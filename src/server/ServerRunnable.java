@@ -17,7 +17,16 @@ public class ServerRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            handleClientRequest();
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+    
+            String clientRequest;
+            while((clientRequest = in.readLine())!= null) {
+                System.out.println("Received: " +  clientRequest);
+                String response = handleClientRequest(request);
+                out.println(response);
+            }
+       
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -26,26 +35,14 @@ public class ServerRunnable implements Runnable {
     }
 
     private void handleClientRequest() throws IOException {
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+       
+}
+        // UserDAO userDAO = new UserDAO(DatabaseConnection.getConnection());
+        // AuthenticationService authService = new AuthenticationService(userDAO);
+        // UserDetail user = authService.authenticate(userId, password);
+        ClientRequestRouter clientRequestRouter = new ClientRequestRouter();
+        clientRequestRouter.route(request);
 
-        String userId = inputReader.readLine();
-        String password = inputReader.readLine();
-
-        UserDAO userDAO = new UserDAO(DatabaseConnection.getConnection());
-        AuthenticationService authService = new AuthenticationService(userDAO);
-        UserDetail user = authService.authenticate(userId, password);
-
-        if (user != null) {
-            out.println("Authentication successful. Welcome, " + user.getUsername() + "!");
-            RoleBasedService roleService = new RoleBasedService();
-            roleService.handleRole(user, inputReader, out);
-        } else {
-            out.println("Authentication failed.");
-        }
-
-        inputReader.close();
-        out.close();
     }
 
     private void closeResources() {
