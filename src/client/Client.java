@@ -18,15 +18,15 @@ public class Client {
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              Scanner scanner = new Scanner(System.in)) {
 
-            System.out.print("Enter User ID: ");
-            String userID = scanner.nextLine();
+            // System.out.print("Enter User ID: ");
+            // String userID = scanner.nextLine();
 
-            System.out.print("Enter Password: ");
-            String password = scanner.nextLine();
+            // System.out.print("Enter Password: ");
+            // String password = scanner.nextLine();
 
-            // Send userID and password to server
-            out.println(userID);
-            out.println(password);
+            // // Send userID and password to server
+            // out.println(userID);
+            // out.println(password);
 
             // Receive response from server
             String serverResponse = in.readLine();

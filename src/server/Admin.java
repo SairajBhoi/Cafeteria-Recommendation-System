@@ -1,17 +1,20 @@
 public class Admin extends User {
-    private Menu() menu;
+    private Menu() menu=null;
 
+ public   Admin(){
+        menu= new Menu();
+    }
    
-    public void addMenuItem(MenuItem menuItem) {
-        menu.addMenuItem(menuItem);
+    public void addMenuItem() {
+        menu.addMenuItem();
     }
 
-    public void updateMenuItem(MenuItem menuItem) {
-        menu.updateMenuItem(menuItem);
+    public void updateMenuItem() {
+        menu.updateMenuItem();
     }
 
-    public void deleteMenuItem(String itemId) {
-        menu.deleteMenuItem(itemId);
+    public void deleteMenuItem() {
+        menu.deleteMenuItem();
     }
 
 
