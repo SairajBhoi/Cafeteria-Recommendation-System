@@ -1,3 +1,7 @@
+package client;
+
+import java.io.IOException;
+
 public class Employee extends User {
 
     private FeedbackHandler feedbackHandler;
@@ -11,13 +15,23 @@ public class Employee extends User {
     }
 void ViewFeedbackonFoodItem(){
     
-    String itemName=InputHandler.getStringInput("Enter Food Item Name");
+    try {
+		String itemName=InputHandler.getStringInput("Enter Food Item Name");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     feedbackHandler.viewFeedbackonFoodItem();
 
 }
 
 void addFeedbackonFooditem(){
-  feedbackHandler.addFeedbackOnFoodItem();
+  try {
+	feedbackHandler.addFeedbackOnFoodItem();
+} catch (IOException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
 }
 
 void viewNotification(){

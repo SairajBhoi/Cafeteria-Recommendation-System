@@ -21,7 +21,7 @@ public class ServerRunnable implements Runnable {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
     
             String clientRequest;
-            while((clientRequest = in.readLine())!= null) {
+            while((clientRequest = inputReader.readLine())!= null) {
                 System.out.println("Received: " +  clientRequest);
                 String response = handleClientRequest(request);
                 out.println(response);

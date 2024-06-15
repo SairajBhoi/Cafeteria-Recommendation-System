@@ -18,7 +18,7 @@ void viewNotification(String userID){
 
     this.requestPath=this.requestPath+"/viewNotification";
     String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath);
-    //to do have send and handle notification;
+    //TO DO have send and handle notification;
 }
 
 }

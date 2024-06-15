@@ -1,3 +1,5 @@
+package client;
+
 public class MenuItem {
     private String itemName;
     private float itemPrice;

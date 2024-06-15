@@ -1,3 +1,6 @@
+package client;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +18,27 @@ public class Menu {
 
     public void addMenuItem() {
         menuItem = new MenuItem();
-        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-        float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
-        boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+        String itemName = null;
+		try {
+			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        float itemPrice = 0;
+		try {
+			itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        boolean isItemAvailable = false;
+		try {
+			isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         this.requestPath = this.requestPath + "/addMenuItem";
 
         char category;
@@ -44,11 +65,23 @@ public class Menu {
     }
 
     public void deleteMenuItem() {
-        String itemName = InputHandler.getStringInput("\nEnter item name: ");
+        String itemName = null;
+		try {
+			itemName = InputHandler.getStringInput("\nEnter item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         this.requestPath = this.requestPath + "/deleteMenuItem/";
         
         char category = 'a'; 
-        boolean deleteFromAllCategory = InputHandler.getBooleanInput(itemName + " delete the item from all categories? Enter 'no' to delete from specific category, 'yes' to delete from all categories");
+        boolean deleteFromAllCategory = false;
+		try {
+			deleteFromAllCategory = InputHandler.getBooleanInput(itemName + " delete the item from all categories? Enter 'no' to delete from specific category, 'yes' to delete from all categories");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     
         if (!deleteFromAllCategory) {
             do {

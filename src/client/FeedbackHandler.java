@@ -17,22 +17,43 @@ public class FeedbackHandler {
         this.requestPath = "/" + role;
     }
 
-    public void addFeedbackOnFoodItem() {
-        Scanner scanner = new Scanner(System.in);
+    public void addFeedbackOnFoodItem() throws IOException {
+ 
 
-        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-        int tasteRating, qualityRating, freshnessRating, valueForMoneyRating;
+        String itemName=null;
+		try {
+			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        int tasteRating = 0, qualityRating = 0, freshnessRating=0, valueForMoneyRating=0;
 
         do {
-            tasteRating = InputHandler.getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ");
+            try {
+				tasteRating = InputHandler.getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } while (!isValidRating(tasteRating));
 
         do {
-            qualityRating =  InputHandler.getIntegerInput("Enter the Quality rating of " + itemName + " (0-5): ");
+            try {
+				qualityRating =  InputHandler.getIntegerInput("Enter the Quality rating of " + itemName + " (0-5): ");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } while (!isValidRating(qualityRating));
 
         do {
-            freshnessRating =  InputHandler.getIntegerInput("Enter the Freshness rating of " + itemName + " (0-5): ");
+            try {
+				freshnessRating =  InputHandler.getIntegerInput("Enter the Freshness rating of " + itemName + " (0-5): ");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } while (!isValidRating(freshnessRating));
 
         do {
