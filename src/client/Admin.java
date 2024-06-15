@@ -1,13 +1,13 @@
 public class Admin extends User {
-    private Menu() menu=null;
+    private Menu(String role) menu= null;
 
- public   Admin(){
+    public   Admin(){
         menu= new Menu();
     }
-   
-    public void addMenuItem() {
+      public void addMenuItem() {
         menu.addMenuItem();
-    }
+    } 
+
 
     public void updateMenuItem() {
         menu.updateMenuItem();
@@ -18,8 +18,8 @@ public class Admin extends User {
     }
 
 
-    public List<MenuItem> getAllMenuItems() {
-        return menu.getAllMenuItems();
+    public viewAllMenuItems() {
+    menu.getAllMenuItems();
     }
 
     

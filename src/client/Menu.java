@@ -5,10 +5,12 @@ public class Menu {
     private MenuItem menuItem;
     private JsonConverter jsonConverter;
     private String requestPath;
+    private String role ;
 
-    public Menu() {
+    public Menu(String role) {
         jsonConverter = new JsonConverter();
-        this.requestPath = "/admin"; 
+        this.role= role;
+        this.requestPath = "/"+role; 
     }
 
     public void addMenuItem() {
@@ -16,7 +18,7 @@ public class Menu {
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
         float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
         boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
-        this.requestPath = this.requestPath + "/addmenuitem";
+        this.requestPath = this.requestPath + "/addMenuItem";
 
         char category;
         do {
@@ -30,7 +32,7 @@ public class Menu {
         
         String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
         System.out.println("JSON Request: " + jsonRequest); 
-        this.requestPath = "/admin";
+        this.requestPath = "/"+ this.role; 
     }
 
     private boolean isValidCategory(char category) {
@@ -57,14 +59,14 @@ public class Menu {
         MenuItem menuItem = new MenuItem(itemName, category); 
         String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
         System.out.println("JSON Request: " + jsonRequest); 
-        this.requestPath = "/admin"; 
+        this.requestPath = "/"+this.role;  
     }
 
     public void viewAllMenuItems() {
         this.requestPath = this.requestPath + "/viewAllMenuItems";
         String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath); 
         System.out.println("JSON Request: " + jsonRequest);
+        this.requestPath = "/"+this.role;
 
-        // sendRequestToServer(jsonRequest);
     }
 }
