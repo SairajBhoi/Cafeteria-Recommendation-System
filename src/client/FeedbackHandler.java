@@ -5,15 +5,17 @@ public class FeedbackHandler {
     private String requestPath;
     private JsonConverter jsonConverter;
     private String role;
+    private employeeName;
 
-    public FeedbackHandler(String role) {
+    public FeedbackHandler(String role,String employeeName) {
         jsonConverter = new JsonConverter();
         feedback = new Feedback();
         this.role = role;
+        this.employeeName=employeeName;
         this.requestPath = "/" + role;
     }
 
-    public void addFeedbackOnFoodItem(String employeeName) {
+    public void addFeedbackOnFoodItem() {
         Scanner scanner = new Scanner(System.in);
 
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
@@ -39,7 +41,7 @@ public class FeedbackHandler {
 
         this.requestPath = this.requestPath + "/addFeedbackOnFoodItem"; 
 
-        feedback.setEmployeeName(employeeName);
+        feedback.setEmployeeName(this.employeeName);
         feedback.setItemName(itemName);
         feedback.setTasteRating(tasteRating);
         feedback.setQualityRating(qualityRating);

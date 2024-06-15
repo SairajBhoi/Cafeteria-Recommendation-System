@@ -1,8 +1,8 @@
 public class Admin extends User {
-    private Menu(String role) menu= null;
+    private Menu() menu= null;
 
     public   Admin(){
-        menu= new Menu();
+        menu= new Menu(String this.role);
     }
       public void addMenuItem() {
         menu.addMenuItem();
