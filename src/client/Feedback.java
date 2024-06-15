@@ -1,3 +1,5 @@
+package client;
+
 public class Feedback {
     private String employeeName;
     private String itemName;
@@ -8,7 +10,7 @@ public class Feedback {
     private String feedbackMessage;
 
     public String getEmployeeName() {
-        return employeeID;
+        return this.employeeName;
     }
 
     public void setEmployeeName(String employeeID) {

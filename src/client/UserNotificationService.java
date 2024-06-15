@@ -1,7 +1,11 @@
-public class UserNotificationService(
+package client;
+
+public class UserNotificationService{
     private String role;
-    private requestPath
-    private JsonConverter jsonConverter;
+    private String requestPath;
+    private JsonConverter jsonConverter;	
+ 
+    
 UserNotificationService(String role)
 {
     jsonConverter = new JsonConverter();
@@ -12,9 +16,9 @@ UserNotificationService(String role)
 
 void viewNotification(String userID){
 
-    this.requestPath=this.requestPath+"/viewNotification"
+    this.requestPath=this.requestPath+"/viewNotification";
     String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath);
     //to do have send and handle notification;
 }
 
-)
+}

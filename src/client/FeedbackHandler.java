@@ -1,11 +1,13 @@
-import java.util.Scanner;
+package client;
+
+import java.io.IOException;
 
 public class FeedbackHandler {
     private Feedback feedback;
     private String requestPath;
     private JsonConverter jsonConverter;
     private String role;
-    private employeeName;
+    private String employeeName;
 
     public FeedbackHandler(String role,String employeeName) {
         jsonConverter = new JsonConverter();
@@ -22,19 +24,19 @@ public class FeedbackHandler {
         int tasteRating, qualityRating, freshnessRating, valueForMoneyRating;
 
         do {
-            tasteRating = getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ", scanner);
+            tasteRating = InputHandler.getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ");
         } while (!isValidRating(tasteRating));
 
         do {
-            qualityRating = getIntegerInput("Enter the Quality rating of " + itemName + " (0-5): ", scanner);
+            qualityRating =  InputHandler.getIntegerInput("Enter the Quality rating of " + itemName + " (0-5): ");
         } while (!isValidRating(qualityRating));
 
         do {
-            freshnessRating = getIntegerInput("Enter the Freshness rating of " + itemName + " (0-5): ", scanner);
+            freshnessRating =  InputHandler.getIntegerInput("Enter the Freshness rating of " + itemName + " (0-5): ");
         } while (!isValidRating(freshnessRating));
 
         do {
-            valueForMoneyRating = getIntegerInput("Enter the Value for Money rating of " + itemName + " (0-5): ", scanner);
+            valueForMoneyRating =  InputHandler.getIntegerInput("Enter the Value for Money rating of " + itemName + " (0-5): ");
         } while (!isValidRating(valueForMoneyRating));
 
         String feedbackMessage = InputHandler.getStringInput("Enter feedback message: ");
@@ -68,7 +70,12 @@ public class FeedbackHandler {
 
 
    void viewFeedbackonFoodItem(){
-    String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+    try {
+		String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 
     this.requestPath = this.requestPath + "/viewFeedbackonFoodItem"; 
 

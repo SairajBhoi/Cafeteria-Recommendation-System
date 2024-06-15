@@ -1,8 +1,11 @@
+package client;
+
 public class Admin extends User {
-    private Menu() menu= null;
+    private Menu menu= null;
+
 
     public   Admin(){
-        menu= new Menu(String this.role);
+        menu= new Menu(this.getUserRole());
     }
       public void addMenuItem() {
         menu.addMenuItem();
@@ -18,8 +21,8 @@ public class Admin extends User {
     }
 
 
-    public viewAllMenuItems() {
-    menu.getAllMenuItems();
+    public void viewAllMenuItems() {
+    menu.viewAllMenuItems();
     }
 
     

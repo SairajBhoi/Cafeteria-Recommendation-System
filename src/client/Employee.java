@@ -5,23 +5,23 @@ public class Employee extends User {
 
     Employee(){
           
-        FeedbackHandler=new FeedbackHandler(String this.role,this.userName);
-        userNotificationService = new UserNotificationService(String this.role);
+        feedbackHandler=new FeedbackHandler(this.getUserRole(),this.getUserName());
+        userNotificationService = new UserNotificationService(this.getUserRole());
 
     }
-ViewFeedbackonFoodItem(){
+void ViewFeedbackonFoodItem(){
     
     String itemName=InputHandler.getStringInput("Enter Food Item Name");
-    feedbackHandler.ViewFeedbackonFoodItem();
+    feedbackHandler.viewFeedbackonFoodItem();
 
 }
 
-addFeedbackonFooditem(){
+void addFeedbackonFooditem(){
   feedbackHandler.addFeedbackOnFoodItem();
 }
 
-viewNotification(){
-    userNotificationService.viewNotification(this.userID);
+void viewNotification(){
+    userNotificationService.viewNotification(this.getUserId());
 }
 
 }

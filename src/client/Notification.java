@@ -1,3 +1,5 @@
+package client;
+
 
 public class Notification {
     private String message;
@@ -22,7 +24,7 @@ public class Notification {
 
   
     public String setCreatedDate(String createdDate) {
-       this.createdDate=createdDate;
+       return this.createdDate=createdDate;
     }
 
     public String getType() {
