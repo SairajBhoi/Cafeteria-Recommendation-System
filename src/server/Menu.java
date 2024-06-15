@@ -4,19 +4,19 @@ import java.util.List;
 public class Menu {
     private MenuItem menuItem;
     private JsonConverter jsonConverter;
-    private String request;
+    private String requestPath;
 
     public Menu() {
-        menuItem = new MenuItem();
         jsonConverter = new JsonConverter();
-        this.request = "/admin/"; 
+        this.requestPath = "/admin"; 
     }
 
     public void addMenuItem() {
+        menuItem = new MenuItem();
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
         float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
         boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
-        this.request=this.request+"/addmenuitem";
+        this.requestPath = this.requestPath + "/addmenuitem";
 
         char category;
         do {
@@ -28,9 +28,9 @@ public class Menu {
         menuItem.setItemAvailable(isItemAvailable);
         menuItem.setItemCategory(category);
         
-        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, request); 
+        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
         System.out.println("JSON Request: " + jsonRequest); 
-        
+        this.requestPath = "/admin";
     }
 
     private boolean isValidCategory(char category) {
@@ -38,15 +38,33 @@ public class Menu {
     }
 
     public void updateMenuItem() {
-        // Placeholder for update logic
+       this.addMenuItem();
     }
 
     public void deleteMenuItem() {
-        // Placeholder for delete logic
+        String itemName = InputHandler.getStringInput("\nEnter item name: ");
+        this.requestPath = this.requestPath + "/deleteMenuItem/";
+        
+        char category = 'a'; 
+        boolean deleteFromAllCategory = InputHandler.getBooleanInput(itemName + " delete the item from all categories? Enter 'no' to delete from specific category, 'yes' to delete from all categories");
+    
+        if (!deleteFromAllCategory) {
+            do {
+                category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
+            } while (!isValidCategory(category));
+        }
+        
+        MenuItem menuItem = new MenuItem(itemName, category); 
+        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
+        System.out.println("JSON Request: " + jsonRequest); 
+        this.requestPath = "/admin"; 
     }
 
-    public List<MenuItem> getAllMenuItems() {
-        // Placeholder for retrieving all menu items
-        return new ArrayList<>(); // Replace with actual implementation
+    public void viewAllMenuItems() {
+        this.requestPath = this.requestPath + "/viewAllMenuItems";
+        String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath); 
+        System.out.println("JSON Request: " + jsonRequest);
+
+        // sendRequestToServer(jsonRequest);
     }
 }

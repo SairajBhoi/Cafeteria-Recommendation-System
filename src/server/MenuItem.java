@@ -4,7 +4,13 @@ public class MenuItem {
     private boolean isItemAvailable;
     private char itemCategory;
    
+    MenuItem(){}
 
+    MenuItem(String itemName,char itemCategory)
+    {
+        this.itemName=itemName;
+        this.itemCategory=itemCategory;
+    }
     public String getItemName() {
         return itemName;
     }
