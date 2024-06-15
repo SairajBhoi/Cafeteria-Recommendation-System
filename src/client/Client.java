@@ -5,37 +5,71 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class Client {
-    public static void main(String[] args) {
-        String hostName = "localhost";
-        int portNumber = 5700;
+    private static BufferedReader in;
+    private static PrintWriter out;
+    private static Socket socket = null;
+    private static final String SERVER_ADDRESS = "localhost";
+    private static final int SERVER_PORT = 5700;
 
-        try (Socket clientSocket = new Socket(hostName, portNumber);
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             Scanner scanner = new Scanner(System.in)) {
+    public static String requestServer(String requestToServer) throws IOException {
+        try {
+            if (socket == null || socket.isClosed()) {
+                socket = openSocket(SERVER_PORT);
+            }
+            openConnection(socket);
+            out.println(requestToServer);
 
-            // System.out.print("Enter User ID: ");
-            // String userID = scanner.nextLine();
-
-            // System.out.print("Enter Password: ");
-            // String password = scanner.nextLine();
-
-            // // Send userID and password to server
-            // out.println(userID);
-            // out.println(password);
-
-            // Receive response from server
             String serverResponse = in.readLine();
-            System.out.println("Server Says: " + serverResponse);
 
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + hostName);
+            return serverResponse;  
+
+        } catch (IOException ex) {
+            throw new IOException("Error communicating with server: " + ex.getMessage());
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static Socket openSocket(int port) throws IOException {
+        return new Socket(SERVER_ADDRESS, port);
+    }
+
+    private static void closeSocket(Socket socket) {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException e) {
-            System.err.println("I/O error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void openConnection(Socket socket) throws IOException {
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
+    }
+
+    public static void closeConnection() {
+        try {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
