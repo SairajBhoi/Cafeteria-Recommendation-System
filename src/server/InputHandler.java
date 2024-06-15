@@ -45,6 +45,21 @@ public class InputHandler {
         }
     }
 
+    public static char getCharInput(String messageToUser) {
+        while (true) {
+            try {
+                String input = getStringInput(messageToUser);
+                if (input.length() == 1) {
+                    return input.charAt(0);
+                } else {
+                    System.out.println("Please enter exactly one character.\n");
+                }
+            } catch (IOException e) {
+                System.out.println("Error reading input. Please try again.\n");
+            }
+        }
+    }
+
     public static void closeInputHandler() {
         try {
             bufferedReader.close();

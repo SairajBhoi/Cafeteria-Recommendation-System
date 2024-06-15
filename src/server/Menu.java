@@ -1,46 +1,52 @@
-import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
     private MenuItem menuItem;
-    private Scanner scanner;
+    private JsonConverter jsonConverter;
+    private String request;
 
-    Menu() {
+    public Menu() {
         menuItem = new MenuItem();
-        scanner = new Scanner(System.in);
+        jsonConverter = new JsonConverter();
+        this.request = "/admin/"; 
     }
-   
+
     public void addMenuItem() {
-        String messageToUser;
-        
-        messageToUser = "Enter the Food Item name: ";
-        String itemName = InputHandler.getStringInput(messageToUser);
+        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+        float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
+        boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+        this.request=this.request+"/addmenuitem";
 
-        messageToUser = "Enter the Food Item price for " + itemName + ": ";
-        float itemPrice = InputHandler.getFloatInput(messageToUser);
-
-        messageToUser = itemName + " is Available: Enter 'no' for not available, 'yes' for available: ";
-        boolean isItemAvailable = InputHandler.getBooleanInput(messageToUser);
-
-        messageToUser = "Enter Food Category: \n1 - breakfast\n2 - lunch\n3 - snacks\n4 - dinner\n";
-        int category = InputHandler.getIntegerInput(messageToUser);
+        char category;
+        do {
+            category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
+        } while (!isValidCategory(category));
 
         menuItem.setItemName(itemName);
         menuItem.setItemPrice(itemPrice);
         menuItem.setItemAvailable(isItemAvailable);
         menuItem.setItemCategory(category);
+        
+        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, request); 
+        System.out.println("JSON Request: " + jsonRequest); 
+        
+    }
+
+    private boolean isValidCategory(char category) {
+        return category == 'b' || category == 'l' || category == 's' || category == 'd';
     }
 
     public void updateMenuItem() {
-        // Add implementation to update a menu item
+        // Placeholder for update logic
     }
 
     public void deleteMenuItem() {
-        // Add implementation to delete a menu item
+        // Placeholder for delete logic
     }
 
     public List<MenuItem> getAllMenuItems() {
-        // Add implementation to retrieve all menu items
-        return new ArrayList<>(); // Placeholder return statement
+        // Placeholder for retrieving all menu items
+        return new ArrayList<>(); // Replace with actual implementation
     }
 }

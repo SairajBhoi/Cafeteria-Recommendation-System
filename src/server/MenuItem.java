@@ -2,7 +2,7 @@ public class MenuItem {
     private String itemName;
     private float itemPrice;
     private boolean isItemAvailable;
-    private String itemCategory;
+    private char itemCategory;
    
 
     public String getItemName() {
@@ -29,11 +29,11 @@ public class MenuItem {
         isItemAvailable = itemAvailable;
     }
 
-    public String getItemCategory() {
+    public char getItemCategory() {
         return itemCategory;
     }
 
-    public void setItemCategory(String itemCategory) {
+    public void setItemCategory(char itemCategory) {
         this.itemCategory = itemCategory;
     }
 }
