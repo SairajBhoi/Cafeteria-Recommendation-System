@@ -45,11 +45,12 @@ public class Menu {
         do {
             category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
         } while (!isValidCategory(category));
-
+        
+        String categoryName=this.getCategoryName(category);
         menuItem.setItemName(itemName);
         menuItem.setItemPrice(itemPrice);
         menuItem.setItemAvailable(isItemAvailable);
-        menuItem.setItemCategory(category);
+        menuItem.setItemCategory(categoryName);
         
         String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
@@ -74,7 +75,7 @@ public class Menu {
 		}
         this.requestPath = this.requestPath + "/deleteMenuItem/";
         
-        char category = 'a'; 
+       char category = 'a'; 
         boolean deleteFromAllCategory = false;
 		try {
 			deleteFromAllCategory = InputHandler.getBooleanInput(itemName + " delete the item from all categories? Enter 'no' to delete from specific category, 'yes' to delete from all categories");
@@ -88,12 +89,14 @@ public class Menu {
                 category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
             } while (!isValidCategory(category));
         }
+        String categoryName=this.getCategoryName(category);
         
-        MenuItem menuItem = new MenuItem(itemName, category); 
+        MenuItem menuItem = new MenuItem(itemName, categoryName); 
         String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+this.role;  
     }
+   
 
     public void viewAllMenuItems() {
         this.requestPath = this.requestPath + "/viewAllMenuItems";
@@ -101,5 +104,22 @@ public class Menu {
         System.out.println("JSON Request: " + jsonRequest);
         this.requestPath = "/"+this.role;
 
+    }
+    
+    private String getCategoryName(char category) {
+        switch (category) {
+        case 'a':    
+        	    return "all";
+        case 'b':
+                return "breakfast";
+            case 'l':
+                return "lunch";
+            case 's':
+                return "snacks";
+            case 'd':
+                return "dinner";
+            default:
+                return "unknown";
+        }
     }
 }

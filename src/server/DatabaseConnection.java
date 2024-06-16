@@ -9,11 +9,11 @@ public class DatabaseConnection {
     private static final String PASSWORD = "SairajBhoiITT"; //System.getenv("DB_PASSWORD");
     private static final String DATABASE_NAME = "cafeteria";//System.getenv("DB_NAME");
 
-    // Singleton instance
+   
     private static DatabaseConnection instance;
     private Connection connection;
 
-    // Private constructor to prevent instantiation
+   
     private DatabaseConnection() {
         try {
             this.connection = DriverManager.getConnection(DB_URL + DATABASE_NAME, USERNAME, PASSWORD);
@@ -22,7 +22,7 @@ public class DatabaseConnection {
         }
     }
 
-    // Public method to provide access to the instance
+  
     public static DatabaseConnection getInstance() {
         if (instance == null) {
             synchronized (DatabaseConnection.class) {
@@ -34,12 +34,12 @@ public class DatabaseConnection {
         return instance;
     }
 
-    // Method to get the connection
+   
     public Connection getConnection() {
         return connection;
     }
 
-    // Method to close the connection
+   
     public static void closeConnection() {
         if (instance != null && instance.connection != null) {
             try {
