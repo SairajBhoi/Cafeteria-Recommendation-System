@@ -1,5 +1,7 @@
 package client;
 
+
+
 public class Authenticator {
     private String requestPath;
     
@@ -32,28 +34,28 @@ public class Authenticator {
       String role = user.getUserRole();
       String userName= user.getUserName();
 
-      try {
-        switch (role) {
-            case "ADMIN":
-                AdminController adminController = new AdminController(userName, userId);
-                adminController.runHomepage();
-                break;
-            case "CHEF":
-                ChefController chefController = new ChefController(userName, userId);
-                chefController.runHomePage();
-                break;
-            case "EMPLOYEE":
-                EmployeeController employeeController = new EmployeeController(userName, userId);
-                employeeController.runHomePage();
-                break;
-            default:
-                System.out.println("Invalid role.");
+        try {
+            switch (role) {
+                case "ADMIN" -> {
+                    AdminController adminController = new AdminController(userName, userId);
+                    adminController.runHomepage();
+                }
+                case "CHEF" -> {
+                    ChefController chefController = new ChefController(userName, userId);
+                    chefController.runHomePage();
+                }
+                case "EMPLOYEE" -> {
+                    EmployeeController employeeController = new EmployeeController(userName, userId);
+                    employeeController.runHomePage();
+                }
+                default -> {
+                    System.out.println("Invalid role.");
+                }
+            }
         } catch (Exception ex) {
             System.out.println("Server connection failed.");
-            
-        }
-        finally{
-            user.logout();
+        }finally {
+        	user.logout();
         }
     }
 		return true;
