@@ -51,7 +51,7 @@ public class Menu {
         menuItem.setItemAvailable(isItemAvailable);
         menuItem.setItemCategory(category);
         
-        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
+        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+ this.role; 
     }
@@ -90,7 +90,7 @@ public class Menu {
         }
         
         MenuItem menuItem = new MenuItem(itemName, category); 
-        String jsonRequest = jsonConverter.convertObjectToJson(menuItem, this.requestPath); 
+        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+this.role;  
     }

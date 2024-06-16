@@ -1,10 +1,12 @@
+package server;
+
 public class ClientRequestRouter{
 
-    ClientRequestRouter()
-    route(String request){
+    ClientRequestRouter(){}
+      String route(String clientRequest){
 
-
-
+              String response=null;
+                      return response;
         
     }
 }

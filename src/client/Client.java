@@ -16,43 +16,19 @@ public class Client {
     public static String requestServer(String requestToServer) throws IOException {
         try {
             if (socket == null || socket.isClosed()) {
-                socket = openSocket(SERVER_PORT);
+                openSocket(SERVER_PORT);
+                openConnection(socket);
             }
-            openConnection(socket);
             out.println(requestToServer);
 
-            String serverResponse = in.readLine();
-
-            return serverResponse;  
-
+            return in.readLine();
         } catch (IOException ex) {
             throw new IOException("Error communicating with server: " + ex.getMessage());
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    private static Socket openSocket(int port) throws IOException {
-        return new Socket(SERVER_ADDRESS, port);
-    }
-
-    private static void closeSocket(Socket socket) {
-        try {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static void openSocket(int port) throws IOException {
+        socket = new Socket(SERVER_ADDRESS, port);
     }
 
     private static void openConnection(Socket socket) throws IOException {
@@ -71,5 +47,20 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void closeSocket() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void logout() {
+        closeConnection();
+        closeSocket();
     }
 }

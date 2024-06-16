@@ -37,6 +37,14 @@ public abstract class User {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
+	
+	 public void logout() {
+	        Client.closeConnection();
+	        Client.closeSocket();
+	    }
+	
+}
+
 
    
-}
+

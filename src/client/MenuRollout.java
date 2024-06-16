@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class MenuRollout {
     private DailyMenuItem dailyMenuItem;
     private InputHandler inputHandler;
@@ -48,7 +50,7 @@ public class MenuRollout {
     public void sendMenuRollout() {
         try {
         	this.requestPath = "/" + role + "/rolloutMenu";
-            String jsonRequest = jsonConverter.convertObjectToJson(dailyMenuItem, this.requestPath);
+            String jsonRequest = jsonConverter.convertObjectToJson( this.requestPath,dailyMenuItem);
             System.out.println("JSON Request: " + jsonRequest);
 
             String response = Client.requestServer(jsonRequest);

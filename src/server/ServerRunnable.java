@@ -23,7 +23,7 @@ public class ServerRunnable implements Runnable {
             String clientRequest;
             while((clientRequest = inputReader.readLine())!= null) {
                 System.out.println("Received: " +  clientRequest);
-                String response = handleClientRequest(request);
+                String response = handleClientRequest(clientRequest);
                 out.println(response);
             }
        
@@ -34,14 +34,15 @@ public class ServerRunnable implements Runnable {
         }
     }
 
-    private void handleClientRequest() throws IOException {
+    private String handleClientRequest(String clientRequest) throws IOException {
        
-}
+
         // UserDAO userDAO = new UserDAO(DatabaseConnection.getConnection());
         // AuthenticationService authService = new AuthenticationService(userDAO);
         // UserDetail user = authService.authenticate(userId, password);
         ClientRequestRouter clientRequestRouter = new ClientRequestRouter();
-        clientRequestRouter.route(request);
+        String response= clientRequestRouter.route(clientRequest);
+		return response;
 
     }
 

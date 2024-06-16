@@ -72,7 +72,7 @@ public class FeedbackHandler {
         feedback.setValueForMoneyRating(valueForMoneyRating);
         feedback.setFeedbackMessage(feedbackMessage);
 
-        String jsonRequest = jsonConverter.convertObjectToJson(feedback, this.requestPath);
+        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,feedback );
         this.requestPath = "/" + this.role;
 
         System.out.println("Feedback added successfully!");

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonConverter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String convertObjectToJson(Object object, String path) {
+    public static String convertObjectToJson(String path,Object object) {
         try {
             return objectMapper.writeValueAsString(new JsonRequest(path, object));
         } catch (JsonProcessingException e) {
@@ -15,7 +15,7 @@ public class JsonConverter {
         }
     }
 
-    private static class JsonRequest {
+    public static class JsonRequest {
         private String path;
         private Object data;
 
