@@ -18,8 +18,10 @@ public class Main {
 	            String userPassword = InputHandler.getStringInput("Enter user Password:");
 	            
 	            
-	            authenticator.authenticate(userId, userPassword);
-	          
+	            boolean authenticationStatus = authenticator.authenticate(userId, userPassword);
+	            if (!authenticationStatus) {
+                    System.out.println("Authentication failed. Please try again.");
+                }
 	        } catch (IOException e) {
 	            System.err.println("IO ERROR.");
 	        } catch (InterruptedException e) {

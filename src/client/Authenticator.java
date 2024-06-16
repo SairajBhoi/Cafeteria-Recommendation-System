@@ -1,7 +1,5 @@
 package client;
 
-
-
 public class Authenticator {
     private String requestPath;
     
@@ -9,43 +7,56 @@ public class Authenticator {
         requestPath = "/authenticate"; 
     }
 
-    public void authenticate(String userId, String password) throws Exception {
+    public boolean authenticate(String userId, String password) throws Exception {
     	User user= new User();
-    	
+    	user.setUserId(userId);
+    	user.setUserPassword(password);
         String jsonRequest = JsonConverter.convertObjectToJson(requestPath,user);
+        
+        
         System.out.println("JSON Request: " + jsonRequest);
         
-        String response = Client.requestServer(jsonRequest);
+        String jsonresponse = Client.requestServer(jsonRequest);
+        System.out.println("JSON Request: " + jsonresponse);
         
-          user =JsonStringToObject.fromJsonToObject(response, User.class);
+        if(JsonStringToObject.checkJsonResponseForError(jsonresponse)) {
+        	user.logout();
+        	return false ;
+        	
+        }
+        else {
+        user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
         
         
         
-        String role = InputHandler.getStringInput("Enter role");
-        String userName = "Sairaj";
+      String role = user.getUserRole();
+      String userName= user.getUserName();
 
-        try {
-            switch (role) {
-                case "ADMIN" -> {
-                    AdminController adminController = new AdminController(userName, userId);
-                    adminController.runHomepage();
-                }
-                case "CHEF" -> {
-                    ChefController chefController = new ChefController(userName, userId);
-                    chefController.runHomePage();
-                }
-                case "EMPLOYEE" -> {
-                    EmployeeController employeeController = new EmployeeController(userName, userId);
-                    employeeController.runHomePage();
-                }
-                default -> {
-                    System.out.println("Invalid role.");
-                }
-            }
+      try {
+        switch (role) {
+            case "ADMIN":
+                AdminController adminController = new AdminController(userName, userId);
+                adminController.runHomepage();
+                break;
+            case "CHEF":
+                ChefController chefController = new ChefController(userName, userId);
+                chefController.runHomePage();
+                break;
+            case "EMPLOYEE":
+                EmployeeController employeeController = new EmployeeController(userName, userId);
+                employeeController.runHomePage();
+                break;
+            default:
+                System.out.println("Invalid role.");
         } catch (Exception ex) {
             System.out.println("Server connection failed.");
+            
+        }
+        finally{
+            user.logout();
         }
     }
-
+		return true;
+    }
  
 }
