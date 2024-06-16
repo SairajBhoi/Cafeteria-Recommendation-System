@@ -1,4 +1,4 @@
-package client;
+package server;
 
 public class User {
     private String userId;
@@ -38,10 +38,6 @@ public class User {
         this.userPassword = userPassword;
     }
 	
-	 public void logout() {
-	        Client.closeConnection();
-	        Client.closeSocket();
-	    }
 	
 }
 

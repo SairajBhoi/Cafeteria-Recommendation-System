@@ -1,4 +1,4 @@
-package client;
+package server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,7 @@ public class JsonConverter {
             return null;
         }
     }
+    
     public static String convertObjectToJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
@@ -30,7 +31,9 @@ public class JsonConverter {
             this.path = path;
             this.data = data;
         }
-
+        public JsonRequest(Object data) {
+            this.data = data;
+        }
         public String getPath() {
             return path;
         }

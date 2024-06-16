@@ -6,17 +6,18 @@ import java.util.List;
 
 public class Menu {
     private MenuItem menuItem;
-    private JsonConverter jsonConverter;
+   
     private String requestPath;
     private String role ;
 
     public Menu(String role) {
-        jsonConverter = new JsonConverter();
+    
         this.role= role;
         this.requestPath = "/"+role; 
     }
 
-    public void addMenuItem() {
+    @SuppressWarnings({ "static-access", "static-access" })
+	public void addMenuItem() {
         menuItem = new MenuItem();
         String itemName = null;
 		try {
@@ -52,7 +53,7 @@ public class Menu {
         menuItem.setItemAvailable(isItemAvailable);
         menuItem.setItemCategory(categoryName);
         
-        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+ this.role; 
     }
@@ -92,7 +93,7 @@ public class Menu {
         String categoryName=this.getCategoryName(category);
         
         MenuItem menuItem = new MenuItem(itemName, categoryName); 
-        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,menuItem); 
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+this.role;  
     }
@@ -100,7 +101,7 @@ public class Menu {
 
     public void viewAllMenuItems() {
         this.requestPath = this.requestPath + "/viewAllMenuItems";
-        String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath); 
+        String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath); 
         System.out.println("JSON Request: " + jsonRequest);
         this.requestPath = "/"+this.role;
 

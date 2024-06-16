@@ -36,10 +36,6 @@ public class ServerRunnable implements Runnable {
 
     private String handleClientRequest(String clientRequest) throws IOException {
        
-
-        // UserDAO userDAO = new UserDAO(DatabaseConnection.getConnection());
-        // AuthenticationService authService = new AuthenticationService(userDAO);
-        // UserDetail user = authService.authenticate(userId, password);
         ClientRequestRouter clientRequestRouter = new ClientRequestRouter();
         String response= clientRequestRouter.route(clientRequest);
 		return response;

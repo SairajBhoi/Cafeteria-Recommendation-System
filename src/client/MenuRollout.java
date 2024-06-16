@@ -7,14 +7,12 @@ import java.util.List;
 public class MenuRollout {
     private DailyMenuItem dailyMenuItem;
     private InputHandler inputHandler;
-    private JsonConverter jsonConverter;
     private String requestPath;
     private String role;
 
     public MenuRollout(String role) {
         this.dailyMenuItem = new DailyMenuItem();
         this.inputHandler = new InputHandler();
-        this.jsonConverter = new JsonConverter();
         this.role = role;
         this.requestPath = "/" + role; // Initialize requestPath with role
     }
@@ -49,7 +47,7 @@ public class MenuRollout {
     public void sendMenuRollout() {
         try {
             this.requestPath = "/" + role + "/rolloutMenu"; // Update requestPath for specific action
-            String jsonRequest = jsonConverter.convertObjectToJson( this.requestPath,dailyMenuItem);
+            String jsonRequest = JsonConverter.convertObjectToJson( this.requestPath,dailyMenuItem);
             System.out.println("JSON Request: " + jsonRequest);
 
             String response = Client.requestServer(jsonRequest);

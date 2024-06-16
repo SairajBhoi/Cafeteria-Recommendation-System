@@ -8,12 +8,14 @@ public class Feedback {
     private int freshnessRating;
     private int valueForMoneyRating;
     private String feedbackMessage;
-
+    private String feedbackMessageSentiment; 
+    
+    
     public String getEmployeeName() {
         return this.employeeName;
     }
 
-    public void setEmployeeName(String employeeID) {
+    public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
     }
 
@@ -63,5 +65,13 @@ public class Feedback {
 
     public void setFeedbackMessage(String feedbackMessage) {
         this.feedbackMessage = feedbackMessage;
+    }
+
+    public String getFeedbackMessageSentiment() {
+        return feedbackMessageSentiment;
+    }
+
+    public void setFeedbackMessageSentiment(String feedbackMessageSentiment) {
+        this.feedbackMessageSentiment = feedbackMessageSentiment;
     }
 }

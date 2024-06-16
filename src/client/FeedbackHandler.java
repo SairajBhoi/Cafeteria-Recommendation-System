@@ -5,12 +5,10 @@ import java.io.IOException;
 public class FeedbackHandler {
     private Feedback feedback;
     private String requestPath;
-    private JsonConverter jsonConverter;
     private String role;
     private String employeeName;
 
     public FeedbackHandler(String role,String employeeName) {
-        jsonConverter = new JsonConverter();
         feedback = new Feedback();
         this.role = role;
         this.employeeName=employeeName;
@@ -72,7 +70,7 @@ public class FeedbackHandler {
         feedback.setValueForMoneyRating(valueForMoneyRating);
         feedback.setFeedbackMessage(feedbackMessage);
 
-        String jsonRequest = jsonConverter.convertObjectToJson(this.requestPath,feedback );
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback );
         this.requestPath = "/" + this.role;
 
         System.out.println("Feedback added successfully!");
@@ -100,7 +98,7 @@ public class FeedbackHandler {
 
     this.requestPath = this.requestPath + "/viewFeedbackonFoodItem"; 
 
-    String jsonRequest = jsonConverter.convertObjectToJson(null, this.requestPath);
+    String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath);
 
     this.requestPath = "/" + this.role;
 

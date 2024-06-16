@@ -1,20 +1,26 @@
 package client;
 
-public class Authenticator {
-    private JsonConverter jsonConverter;
-    private String requestPath;
 
+
+public class Authenticator {
+    private String requestPath;
+    
     public Authenticator() {
-        jsonConverter = new JsonConverter();
         requestPath = "/authenticate"; 
     }
 
     public void authenticate(String userId, String password) throws Exception {
-    	UserCredentials userCredentials=new UserCredentials(userId, password);
-        // Convert user credentials to JSON
-        String jsonRequest = jsonConverter.convertObjectToJson(requestPath,userCredentials);
+    	User user= new User();
+    	
+        String jsonRequest = JsonConverter.convertObjectToJson(requestPath,user);
         System.out.println("JSON Request: " + jsonRequest);
-
+        
+        String response = Client.requestServer(jsonRequest);
+        
+          user =JsonStringToObject.fromJsonToObject(response, User.class);
+        
+        
+        
         String role = InputHandler.getStringInput("Enter role");
         String userName = "Sairaj";
 
@@ -41,39 +47,5 @@ public class Authenticator {
         }
     }
 
- public  class UserCredentials {
-        private String userId;
-        private String password;
-        private String roll;
-  
-
-        public UserCredentials(String userId, String password) {
-            this.userId = userId;
-            this.password = password;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-        
-        public String getRoll() {
-            return roll;
-        }
-
-        public void setRoll(String roll) {
-            this.roll = roll;
-        }
-    }
+ 
 }

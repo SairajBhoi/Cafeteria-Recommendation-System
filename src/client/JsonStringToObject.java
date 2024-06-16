@@ -1,11 +1,11 @@
-package server;
+package client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonStringToObject {
-    private final static  ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static String getPath(String jsonData) {
         try {
@@ -60,7 +60,7 @@ public class JsonStringToObject {
         }
     }
 
-    public static  <T> T fromJsonToObject(String jsonData, Class<T> valueType) {
+    public  static <T> T fromJsonToObject(String jsonData, Class<T> valueType) {
         try {
             return objectMapper.readValue(jsonData, valueType);
         } catch (JsonProcessingException e) {
