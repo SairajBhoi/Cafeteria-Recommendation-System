@@ -8,10 +8,16 @@ public class Chef extends User {
 		   this.setUserRole("CHEF");
 		    this.setUserName(userName);
 	        this.setUserId(userId);
-		MenuRollout menurollout= new MenuRollout(this.getUserId());
+	        menurollout= new MenuRollout(this.getUserRole());
+		System.out.print("Constructor");
 	}
 	
 	void menurollout() {
+		System.out.print("before");
+
+		
+		System.out.print("after");
+	
 		menurollout.executeMenuRollout();
 	}
 	

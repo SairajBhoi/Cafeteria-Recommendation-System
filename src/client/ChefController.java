@@ -7,9 +7,7 @@ package client;
 
 	    public ChefController(String userName, String userId) {
 	        this.userName = userName;
-	        chef = new Chef(userName, userId);
-	        
-	        
+	        chef = new Chef(userName, userId); 
 	    }
 
 	  public void runHomePage() throws Exception {
@@ -32,6 +30,7 @@ package client;
 	        switch (choice) {
 	            case 1:
 	               chef.menurollout();
+	            
 	                break;
 	            case 2:
 	               chef.viewRecommendation();

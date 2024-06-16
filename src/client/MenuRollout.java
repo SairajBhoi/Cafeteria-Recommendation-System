@@ -4,29 +4,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class MenuRollout {
     private DailyMenuItem dailyMenuItem;
     private InputHandler inputHandler;
     private JsonConverter jsonConverter;
     private String requestPath;
-	private String role;
+    private String role;
 
     public MenuRollout(String role) {
         this.dailyMenuItem = new DailyMenuItem();
         this.inputHandler = new InputHandler();
         this.jsonConverter = new JsonConverter();
-        this.requestPath = "/" + role;
+        this.role = role;
+        this.requestPath = "/" + role; // Initialize requestPath with role
     }
 
-       private void collectMenuItems() throws IOException {
+    private void collectMenuItems() throws IOException {
         List<String> breakfastItems = collectItemsForMeal("breakfast");
         List<String> lunchItems = collectItemsForMeal("lunch");
         List<String> snackItems = collectItemsForMeal("snack");
         List<String> dinnerItems = collectItemsForMeal("dinner");
 
-        dailyMenuItem.setBreakfastMenu(breakfastItems); 
+        dailyMenuItem.setBreakfastMenu(breakfastItems);
         dailyMenuItem.setLunchMenu(lunchItems);
         dailyMenuItem.setSnackMenu(snackItems);
         dailyMenuItem.setDinnerMenu(dinnerItems);
@@ -41,7 +40,7 @@ public class MenuRollout {
         List<String> items = new ArrayList<>();
         System.out.println("Enter " + totalNumberOfItems + " " + mealType + " items:");
         for (int itemCount = 0; itemCount < totalNumberOfItems; itemCount++) {
-            String itemName = inputHandler.getStringInput(mealType + " item " + (itemCount + 1) + ": ");
+            String itemName = inputHandler.getStringInput(mealType + " item  Name" + (itemCount + 1) + ": ");
             items.add(itemName);
         }
         return items;
@@ -49,7 +48,7 @@ public class MenuRollout {
 
     public void sendMenuRollout() {
         try {
-        	this.requestPath = "/" + role + "/rolloutMenu";
+            this.requestPath = "/" + role + "/rolloutMenu"; // Update requestPath for specific action
             String jsonRequest = jsonConverter.convertObjectToJson( this.requestPath,dailyMenuItem);
             System.out.println("JSON Request: " + jsonRequest);
 
@@ -67,7 +66,7 @@ public class MenuRollout {
         } catch (IOException e) {
             System.err.println("Error during menu rollout: " + e.getMessage());
         } finally {
-            this.requestPath = "/" +this.role;
+            this.requestPath = "/" + role; // Reset requestPath after executing action
         }
     }
 }
