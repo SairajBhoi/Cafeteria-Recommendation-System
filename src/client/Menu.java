@@ -25,6 +25,7 @@ public class Menu {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.print("input string handler error");
 		}
         float itemPrice = 0;
 		try {
@@ -32,6 +33,7 @@ public class Menu {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.print("input float handler error");
 		}
         boolean isItemAvailable = false;
 		try {
@@ -39,6 +41,7 @@ public class Menu {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.print("input boolean handler error");
 		}
         this.requestPath = this.requestPath + "/addMenuItem";
 
@@ -56,6 +59,15 @@ public class Menu {
         String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+ this.role; 
+        
+        String jsonResponse=null;
+        try {
+			jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println(jsonResponse);
     }
 
     private boolean isValidCategory(char category) {
@@ -63,9 +75,104 @@ public class Menu {
     }
 
     public void updateMenuItem() {
-       this.addMenuItem();
+    	menuItem = new MenuItem();
+        String itemName = null;
+		try {
+			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("input string handler error");
+		}
+        float itemPrice = 0;
+		try {
+			itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("input float handler error");
+		}
+        boolean isItemAvailable = false;
+		try {
+			isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("input boolean handler error");
+		}
+        this.requestPath = this.requestPath + "/updateMenuItem";
+
+        char category;
+        do {
+            category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
+        } while (!isValidCategory(category));
+        
+        String categoryName=this.getCategoryName(category);
+        menuItem.setItemName(itemName);
+        menuItem.setItemPrice(itemPrice);
+        menuItem.setItemAvailable(isItemAvailable);
+        menuItem.setItemCategory(categoryName);
+        
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,menuItem); 
+        System.out.println("JSON Request: " + jsonRequest); 
+        this.requestPath = "/"+ this.role; 
+        
+        String jsonResponse=null;
+        try {
+			jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println(jsonResponse);
+    }
+    
+    
+    public void updateAvailabilityStatus() {
+    	menuItem = new MenuItem();
+        String itemName = null;
+		try {
+			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("input string handler error");
+		}
+       
+        boolean isItemAvailable = false;
+		try {
+			isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("input boolean handler error");
+		}
+		
+		
+		 menuItem.setItemName(itemName);
+		 menuItem.setItemAvailable(isItemAvailable);
+		 
+		
+		
+        this.requestPath = this.requestPath + "/updateFoodAvailableStatus";
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, menuItem); 
+        System.out.println("JSON Request: " + jsonRequest); 
+        this.requestPath = "/"+ this.role; 
+        
+        String jsonResponse=null;
+        try {
+			jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println(jsonResponse);
     }
 
+    
+    
+    
+    
     public void deleteMenuItem() {
         String itemName = null;
 		try {
@@ -73,8 +180,9 @@ public class Menu {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.print("input string handler error");
 		}
-        this.requestPath = this.requestPath + "/deleteMenuItem/";
+        this.requestPath = this.requestPath + "/deleteMenuItem";
         
        char category = 'a'; 
         boolean deleteFromAllCategory = false;
@@ -83,6 +191,7 @@ public class Menu {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.print("input boolean handler error");
 		}
     
         if (!deleteFromAllCategory) {
@@ -96,15 +205,30 @@ public class Menu {
         String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,menuItem); 
         System.out.println("JSON Request: " + jsonRequest); 
         this.requestPath = "/"+this.role;  
+        String jsonResponse=null;
+        try {
+			jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println(jsonResponse);
     }
-   
+          
 
     public void viewAllMenuItems() {
-        this.requestPath = this.requestPath + "/viewAllMenuItems";
-        String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath); 
+        this.requestPath = "/viewAllMenuItems";
+        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,null); 
         System.out.println("JSON Request: " + jsonRequest);
         this.requestPath = "/"+this.role;
-
+        String jsonResponse=null;
+        try {
+			jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println(jsonResponse);
     }
     
     private String getCategoryName(char category) {

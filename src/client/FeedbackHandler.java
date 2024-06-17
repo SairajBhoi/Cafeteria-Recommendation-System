@@ -73,7 +73,8 @@ public class FeedbackHandler {
         String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback );
         this.requestPath = "/" + this.role;
         
-        Client.requestServer(jsonRequest);
+        String jsonResponse=Client.requestServer(jsonRequest);
+        System.out.print(jsonResponse);
 
 //        System.out.println("Feedback added successfully!");
 //        System.out.println("Feedback details:");
@@ -90,7 +91,7 @@ public class FeedbackHandler {
     }
 
 
-   void viewFeedbackonFoodItem(){
+   void viewFeedbackonFoodItem() {
     try {
 		String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
 	} catch (IOException e) {
@@ -98,11 +99,19 @@ public class FeedbackHandler {
 		e.printStackTrace();
 	}
 
-    this.requestPath = this.requestPath + "/viewFeedbackonFoodItem"; 
+    this.requestPath = "/viewFeedbackonFoodItem"; 
 
     String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath);
+    String jsonRespose = null;
+	try {
+		jsonRespose = Client.requestServer(jsonRequest);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
 
     this.requestPath = "/" + this.role;
+    
+    System.out.print(jsonRespose);
 
 
    }

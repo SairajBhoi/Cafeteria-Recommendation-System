@@ -21,7 +21,11 @@ public class Admin extends User {
     public void deleteMenuItem() {
         menu.deleteMenuItem();
     }
-
+    
+    public void updateAvailabilityStatus() {
+        menu.updateAvailabilityStatus();
+    }
+    
     public void viewAllMenuItems() {
         menu.viewAllMenuItems();
     }

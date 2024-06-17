@@ -1,5 +1,8 @@
 package server;
 
+import java.util.List;
+import java.util.Map;
+
 public class FeedbackService {
 	private Feedback feedback;
 	
@@ -8,12 +11,27 @@ public class FeedbackService {
 			try {
 				feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
 				EmployeeFeedback empFeedback = new EmployeeFeedback();
-				jsonResponse=empFeedback.addFeedback(feedback);
+				String message =empFeedback.addFeedback(feedback);
+				jsonResponse=JsonConverter.convertStatusAndMessageToJson("success",message);
+	
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				jsonResponse = "{\"error\": \"" + e.getMessage() + "\"}";
+				jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
 			}
 			return jsonResponse;
 		    }
 
+	 
+	 
+	 public String viewFeedback(String data) {
+		    try {
+		    	String itemName=JsonStringToObject.getValueFromData("itemName", data);
+		    	EmployeeFeedback employeeFeedback = new EmployeeFeedback();
+		        List<Map<String, Object>> feedbackList = employeeFeedback.viewFeedback(itemName);
+		        return JsonConverter.convertObjectToJson(feedbackList);
+		    } catch (Exception e) {
+		        e.printStackTrace(); 
+		        return JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+		    }
+		}
+	 
 }

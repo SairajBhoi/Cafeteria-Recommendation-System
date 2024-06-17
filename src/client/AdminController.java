@@ -19,7 +19,7 @@ public class AdminController {
             displayOptions();
             int choice = InputHandler.getIntegerInput("Enter your choice: ");
             processOption(choice);
-            if (choice == 5) {
+            if (choice == 6) {
                 break;
             }
         }
@@ -37,9 +37,12 @@ public class AdminController {
                 admin.updateMenuItem();
                 break;
             case 4:
-                admin.viewAllMenuItems();
+                admin.updateAvailabilityStatus();
                 break;
             case 5:
+                admin.viewAllMenuItems();;
+                break;
+            case 6:
                 System.out.println("Logging out...");
                 admin.logout();
                 break;
@@ -53,7 +56,8 @@ public class AdminController {
         System.out.println("\n1. Add Menu Item");
         System.out.println("2. Delete Menu Item");
         System.out.println("3. Update Menu Item");
-        System.out.println("4. View Menu Items");
-        System.out.println("5. Logout");
+        System.out.println("4. Update Food item Availabilty Status");
+        System.out.println("5. View Menu Items");
+        System.out.println("6. Logout");
     }
 }
