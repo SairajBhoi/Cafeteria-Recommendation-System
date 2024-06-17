@@ -3,7 +3,7 @@ package client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import server.JsonConverter.JsonResponse;
+
 
 public class JsonConverter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -11,14 +11,6 @@ public class JsonConverter {
     public static String convertObjectToJson(String path,Object object) {
         try {
             return objectMapper.writeValueAsString(new JsonRequest(path, object));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static String convertObjectToJson(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
@@ -34,7 +26,14 @@ public class JsonConverter {
         }
     }
     
-    
+    public static String convertObjectToJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public static class JsonRequest {
         private String path;
         private Object data;
@@ -43,7 +42,9 @@ public class JsonConverter {
             this.path = path;
             this.data = data;
         }
-
+        public JsonRequest(Object data) {
+            this.data = data;
+        }
         public String getPath() {
             return path;
         }
@@ -60,6 +61,7 @@ public class JsonConverter {
             this.data = data;
         }
     }
+    
     
     public static class JsonResponse {
         private String status;
