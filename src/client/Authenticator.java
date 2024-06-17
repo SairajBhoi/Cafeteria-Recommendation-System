@@ -15,19 +15,22 @@ public class Authenticator {
     	user.setUserPassword(password);
         String jsonRequest = JsonConverter.convertObjectToJson(requestPath,user);
         
-        
+    
+      
         System.out.println("JSON Request: " + jsonRequest);
         
         String jsonresponse = Client.requestServer(jsonRequest);
         System.out.println("JSON Request: " + jsonresponse);
         
-        if("error"==JsonStringToObject.getValueFromData("status", jsonresponse)) {
-        	JsonStringToObject.getValueFromData("message", jsonresponse);
-        	user.logout();
-        	return false ;
+        if(JsonStringToObject.getValueFromData("status", jsonresponse).equals("error"))
+        {	
+        System.out.println(JsonStringToObject.getValueFromData("message", jsonresponse));
+        
+       	user.logout();
+       	return false ;
         	
         }
-        else {
+       else {
         user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
         
         
@@ -58,7 +61,7 @@ public class Authenticator {
         }finally {
         	user.logout();
         }
-    }
+   }
 		return true;
     }
  

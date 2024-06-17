@@ -22,30 +22,30 @@ public class JsonStringToObject {
     }
 
     
-    public static boolean checkJsonResponseForError(String jsonResponse) {
-        try {
-           
-            JsonNode jsonResponseObj = objectMapper.readTree(jsonResponse);
-
-          
-            if (jsonResponseObj.has("error")) {
-                String errorMessage = jsonResponseObj.get("error").asText();
-
-              
-                System.out.println("Error: " + errorMessage);
-
-                return true;
-            } else {
-                // Handle case where there's no 'error' field
-                System.out.println("No error message found in the response.");
-                return false;
-            }
-        } catch (JsonProcessingException e) {
-            // Handle JSON parsing exception
-            System.err.println("Error processing JSON: " + e.getMessage());
-            return false;
-        }
-    }
+//    public static boolean checkJsonResponseForError(String jsonResponse) {
+//        try {
+//           
+//            JsonNode jsonResponseObj = objectMapper.readTree(jsonResponse);
+//
+//          
+//            if (jsonResponseObj.has("error")) {
+//                String errorMessage = jsonResponseObj.get("error").asText();
+//
+//              
+//                System.out.println("Error: " + errorMessage);
+//
+//                return true;
+//            } else {
+//                // Handle case where there's no 'error' field
+//                System.out.println("No error message found in the response.");
+//                return false;
+//            }
+//        } catch (JsonProcessingException e) {
+//            // Handle JSON parsing exception
+//            System.err.println("Error processing JSON: " + e.getMessage());
+//            return false;
+//        }
+//    }
 
     
     public static String getData(String jsonData) {
