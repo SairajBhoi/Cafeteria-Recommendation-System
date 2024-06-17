@@ -7,6 +7,7 @@ public class Authenticator {
     
     public Authenticator() {
         requestPath = "/authenticate"; 
+    
     }
 
     public boolean authenticate(String userId, String password) throws Exception {
@@ -19,25 +20,30 @@ public class Authenticator {
       
         System.out.println("JSON Request: " + jsonRequest);
         
-        String jsonresponse = Client.requestServer(jsonRequest);
-        System.out.println("JSON Request: " + jsonresponse);
+//        String jsonresponse = Client.requestServer(jsonRequest);
+//        System.out.println("JSON Request: " + jsonresponse);
+//        
+//        if(JsonStringToObject.getValueFromData("status", jsonresponse).equals("error"))
+//        {	
+//        System.out.println(JsonStringToObject.getValueFromData("message", jsonresponse));
+//        
+//       	user.logout();
+//       	return false ;
+//        	
+//        }
+//       else {
+//        
+//        user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
+//        
         
-        if(JsonStringToObject.getValueFromData("status", jsonresponse).equals("error"))
-        {	
-        System.out.println(JsonStringToObject.getValueFromData("message", jsonresponse));
         
-       	user.logout();
-       	return false ;
-        	
-        }
-       else {
-        user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
-        
-        
-        
-      String role = user.getUserRole();
-      String userName= user.getUserName();
+//      String role = user.getUserRole();
+//      String userName= user.getUserName();
 
+     String role=InputHandler.getStringInput("role name");
+     String userName= InputHandler.getStringInput("name");
+
+      
         try {
             switch (role) {
                 case "ADMIN" -> {
@@ -61,7 +67,7 @@ public class Authenticator {
         }finally {
         	user.logout();
         }
-   }
+   //}
 		return true;
     }
  
