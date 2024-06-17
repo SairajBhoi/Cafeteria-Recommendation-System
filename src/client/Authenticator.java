@@ -21,7 +21,8 @@ public class Authenticator {
         String jsonresponse = Client.requestServer(jsonRequest);
         System.out.println("JSON Request: " + jsonresponse);
         
-        if(JsonStringToObject.checkJsonResponseForError(jsonresponse)) {
+        if("error"==JsonStringToObject.getValueFromData("status", jsonresponse)) {
+        	JsonStringToObject.getValueFromData("message", jsonresponse);
         	user.logout();
         	return false ;
         	

@@ -72,15 +72,17 @@ public class FeedbackHandler {
 
         String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback );
         this.requestPath = "/" + this.role;
+        
+        Client.requestServer(jsonRequest);
 
-        System.out.println("Feedback added successfully!");
-        System.out.println("Feedback details:");
-        System.out.println("Item Name: " + feedback.getItemName());
-        System.out.println("Taste Rating: " + feedback.getTasteRating());
-        System.out.println("Quality Rating: " + feedback.getQualityRating());
-        System.out.println("Freshness Rating: " + feedback.getFreshnessRating());
-        System.out.println("Value for Money Rating: " + feedback.getValueForMoneyRating());
-        System.out.println("Feedback Message: " + feedback.getFeedbackMessage());
+//        System.out.println("Feedback added successfully!");
+//        System.out.println("Feedback details:");
+//        System.out.println("Item Name: " + feedback.getItemName());
+//        System.out.println("Taste Rating: " + feedback.getTasteRating());
+//        System.out.println("Quality Rating: " + feedback.getQualityRating());
+//        System.out.println("Freshness Rating: " + feedback.getFreshnessRating());
+//        System.out.println("Value for Money Rating: " + feedback.getValueForMoneyRating());
+//        System.out.println("Feedback Message: " + feedback.getFeedbackMessage());
     }
 
     private boolean isValidRating(int rating) {

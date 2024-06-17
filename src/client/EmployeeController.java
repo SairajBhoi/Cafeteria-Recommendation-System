@@ -58,9 +58,9 @@ public class EmployeeController {
 
 	  private void displayOptions() {
 	        System.out.println("\n1. View Menu menu.");
-	        System.out.println("2. viewRecommendation");
+	        System.out.println("2. View Recommendation");
 	        System.out.println("3. View  Feedback on Food item.");
-	        System.out.println("4. add Feedbackon Food item.");
+	        System.out.println("4. Add Feedback on Food item.");
 	        System.out.println("5. View Notifications.");
 	        System.out.println("6. Logout");
 	    }

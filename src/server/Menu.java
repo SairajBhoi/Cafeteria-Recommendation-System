@@ -19,7 +19,7 @@ public class Menu {
     }
 
     public boolean addMenuItem(MenuItem menuItem) throws Exception {
-        String query = "INSERT INTO FoodMenuItem (nameOfFood, foodPrice, foodAvailable) VALUES (?, ?, ?)";
+        String query = "INSERT INTO FoodMenuItem (nameOfFood, foodPrice, foodAvailable,cate) VALUES (?, ?, ?)";
         try (PreparedStatement addMenuItemStmt = connection.prepareStatement(query)) {
             addMenuItemStmt.setString(1, menuItem.getItemName());
             addMenuItemStmt.setDouble(2, menuItem.getItemPrice());
@@ -32,6 +32,26 @@ public class Menu {
         }
     }
 
+    
+    
+    public boolean isItemNameExists(String itemName) throws Exception {
+        String query = "SELECT COUNT(*) AS count FROM FoodMenuItem WHERE nameOfFood = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, itemName);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0;
+            }
+        } catch (SQLException ex) {
+            throw new Exception("Failed to check if item name exists.\n" + ex.getMessage());
+        }
+
+        return false;
+    }
+    
+    
     public boolean updateMenuItem(MenuItem menuItem) throws Exception {
         String query = "UPDATE FoodMenuItem SET foodPrice = ?, foodAvailable = ? WHERE nameOfFood = ?";
         try (PreparedStatement updateMenuItemStmt = connection.prepareStatement(query)) {
@@ -132,6 +152,19 @@ public class Menu {
         }
 
         return isInCategory;
+    }
+    
+    
+    public boolean updateAvailabilityStatus(String itemName, boolean foodAvailable) throws Exception {
+    	int itemId = this.getItemID(itemName);
+        String query = "UPDATE FoodMenuItem SET foodAvailable = ? WHERE itemID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setBoolean(1, foodAvailable);
+            stmt.setInt(2, itemId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
     }
 
     public void closeConnection() {

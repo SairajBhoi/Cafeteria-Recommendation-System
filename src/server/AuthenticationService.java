@@ -18,7 +18,7 @@ public class AuthenticationService {
     try {
 		 jsonResponse=  userDAO.authenticateUser(user.getUserId(),user.getUserPassword());
 	} catch (Exception e) {
-            jsonResponse = "{\"error\": \"" + e.getMessage() + "\"}";
+            jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());             
         }
 	return jsonResponse;
     }

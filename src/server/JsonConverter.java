@@ -15,6 +15,15 @@ public class JsonConverter {
         }
     }
     
+    public static String convertStatusAndMessageToJson(String status, String message) {
+        try {
+            return objectMapper.writeValueAsString(new JsonResponse(status, message));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public static String convertObjectToJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
@@ -50,4 +59,32 @@ public class JsonConverter {
             this.data = data;
         }
     }
+    
+    
+    public static class JsonResponse {
+        private String status;
+        private String message;
+
+        public JsonResponse(String status, String message) {
+            this.status = status;
+            this.message = message;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }
+
