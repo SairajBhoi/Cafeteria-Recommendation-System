@@ -20,42 +20,51 @@ public class Authenticator {
       
         System.out.println("JSON Request: " + jsonRequest);
         
-//        String jsonresponse = Client.requestServer(jsonRequest);
-//        System.out.println("JSON Request: " + jsonresponse);
-//        
-//        if(JsonStringToObject.getValueFromData("status", jsonresponse).equals("error"))
-//        {	
-//        System.out.println(JsonStringToObject.getValueFromData("message", jsonresponse));
-//        
-//       	user.logout();
-//       	return false ;
-//        	
-//        }
-//       else {
-//        
-//        user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
-//        
+        String jsonresponse = Client.requestServer(jsonRequest);
+        System.out.println("JSON Request: " + jsonresponse);
         
+        if(JsonStringToObject.getValueFromData("status", jsonresponse).equals("error"))
+        {	
+        System.out.println(JsonStringToObject.getValueFromData("message", jsonresponse));
         
-//      String role = user.getUserRole();
-//      String userName= user.getUserName();
+       	user.logout();
+       	return false ;
+        	
+        }
+       else {
+        
+        user =JsonStringToObject.fromJsonToObject(jsonresponse, User.class);
+        System.out.print("+++++++++++++++++++++++++++++++");
+        System.out.print(user.getUserId());
+        System.out.print(user.getUserPassword());
+        System.out.print(user.getUserName());
+        System.out.print("+++++++++++++++++++++++++++++++");
+      String role = user.getUserRole();
+      String userName= user.getUserName();
+      System.out.print("+++++++++++++++++++++++++++++++"); 
+      user.setUserId(JsonStringToObject.getValueFromData("userId", jsonresponse));
+      user.setUserName(JsonStringToObject.getValueFromData("userName", jsonresponse));
+      
+      System.out.print(user.getUserId());
+      System.out.print(user.getUserPassword());
+      System.out.print(user.getUserName());
 
-     String role=InputHandler.getStringInput("role name");
-     String userName= InputHandler.getStringInput("name");
+//     String role=InputHandler.getStringInput("role name");
+//     String userName= InputHandler.getStringInput("name");
 
       
         try {
             switch (role) {
                 case "ADMIN" -> {
-                    AdminController adminController = new AdminController(userName, userId);
+                    AdminController adminController = new AdminController(user.getUserName(), user.getUserId());
                     adminController.runHomepage();
                 }
                 case "CHEF" -> {
-                    ChefController chefController = new ChefController(userName, userId);
+                    ChefController chefController = new ChefController(user.getUserName(), user.getUserId());
                     chefController.runHomePage();
                 }
                 case "EMPLOYEE" -> {
-                    EmployeeController employeeController = new EmployeeController(userName, userId);
+                    EmployeeController employeeController = new EmployeeController(user.getUserName(), user.getUserId());
                     employeeController.runHomePage();
                 }
                 default -> {
@@ -67,7 +76,7 @@ public class Authenticator {
         }finally {
         	user.logout();
         }
-   //}
+   }
 		return true;
     }
  

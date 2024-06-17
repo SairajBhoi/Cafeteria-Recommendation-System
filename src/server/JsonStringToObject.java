@@ -44,7 +44,6 @@ public class JsonStringToObject {
         try {
             JsonNode dataNode = objectMapper.readTree(jsonData);
             JsonNode valueNode = dataNode.get(key);
-
             if (valueNode == null) {
                 System.err.println("No value found for key: " + key);
                 return "";

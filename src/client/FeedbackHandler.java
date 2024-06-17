@@ -7,11 +7,15 @@ public class FeedbackHandler {
     private String requestPath;
     private String role;
     private String employeeName;
+    private String employeeId;
 
-    public FeedbackHandler(String role,String employeeName) {
+    public FeedbackHandler(String role,String employeeName,String employeeID) {
         feedback = new Feedback();
+        feedback.setEmployeeId(employeeID);
+        feedback.setEmployeeName(employeeName);
         this.role = role;
         this.employeeName=employeeName;
+        this.employeeId=employeeID;
         this.requestPath = "/" + role;
     }
 
@@ -22,7 +26,6 @@ public class FeedbackHandler {
 		try {
 			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         int tasteRating = 0, qualityRating = 0, freshnessRating=0, valueForMoneyRating=0;
@@ -31,7 +34,6 @@ public class FeedbackHandler {
             try {
 				tasteRating = InputHandler.getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         } while (!isValidRating(tasteRating));
@@ -92,16 +94,18 @@ public class FeedbackHandler {
 
 
    void viewFeedbackonFoodItem() {
+	   String itemName = null;
     try {
-		String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		 itemName = InputHandler.getStringInput("Enter the Food Item name: ");
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 
     this.requestPath = "/viewFeedbackonFoodItem"; 
-
-    String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath);
+      feedback.setItemName(itemName);
+    String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback);
+  
     String jsonRespose = null;
 	try {
 		jsonRespose = Client.requestServer(jsonRequest);

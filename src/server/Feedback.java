@@ -1,6 +1,7 @@
 package server;
 
 public class Feedback {
+    private String employeeId;
     private String employeeName;
     private String itemName;
     private int tasteRating;
@@ -11,11 +12,19 @@ public class Feedback {
     private String feedbackMessageSentiment; 
     
     
+    public String getEmployeeId() {
+        return this.employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+    
     public String getEmployeeName() {
         return this.employeeName;
     }
 
-    public void setEmployeeName(String employeeName) {
+    public void setEmployeeName(String employName) {
         this.employeeName = employeeName;
     }
 

@@ -62,7 +62,22 @@ public class UserDAO {
             throw new Exception("Database error while fetching username: " + e.getMessage());
         }
     }
-
+    
+    
+    
+    
+    
+    boolean isUserExists(String userId) throws SQLException {
+        String query = "SELECT COUNT(*) AS count FROM User WHERE userID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        }
+        return false;
+    }
     public void closeConnection() {
         try {
             if (connection != null) {

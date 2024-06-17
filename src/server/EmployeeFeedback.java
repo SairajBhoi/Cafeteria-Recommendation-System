@@ -20,14 +20,17 @@ public class EmployeeFeedback {
 
     public String addFeedback(Feedback feedback) throws Exception {
         String status = null;
-
-        String sqlQuery = "INSERT INTO UserFeedbackOnFoodItem (userUserId, itemID, feedbackGivenDate, qualityRating, tasteRating, freshnessRating, valueForMoneyRating, feedbackMessage, sentiment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        UserDAO user =  new UserDAO();
+         if (!user.isUserExists(feedback.getEmployeeId())) {
+            throw new Exception("User ID does not exist: " + feedback.getEmployeeId());
+        }
+        String sqlQuery = "INSERT INTO UserFeedbackOnFoodItem ( userUserID, itemID, feedbackGivenDate, qualityRating, tasteRating, freshnessRating, valueForMoneyRating, feedbackMessage, sentiment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement addFeedbackStmt = connection.prepareStatement(sqlQuery)) {
             Menu menu = new Menu();
             int itemId = menu.getItemID(feedback.getItemName());
 
-            addFeedbackStmt.setString(1, feedback.getEmployeeName());
+            addFeedbackStmt.setString(1, feedback.getEmployeeId());
             addFeedbackStmt.setInt(2, itemId);
             addFeedbackStmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime())); // Current date
             addFeedbackStmt.setInt(4, feedback.getQualityRating());

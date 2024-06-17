@@ -10,19 +10,20 @@ public class Employee extends User {
     Employee(String userName, String userId){
     	  this.setUserRole("EMPLOYEE");
 		    this.setUserName(userName);
-	        this.setUserId(userId);  
-        feedbackHandler=new FeedbackHandler(this.getUserRole(),this.getUserName());
+	        this.setUserId(userId); 
+	        System.out.println("==============================");
+	        System.out.println("==============================");
+	        System.out.println("==============================");
+	        System.out.println(this.getUserRole());
+	        System.out.println(this.getUserName());
+	        System.out.println(this.getUserId());
+	        
+	        System.out.println("==============================");
+        feedbackHandler=new FeedbackHandler(this.getUserRole(),this.getUserName(),this.getUserId());
         userNotificationService = new UserNotificationService(this.getUserRole());
 
     }
 void ViewFeedbackonFoodItem(){
-    
-    try {
-		String itemName=InputHandler.getStringInput("Enter Food Item Name");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
     feedbackHandler.viewFeedbackonFoodItem();
 
 }
@@ -41,7 +42,6 @@ void viewNotification(){
 }
 
 void viewMainMenu() {
-	
 	
 	System.out.print("Main menu");
 }
