@@ -100,13 +100,5 @@ public class ChefRolloutHandler {
     }
 
 
-    public static void main(String[] args) {
-        ChefRolloutHandler handler = new ChefRolloutHandler();
-        List<ChefMenuRollout> rollouts = handler.createChefMenuRollouts();
-
-       
-        for (ChefMenuRollout rollout : rollouts) {
-            System.out.println("ChefMenuRollout: " + rollout.getItemName() + " - Category: " + rollout.getCategoryName());
-        }
-    }
+    
 }
