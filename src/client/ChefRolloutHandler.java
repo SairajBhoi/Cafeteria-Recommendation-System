@@ -2,103 +2,103 @@ package client;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChefRolloutHandler {
+    private String requestPath;
+    private String role;
 
-    public ChefRolloutHandler() {
-      
+    public ChefRolloutHandler(String role) {
+        this.requestPath = "/" + role;
+        this.role = role;
     }
-
-    public List<ChefMenuRollout> createChefMenuRollouts() {
-        List<ChefMenuRollout> rollouts = new ArrayList<>();
-
-        int breakfastCount=0;
-		try {
-			breakfastCount = InputHandler.getIntegerInput("Enter number of items for Breakfast:");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-        for (int count = 0; count < breakfastCount; count++) {
-            String itemName = null;
-			try {
-				itemName = InputHandler.getStringInput("Breakfast" +(count + 1));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            ChefMenuRollout rollout = createRolloutObject(itemName, "breakfast");
-            rollouts.add(rollout);
-        }
-
-        int lunchCount = 0;
-		try {
-			lunchCount = InputHandler.getIntegerInput("Enter number of items for Lunch:");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        for (int count = 0; count < lunchCount; count++) {
-            String itemName = null;
-			try {
-				itemName = InputHandler.getStringInput("Lunch" +(count + 1));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            ChefMenuRollout rollout = createRolloutObject(itemName, "lunch");
-            rollouts.add(rollout);
-        }
-
-        int snacksCount = 0;
-		try {
-			snacksCount = InputHandler.getIntegerInput("Enter number of items for Snacks:");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        for (int count = 0; count < snacksCount; count++) {
-            String itemName = null;
-			try {
-				itemName = InputHandler.getStringInput("Snacks"+(count + 1));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            ChefMenuRollout rollout = createRolloutObject(itemName, "snacks");
-            rollouts.add(rollout);
-        }
-
-        int dinnerCount = 0;
-		try {
-			dinnerCount = InputHandler.getIntegerInput("Enter number of items for Dinner:");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        for (int count = 0; count < dinnerCount; count++) {
-            String itemName = null;
-			try {
-				itemName = InputHandler.getStringInput("Dinner"+(count + 1));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            ChefMenuRollout rollout = createRolloutObject(itemName, "dinner");
-            rollouts.add(rollout);
-        }
-
-        return rollouts;
-    }
-
-   
-    private ChefMenuRollout createRolloutObject(String itemName, String categoryName) {
-        ChefMenuRollout rollout = new ChefMenuRollout();
-        rollout.setRolloutDate(new Date(System.currentTimeMillis())); 
-        rollout.setItemName(itemName);
-        rollout.setCategoryName(categoryName);
-        rollout.setNumberOfVotes(0); 
-        return rollout;
-    }
-
-
     
+    
+    public void recommendation() {
+    	
+    	this.requestPath=	this.requestPath + "/recommendation";
+    	
+    	String jsonRequest=JsonConverter.convertObjectToJson(this.requestPath, null);
+    	String jsonResponse = null;
+    	 try {
+			 jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	 this.requestPath = "/" + role;
+    	 System.out.println("recommendation system");
+    	System.out.println(jsonResponse);
+    	
+    }
+    
+    
+    public void getFinalMenu() {
+    	this.requestPath=	this.requestPath + "/finalReport";
+    	String jsonRequest=JsonConverter.convertObjectToJson(this.requestPath, null);
+    	String jsonResponse = null;
+    	 try {
+			 jsonResponse = Client.requestServer(jsonRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	 this.requestPath = "/" + role;
+    	 System.out.println("recommendation system");
+    	System.out.println(jsonResponse);
+    	
+    }
+    	
+    	
+
+
+    public void createChefMenuRollouts(String mealType) {
+        int itemCount = 0;
+		try {
+			itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " Food items to add");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        for (int count = 0; count < itemCount; count++) {
+            ChefMenuRollout chefMenuRollout = new ChefMenuRollout();
+
+            chefMenuRollout.setCategoryName(mealType);
+            String itemName = null;
+            try {
+                itemName = InputHandler.getStringInput("Item Name: ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            chefMenuRollout.setItemName(itemName);
+
+            long currentTimeMillis = System.currentTimeMillis();
+            Date currentDate = new Date(currentTimeMillis);
+
+            System.out.println("Current Date: " + currentDate);
+
+            chefMenuRollout.setRolloutDate(currentDate);
+
+            String currentRequestPath = this.requestPath + "/rolloutMenu"; 
+            String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, chefMenuRollout);
+            System.out.println("JSON Request: " + jsonRequest);
+
+            String jsonResponse = null;
+            this.requestPath =  "/" + this.role;
+            try {
+                jsonResponse = Client.requestServer(jsonRequest);
+                System.out.println("JSON Response: " + jsonResponse);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void createAllChefMenuRollouts() {
+        createChefMenuRollouts("breakfast");
+        createChefMenuRollouts("lunch");
+        createChefMenuRollouts("snacks");
+        createChefMenuRollouts("dinner");
+    }
 }

@@ -30,16 +30,16 @@ package client;
 	        switch (choice) {
 	            case 1:
 	               chef.menurollout();
-	            
+	                 
 	                break;
 	            case 2:
 	               chef.viewRecommendation();
 	                break;
 	            case 3:
-	                chef.viewFeedback();
+	                chef.ViewFeedbackonFoodItem();
 	                break;
 	            case 4:
-	            	 chef.finalMenu();
+	            	 chef.viewFinalMenu();
 	                break;
 	            case 5:
 	            	 System.out.println("Logging out...");

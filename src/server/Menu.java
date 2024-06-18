@@ -67,7 +67,7 @@ public class Menu {
 		return false;
     }
 
-    private int getCategoryID(String categoryName) throws Exception {
+    public int getCategoryID(String categoryName) throws Exception {
     	System.out.print(categoryName);
         String query = "SELECT categoryID FROM Category WHERE categoryName = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {

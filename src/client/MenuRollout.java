@@ -14,7 +14,7 @@ public class MenuRollout {
         this.dailyMenuItem = new DailyMenuItem();
         this.inputHandler = new InputHandler();
         this.role = role;
-        this.requestPath = "/" + role; // Initialize requestPath with role
+        this.requestPath = "/" + role; 
     }
 
     private void collectMenuItems() throws IOException {
@@ -64,7 +64,7 @@ public class MenuRollout {
         } catch (IOException e) {
             System.err.println("Error during menu rollout: " + e.getMessage());
         } finally {
-            this.requestPath = "/" + role; // Reset requestPath after executing action
+            this.requestPath = "/" + role;
         }
     }
 }

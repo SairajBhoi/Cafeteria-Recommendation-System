@@ -18,6 +18,13 @@ public class FeedbackHandler {
         this.employeeId=employeeID;
         this.requestPath = "/" + role;
     }
+    public FeedbackHandler(String role) {
+    	
+    	this.role=role;
+    }
+    
+    
+    
 
     public void addFeedbackOnFoodItem() throws IOException {
  

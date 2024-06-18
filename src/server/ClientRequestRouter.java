@@ -7,6 +7,9 @@ public class ClientRequestRouter {
     private AuthenticationService authService;
     private MenuItemHandler menuItemHandler;
     private FeedbackService feedbackService;
+    private ChefMenuRolloutHandler chefMenuRolloutHandler;
+    private UserVoteDAO uservoteDAO;
+ private RecommendationEngine recommendationEngine;
 
     public ClientRequestRouter() {
         authService = new AuthenticationService();
@@ -16,6 +19,7 @@ public class ClientRequestRouter {
 			e.printStackTrace();
 		}
         feedbackService = new FeedbackService();
+      
     }
 
     public String route(String clientRequest) {
@@ -26,8 +30,8 @@ public class ClientRequestRouter {
             System.out.print("path"+path);
             String data = JsonStringToObject.getData(clientRequest);
             System.out.print("data"+data);
-            System.out.print("?????????????????????????????????");
             switch (path) {
+   
                 case "/authenticate":
                     response = authService.authenticate(data);
                     break;
@@ -52,6 +56,28 @@ public class ClientRequestRouter {
                 case "/ADMIN/updateFoodAvailableStatus":
                     response = menuItemHandler.updateFoodAvailableStatus(data);
                     break;
+                case "/CHEF/recommendation":
+                	System.out.println("inside the recommendation case");
+                	recommendationEngine = new RecommendationEngine();
+                response = (recommendationEngine.getCategoryRatingsOrderedByTaste()).toJSONString();
+                break;
+                case "/CHEF/rolloutMenu":
+                	chefMenuRolloutHandler = new ChefMenuRolloutHandler();
+				    response = chefMenuRolloutHandler.rolloutMenu(data);
+               	break;
+                case "/EMPLOYEE/viewChefRollout":
+                     uservoteDAO = new UserVoteDAO();
+                   response = uservoteDAO.getChefRolloutListForCurrentDateAsJson();
+                   break;
+                case "/EMPLOYEE/addVote":
+                	uservoteDAO= new UserVoteDAO();              
+                	response=uservoteDAO.addVote(data);
+                	break;
+                case "/EMPLOYEE/recommendation":
+                	System.out.println("inside the recommendation case");
+                	 recommendationEngine = new RecommendationEngine();
+                response = (recommendationEngine.getCategoryRatingsOrderedByTaste()).toJSONString();
+                break;
                 default:
                     response = JsonConverter.convertStatusAndMessageToJson("info","Unknown request path: " + path);
                     break;

@@ -13,27 +13,41 @@ public class Chef extends User {
 	}
 	
 	void menurollout() {
-		System.out.print("before");
 
-		
+		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
+		chef.createAllChefMenuRollouts();
 		System.out.print("after");
 	
-		menurollout.executeMenuRollout();
+		//menurollout.executeMenuRollout();
+		
 	}
+	
+
+
 	
 	void viewRecommendation() {
+		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
+		chef.recommendation();
 	System.out.println("Recommendation engine");
+	 
 	}
 	
-	void finalMenu() {
+	void viewFinalMenu() {
+		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
+		chef.getFinalMenu();
+		
 		System.out.println("Final Menu");
 		
 	}
 	
-	void viewFeedback() {
-		System.out.println("viewFeedback");
+	;
+		void ViewFeedbackonFoodItem(){
+			 FeedbackHandler feedbackHandler=new FeedbackHandler (this.getUserRole());
+		    feedbackHandler.viewFeedbackonFoodItem();
+
+		}
 		
-	}
+	
 	
 	
 	void generateReport() {

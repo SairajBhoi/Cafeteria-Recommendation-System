@@ -21,7 +21,7 @@ public class EmployeeController {
 	            displayOptions();
 	            int choice = InputHandler.getIntegerInput("Enter your choice: ");
 	            processOption(choice);
-	            if (choice == 6) {
+	            if (choice == 8) {
 	                break;
 	            }
 	        }
@@ -44,8 +44,15 @@ public class EmployeeController {
 	            case 5:
 	            	 employee.viewNotification();
 	                 break;
-	                
 	            case 6:
+	            	  employee.viewChefRollout();
+	            	  break;
+	            	  
+	            case 7:
+	            	 System.out.println("vote to rollout");
+	            	 employee.votefortomorrowsMenu();
+	                 break;	  
+	            case 8:
 	            	 System.out.println("Logging out...");
 	            	 employee.logout();
 	                 break;
@@ -62,7 +69,10 @@ public class EmployeeController {
 	        System.out.println("3. View  Feedback on Food item.");
 	        System.out.println("4. Add Feedback on Food item.");
 	        System.out.println("5. View Notifications.");
-	        System.out.println("6. Logout");
+	        System.out.println("6. roolout view");
+	        System.out.println("7. vote to rollout");
+	        System.out.println("8. logout");
+	        
 	    }
 	
 
