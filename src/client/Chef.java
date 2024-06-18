@@ -13,14 +13,17 @@ public class Chef extends User {
 	}
 	
 	void menurollout() {
-		System.out.print("before");
 
-		
+		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
+		chef.createAllChefMenuRollouts();
 		System.out.print("after");
 	
-		menurollout.executeMenuRollout();
+		//menurollout.executeMenuRollout();
+		
 	}
 	
+
+
 	void viewRecommendation() {
 	System.out.println("Recommendation engine");
 	}

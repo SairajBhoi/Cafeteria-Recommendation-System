@@ -7,6 +7,8 @@ public class ClientRequestRouter {
     private AuthenticationService authService;
     private MenuItemHandler menuItemHandler;
     private FeedbackService feedbackService;
+    private ChefMenuRolloutHandler chefMenuRolloutHandler;
+ 
 
     public ClientRequestRouter() {
         authService = new AuthenticationService();
@@ -16,6 +18,7 @@ public class ClientRequestRouter {
 			e.printStackTrace();
 		}
         feedbackService = new FeedbackService();
+      
     }
 
     public String route(String clientRequest) {
@@ -52,6 +55,10 @@ public class ClientRequestRouter {
                 case "/ADMIN/updateFoodAvailableStatus":
                     response = menuItemHandler.updateFoodAvailableStatus(data);
                     break;
+                case "/CHEF/rolloutMenu":
+                	chefMenuRolloutHandler = new ChefMenuRolloutHandler();
+				    response = chefMenuRolloutHandler.rolloutMenu(data);
+               	break;
                 default:
                     response = JsonConverter.convertStatusAndMessageToJson("info","Unknown request path: " + path);
                     break;

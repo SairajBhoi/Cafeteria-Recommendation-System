@@ -30,7 +30,7 @@ package client;
 	        switch (choice) {
 	            case 1:
 	               chef.menurollout();
-	            
+	                 
 	                break;
 	            case 2:
 	               chef.viewRecommendation();

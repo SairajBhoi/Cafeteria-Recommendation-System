@@ -10,8 +10,6 @@ public class AuthenticationService {
     User user = null;
 	try {
 		user = JsonStringToObject.fromJsonToObject(data, User.class);
-		System.out.println("user ID========="+user.getUserId());
-		System.out.println("user password========="+user.getUserPassword());
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
