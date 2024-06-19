@@ -1,7 +1,8 @@
-package server;
+package server.controller;
 
 import java.sql.SQLException;
 
+import server.RecommendationEngine;
 import server.DatabaseOperation.UserVoteDAO;
 import server.auth.AuthenticationService;
 import server.service.ChefMenuRolloutHandler;

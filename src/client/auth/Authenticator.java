@@ -55,8 +55,6 @@ public class Authenticator {
       System.out.print(user.getUserPassword());
       System.out.print(user.getUserName());
 
-//     String role=InputHandler.getStringInput("role name");
-//     String userName= InputHandler.getStringInput("name");
 
       
         try {

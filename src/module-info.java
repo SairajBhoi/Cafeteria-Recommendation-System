@@ -24,9 +24,10 @@ module CafeteriaRecommendationSystem {
 	    
 	   
 	    requires com.fasterxml.jackson.core;
+		requires junit;
 		
-		
-
+	    
+	    
 	    opens server to com.fasterxml.jackson.databind;
 	    opens client to com.fasterxml.jackson.databind;
 	    opens client.util to com.fasterxml.jackson.databind;
