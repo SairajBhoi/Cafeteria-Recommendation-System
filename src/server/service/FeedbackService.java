@@ -12,24 +12,33 @@ import server.util.JsonStringToObject;
 public class FeedbackService {
 	private Feedback feedback;
 	
-	 public String addFeedback(String  data) {
-			String jsonResponse;
-			try {
-				feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
-				EmployeeFeedback empFeedback = new EmployeeFeedback();
-				String message =empFeedback.addFeedback(feedback);
-				String empFeedbackSentiment=feedback.getFeedbackMessage();
-				FoodFeedbackSentimentAnalysis foodFeedbackSentimentAnalysis= new FoodFeedbackSentimentAnalysis("SentimentKeyWords.txt");
-				foodFeedbackSentimentAnalysis.analyzeSentiment(empFeedbackSentiment);
-				
-				jsonResponse=JsonConverter.convertStatusAndMessageToJson("success",message);
+	public String addFeedback(String data) {
+	    String jsonResponse;
+	    try {
+	       
+	        Feedback feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
+	        
+	     
+	        String feedbackMessage = feedback.getFeedbackMessage();
+	        
+	        System.out.println(feedbackMessage);
+	        FoodFeedbackSentimentAnalysis sentimentAnalysis = new FoodFeedbackSentimentAnalysis("D:\\Learn_and_Code\\final-assignment-june\\Cafeteria-Recommendation-System\\src\\server\\SentimentKeyWords.txt");
+	        String sentiment = sentimentAnalysis.analyzeSentiment(feedbackMessage);
+	   
+	        feedback.setFeedbackMessageSentiment(sentiment);
+	       System.out.println(feedback.getFeedbackMessageSentiment());
 	
-			} catch (Exception e) {
-				jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
-			}
-			return jsonResponse;
-		    }
-
+	        EmployeeFeedback empFeedback = new EmployeeFeedback();
+	        String message = empFeedback.addFeedback(feedback);
+	        
+	    
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("success", message);
+	    } catch (Exception e) {
+	    
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	    }
+	    return jsonResponse;
+	}
 	 
 	 
 	 public String viewFeedback(String data) {

@@ -1,11 +1,12 @@
 package client.service;
 
 import java.io.IOException;
+import java.io.IOException;
+import java.text.ParseException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import client.Client;
 import client.util.InputHandler;
@@ -95,48 +96,50 @@ System.out.println(jsonrequest);
 
 JSONParser parser = new JSONParser();
 
+JSONObject jsonObject = null;
 try {
-    JSONObject jsonObject = (JSONObject) parser.parse(jsonrequest);
-    JSONArray rolloutList = (JSONArray) jsonObject.get("data");
+	jsonObject = (JSONObject) parser.parse(jsonrequest);
+} catch (org.json.simple.parser.ParseException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
+JSONArray rolloutList = (JSONArray) jsonObject.get("data");
 
-    if (rolloutList != null) {
-        System.out.println(rolloutList);
+if (rolloutList != null) {
+    System.out.println(rolloutList);
 
-        for (Object obj : rolloutList) {
-            JSONObject rollout = (JSONObject) obj;
-            int rolloutID = ((Long) rollout.get("rolloutID")).intValue();
-            String nameOfFood = (String) rollout.get("nameOfFood");
-            String categoryName = (String) rollout.get("categoryName");
-            int categoryID = ((Long) rollout.get("categoryID")).intValue();
+    for (Object obj : rolloutList) {
+        JSONObject rollout = (JSONObject) obj;
+        int rolloutID = ((Long) rollout.get("rolloutID")).intValue();
+        String nameOfFood = (String) rollout.get("nameOfFood");
+        String categoryName = (String) rollout.get("categoryName");
+        int categoryID = ((Long) rollout.get("categoryID")).intValue();
 
-            // Simulate user voting (in a real application, this would involve user interaction)
-            boolean voteDecision = InputHandler.getBooleanInput("Enter whether you want to vote");
+        // Simulate user voting (in a real application, this would involve user interaction)
+        boolean voteDecision = InputHandler.getBooleanInput("Enter whether you want to vote");
 
-            // Send the vote to the server
-            JSONObject voteJson = new JSONObject();
-            voteJson.put("userID", this.UserID);
-            voteJson.put("rolloutID", rolloutID);
-            voteJson.put("categoryID", categoryID);
-            voteJson.put("voteDecision", voteDecision);
+        // Send the vote to the server
+        JSONObject voteJson = new JSONObject();
+        voteJson.put("userID", this.UserID);
+        voteJson.put("rolloutID", rolloutID);
+        voteJson.put("categoryID", categoryID);
+        voteJson.put("voteDecision", voteDecision);
 
-            JSONObject requestJson = new JSONObject();
-            requestJson.put("path", this.requestPath);
-            requestJson.put("data", voteJson);
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("path", this.requestPath);
+        requestJson.put("data", voteJson);
 
-            String jsonresponse = null;
-            try {
-                jsonresponse = Client.requestServer(requestJson.toJSONString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println(jsonresponse);
+        String jsonresponse = null;
+        try {
+            jsonresponse = Client.requestServer(requestJson.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } else {
-        System.out.println("No rollout data available.");
+
+        System.out.println(jsonresponse);
     }
-} catch (ParseException e) {
-    e.printStackTrace();
+} else {
+    System.out.println("No rollout data available.");
 }
 
 this.requestPath = "/" + this.role;

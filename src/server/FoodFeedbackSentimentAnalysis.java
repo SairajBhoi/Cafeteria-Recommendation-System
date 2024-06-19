@@ -18,6 +18,8 @@ public class FoodFeedbackSentimentAnalysis {
     private void loadWords(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
+            System.out.print("fileName"+fileName);
+            
             while ((line = br.readLine()) != null) {
                 String[] parts = line.trim().toLowerCase().split("\\s+");
                 if (parts.length == 2) {
@@ -34,6 +36,8 @@ public class FoodFeedbackSentimentAnalysis {
 
     public String analyzeSentiment(String comment) {
         // Tokenize and preprocess the comment
+    	
+    	System.out.println("comment"+comment);
         String[] words = tokenize(comment);
 
         int positiveScore = 0;
@@ -43,12 +47,16 @@ public class FoodFeedbackSentimentAnalysis {
 
         // Calculate sentiment score considering multi-word expressions, negations, and intensifiers
         for (String word : words) {
+            System.out.println("Processing word: " + word);
+
             if (isNegation(word)) {
+                System.out.println("Negation word found: " + word);
                 negateNext = true;
                 continue;
             }
 
             if (isIntensifier(word)) {
+                System.out.println("Intensifier word found: " + word);
                 intensifyNext = true;
                 continue;
             }
@@ -57,11 +65,13 @@ public class FoodFeedbackSentimentAnalysis {
                 int weight = sentimentWords.get(word);
 
                 if (negateNext) {
+                    System.out.println("Negating weight for word: " + word);
                     weight = -weight;
                     negateNext = false;
                 }
 
                 if (intensifyNext) {
+                    System.out.println("Intensifying weight for word: " + word);
                     weight *= 2; // Double the weight for intensifiers
                     intensifyNext = false;
                 }
@@ -76,28 +86,29 @@ public class FoodFeedbackSentimentAnalysis {
 
         // Determine sentiment category based on score
         int totalScore = positiveScore + negativeScore;
+        String sentimentResult;
         if (totalScore > 0) {
-            return "Positive";
+            sentimentResult = "Positive";
         } else if (totalScore < 0) {
-            return "Negative";
+            sentimentResult = "Negative";
         } else {
-            return "Neutral";
+            sentimentResult = "Neutral";
         }
+
+        System.out.println("Sentiment analysis result for comment '" + comment + "': " + sentimentResult);
+        return sentimentResult;
     }
 
-    private boolean isNegation(String word) { // List of negation words to check against
+    private boolean isNegation(String word) {
+        // List of negation words to check against
         return word.equals("not") || word.equals("no") || word.equals("didn't") || word.endsWith("n't");
     }
 
     private boolean isIntensifier(String word) {
-        
         return word.equals("very") || word.equals("extremely") || word.equals("quite") || word.equals("really");
     }
 
     private String[] tokenize(String comment) {
-        
         return comment.toLowerCase().split("[\\s,.!?]+");
     }
-
-   
 }

@@ -1,8 +1,7 @@
 package client.model;
 
 import java.io.IOException;
-
-import org.json.simple.parser.ParseException;
+import java.text.ParseException;
 
 import client.service.FeedbackHandler;
 import client.service.Menu;
