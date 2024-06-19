@@ -2,6 +2,9 @@ package client;
 
 import java.io.IOException;
 
+import client.auth.Authenticator;
+import client.util.InputHandler;
+
 public class Main {
 
 	public static void main(String args []) {

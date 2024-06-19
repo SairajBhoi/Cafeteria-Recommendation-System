@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import server.util.JsonConverter;
+
 public class RecommendationEngine {
 
     private Connection connection;
