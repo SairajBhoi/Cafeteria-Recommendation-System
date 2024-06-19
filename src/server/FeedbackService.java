@@ -12,6 +12,10 @@ public class FeedbackService {
 				feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
 				EmployeeFeedback empFeedback = new EmployeeFeedback();
 				String message =empFeedback.addFeedback(feedback);
+				String empFeedbackSentiment=feedback.getFeedbackMessage();
+				FoodFeedbackSentimentAnalysis foodFeedbackSentimentAnalysis= new FoodFeedbackSentimentAnalysis("SentimentKeyWords.txt");
+				foodFeedbackSentimentAnalysis.analyzeSentiment(empFeedbackSentiment);
+				
 				jsonResponse=JsonConverter.convertStatusAndMessageToJson("success",message);
 	
 			} catch (Exception e) {

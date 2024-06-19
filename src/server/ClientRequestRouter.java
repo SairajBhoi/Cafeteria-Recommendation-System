@@ -65,6 +65,7 @@ public class ClientRequestRouter {
                 	chefMenuRolloutHandler = new ChefMenuRolloutHandler();
 				    response = chefMenuRolloutHandler.rolloutMenu(data);
                	break;
+               	
                 case "/EMPLOYEE/viewChefRollout":
                      uservoteDAO = new UserVoteDAO();
                    response = uservoteDAO.getChefRolloutListForCurrentDateAsJson();
@@ -73,6 +74,7 @@ public class ClientRequestRouter {
                 	uservoteDAO= new UserVoteDAO();              
                 	response=uservoteDAO.addVote(data);
                 	break;
+                
                 case "/EMPLOYEE/recommendation":
                 	System.out.println("inside the recommendation case");
                 	 recommendationEngine = new RecommendationEngine();

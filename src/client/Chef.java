@@ -16,14 +16,11 @@ public class Chef extends User {
 
 		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
 		chef.createAllChefMenuRollouts();
-
-		ChefRolloutHandler chef= new ChefRolloutHandler(this.getUserRole());
-		chef.createAllChefMenuRollouts();
 		System.out.print("after");
 	
 		//menurollout.executeMenuRollout();
 		
-		//menurollout.executeMenuRollout();
+	
 		
 	}
 	
