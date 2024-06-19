@@ -3,9 +3,12 @@ package client;
 import java.io.IOException;
 
 import client.auth.Authenticator;
+import client.auth.Encryption;
 import client.util.InputHandler;
 
 public class Main {
+
+	private static String password;
 
 	public static void main(String args []) {
     
@@ -18,7 +21,9 @@ public class Main {
 	            System.out.println("please login !!!!");
 	            
 	            String userId = InputHandler.getStringInput("Enter User ID");
-	            String userPassword = InputHandler.getStringInput("Enter user Password:");
+	            Encryption encrypt= new Encryption();
+	            String password=InputHandler.getStringInput("Enter the password");
+	            String userPassword = encrypt.encrypt(password);
 	            
 	            
 	            boolean authenticationStatus = authenticator.authenticate(userId, userPassword);
