@@ -1,42 +1,28 @@
-package server.model;
-
-
+package client.model;
 
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
-public class ChefMenuRollout {
+import java.time.LocalDate;
 
-    private int rolloutID;
-    private Date rolloutDate;
+public class TodayMenu {
+    private Date menuDate;
     private int itemID;
     private int categoryID;
     private int numberOfVotes;
     private String itemName;
     private String categoryName;
+    private double itemPrice;
 
-
-    public ChefMenuRollout() {}
-
-    public int getRolloutID() {
-        return rolloutID;
+   
+    public Date getMenuDate() {
+        return menuDate;
     }
 
-    public void setRolloutID(int rolloutID) {
-        this.rolloutID = rolloutID;
-    }
-
-    public Date getRolloutDate() {
-        return rolloutDate;
+    public void setMenuDate(Date menuDate) {
+        this.menuDate = menuDate;
     }
     
-    public void setRolloutDate(Date rolloutDate) {
-        this.rolloutDate=rolloutDate;
-    }
-
-
-
+    
     public int getItemID() {
         return itemID;
     }
@@ -77,7 +63,11 @@ public class ChefMenuRollout {
         this.categoryName = categoryName;
     }
 
-   
-    
-   
+    public double getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(double itemPrice) {
+        this.itemPrice = itemPrice;
+    }
 }

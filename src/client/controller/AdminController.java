@@ -7,6 +7,7 @@ public class AdminController {
     private Admin admin;
     private String userName;
 
+    
     public AdminController(String userName, String userId) {
         this.userName = userName;
         admin = new Admin(userName, userId);

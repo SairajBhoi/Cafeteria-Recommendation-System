@@ -5,14 +5,15 @@ import java.text.ParseException;
 
 import client.service.FeedbackHandler;
 import client.service.Menu;
+import client.service.RolloutHandler;
 import client.service.UserNotificationService;
-import client.service.VoteDAO;
+import client.service.VoteFuncationalityHandler;
 
 public class Employee extends User {
 
     private FeedbackHandler feedbackHandler;
     private UserNotificationService userNotificationService;
-    private   VoteDAO voteDAO;
+    private   VoteFuncationalityHandler voteDAO;
     public Employee(String userName, String userId){
     	  this.setUserRole("EMPLOYEE");
 		    this.setUserName(userName);
@@ -36,7 +37,7 @@ public void addFeedbackonFooditem(){
 }
 
 public void viewChefRollout() {
-	voteDAO = new VoteDAO(this.getUserRole(),this.getUserId());
+	voteDAO = new VoteFuncationalityHandler(this.getUserRole(),this.getUserId());
 	voteDAO.viewChefRollout();
 	
 }
@@ -55,19 +56,11 @@ public void viewMainMenu() {
 
 
 
-public void votefortomorrowsMenu() {
-	voteDAO = new VoteDAO(this.getUserRole(),this.getUserId());
+public void votefortomorrowsMenu() throws ParseException, IOException {
+	voteDAO = new VoteFuncationalityHandler(this.getUserRole(),this.getUserId());
 	voteDAO.viewChefRollout();
 	
-	try {
-		voteDAO.addVote();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (ParseException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	voteDAO.addVote();
 	
 }
 
@@ -75,8 +68,13 @@ public void votefortomorrowsMenu() {
 
 public void viewRecommendation() {
 	System.out.println(this.getUserRole());
-	voteDAO = new VoteDAO(this.getUserRole(),this.getUserId());
+	voteDAO = new VoteFuncationalityHandler(this.getUserRole(),this.getUserId());
 	voteDAO.viewRecommendation();
+}
+
+public void viewTodaysMenu() {
+	RolloutHandler rollouthandler=new  RolloutHandler(this.getUserRole());
+	rollouthandler.getFinalDecidedMenu();
 }
 
 

@@ -7,17 +7,18 @@ import java.util.List;
 import server.DatabaseConnection;
 import server.model.ChefMenuRollout;
 
-public class ChefMenuRolloutDAO {
+public class ChefMenuRolloutDatabaseOperator {
 
     private Connection connection;
 
-    public ChefMenuRolloutDAO() {
+    
+    public ChefMenuRolloutDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }
 
     public boolean insertChefMenuRollout(ChefMenuRollout rollout) throws SQLException {
-        Menu menu = new Menu();
+        MenuDatabaseOperator menu = new MenuDatabaseOperator();
         try {
             int itemId = menu.getItemID(rollout.getItemName());
             int categoryId = menu.getCategoryID(rollout.getCategoryName());
@@ -26,13 +27,13 @@ public class ChefMenuRolloutDAO {
             System.out.println("Item ID: " + itemId);
             System.out.println("Category ID: " + categoryId);
 
-            // Set the retrieved IDs in the rollout object
+          
             rollout.setItemID(itemId);
             rollout.setCategoryID(categoryId);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return false;  // Return false if there's an exception
+            return false;  
         }
 
         String query = "INSERT INTO ChefMenuRollout (rolloutDate, itemID, categoryID, numberOfVotes) VALUES (?, ?, ?, ?)";
@@ -78,6 +79,7 @@ public class ChefMenuRolloutDAO {
 
     public List<ChefMenuRollout> getTodayRollouts() throws SQLException {
         String query = "SELECT * FROM ChefMenuRollout WHERE DATE(rolloutDate) = CURDATE()";
+        MenuDatabaseOperator menuDatabaseOperator = new MenuDatabaseOperator();
         List<ChefMenuRollout> rollouts = new ArrayList<>();
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -88,6 +90,18 @@ public class ChefMenuRolloutDAO {
                 rollout.setItemID(rs.getInt("itemID"));
                 rollout.setCategoryID(rs.getInt("categoryID"));
                 rollout.setNumberOfVotes(rs.getInt("numberOfVotes"));
+                try {
+					rollout.setCategoryName(menuDatabaseOperator.getItemName(rollout.getItemID()));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                try {
+					rollout.setItemName(menuDatabaseOperator.getCategoryName(rollout.getCategoryID()));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 rollouts.add(rollout);
             }
         }

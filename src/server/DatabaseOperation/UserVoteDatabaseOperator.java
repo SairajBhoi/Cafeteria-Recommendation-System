@@ -14,11 +14,11 @@ import server.model.Vote;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
-public class UserVoteDAO {
+public class UserVoteDatabaseOperator {
 
     private Connection connection;
 
-    public UserVoteDAO() {
+    public UserVoteDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }
@@ -43,14 +43,14 @@ public class UserVoteDAO {
 
             while (resultSet.next()) {
                 int rolloutID = resultSet.getInt("rolloutID");
-                String nameOfFood = resultSet.getString("nameOfFood");
+                String itemName = resultSet.getString("nameOfFood");
                 String categoryName = resultSet.getString("categoryName");
                 int categoryID = resultSet.getInt("categoryID");
 
                 // Create a JSON object for each row
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("rolloutID", rolloutID);
-                jsonObject.put("nameOfFood", nameOfFood);
+                jsonObject.put("itemName", itemName);
                 jsonObject.put("categoryName", categoryName);
                 jsonObject.put("categoryID", categoryID);
                 // Add the JSON object to the array

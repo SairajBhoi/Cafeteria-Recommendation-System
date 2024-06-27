@@ -1,128 +1,82 @@
-package server;
+package server.resources;
 
 import java.sql.Connection;
-
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import server.util.JsonConverter;
+import server.DatabaseConnection;
 
 public class RecommendationEngine {
 
     private Connection connection;
 
     public RecommendationEngine() {
-    	
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    
-    public String insertRecommendations() {
-        String insertSql = "INSERT INTO Recommendation (itemID, categoryID, avgQualityRating, avgTasteRating, avgFreshnessRating, " +
-                           "avgValueForMoneyRating, percentPositive, percentNeutral, percentNegative, totalVotes, date) " +
-                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  
+        public List<String> getFoodItemForNextDay(String categoryName, int NumberOfItems) {
+            List<String> foodItemNames = new ArrayList<>();
 
-        String selectSql = "SELECT f.itemID, c.categoryID, " +
-                           "       AVG(uf.qualityRating) AS avgQualityRating, " +
-                           "       AVG(uf.tasteRating) AS avgTasteRating, " +
-                           "       AVG(uf.freshnessRating) AS avgFreshnessRating, " +
-                           "       AVG(uf.valueForMoneyRating) AS avgValueForMoneyRating, " +
-                           "       SUM(CASE WHEN uf.sentiment = 'positive' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentPositive, " +
-                           "       SUM(CASE WHEN uf.sentiment = 'neutral' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentNeutral, " +
-                           "       SUM(CASE WHEN uf.sentiment = 'negative' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentNegative, " +
-                           "       COUNT(*) AS totalVotes " +
-                           "FROM UserFeedbackOnFoodItem uf " +
-                           "JOIN FoodItemCategory fic ON uf.itemID = fic.itemID " +
-                           "JOIN FoodMenuItem f ON uf.itemID = f.itemID " +
-                           "JOIN Category c ON fic.categoryID = c.categoryID " +
-                           "GROUP BY f.itemID, c.categoryID";
+            // SQL query template
+            String query = "SELECT " +
+                    "    m.nameOfFood " +
+                    "FROM " +
+                    "    UserFeedbackOnFoodItem f " +
+                    "JOIN " +
+                    "    FoodItemCategory fic ON f.itemID = fic.itemID " +
+                    "JOIN " +
+                    "    Category c ON fic.categoryID = c.categoryID " +
+                    "JOIN " +
+                    "    FoodMenuItem m ON f.itemID = m.itemID " +
+                    "WHERE " +
+                    "    c.categoryName = ? " +
+                    "GROUP BY " +
+                    "    f.itemID, m.nameOfFood, m.foodPrice, m.foodAvailable, c.categoryName " +
+                    "ORDER BY " +
+                    "    AVG(f.qualityRating) DESC " +
+                    "LIMIT ?";
 
-        try (Statement selectStatement = connection.createStatement();
-             PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                // Set dynamic parameters
+                pstmt.setString(1, categoryName);
+                pstmt.setInt(2, NumberOfItems);
 
-           
-            ResultSet resultSet = selectStatement.executeQuery(selectSql);
-
-            // Process the result set and insert into Recommendation table
-            while (resultSet.next()) {
-                int itemID = resultSet.getInt("itemID");
-                int categoryID = resultSet.getInt("categoryID");
-                double avgQualityRating = resultSet.getDouble("avgQualityRating");
-                double avgTasteRating = resultSet.getDouble("avgTasteRating");
-                double avgFreshnessRating = resultSet.getDouble("avgFreshnessRating");
-                double avgValueForMoneyRating = resultSet.getDouble("avgValueForMoneyRating");
-                double percentPositive = resultSet.getDouble("percentPositive");
-                double percentNeutral = resultSet.getDouble("percentNeutral");
-                double percentNegative = resultSet.getDouble("percentNegative");
-                int totalVotes = resultSet.getInt("totalVotes");
-
-                // Set parameters for the INSERT statement
-                insertStatement.setInt(1, itemID);
-                insertStatement.setInt(2, categoryID);
-                insertStatement.setDouble(3, avgQualityRating);
-                insertStatement.setDouble(4, avgTasteRating);
-                insertStatement.setDouble(5, avgFreshnessRating);
-                insertStatement.setDouble(6, avgValueForMoneyRating);
-                insertStatement.setDouble(7, percentPositive);
-                insertStatement.setDouble(8, percentNeutral);
-                insertStatement.setDouble(9, percentNegative);
-                insertStatement.setInt(10, totalVotes);
-
-                // Set current date as the date column
-                Date currentDate = new Date(System.currentTimeMillis());
-                insertStatement.setDate(11, currentDate);
-
-                // Execute the INSERT statement
-                insertStatement.executeUpdate();
+                // Execute the query
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    // Process the result set
+                    while (rs.next()) {
+                        String nameOfFood = rs.getString("nameOfFood");
+                        foodItemNames.add(nameOfFood);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Consider logging the exception instead of just printing it
+                // It's a good practice to handle exceptions or propagate them to the caller
+                throw new RuntimeException("Error fetching food item names: " + e.getMessage());
             }
 
-            System.out.println("Rows inserted successfully.");
-            return JsonConverter.convertStatusAndMessageToJson("status", "insertion done");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return JsonConverter.convertStatusAndMessageToJson("error", "failed to insert");
+            return foodItemNames;
         }
-    }
-    
-    
-    
-//    public void insertRecommendations() {
-//        try (Statement statement = connection.createStatement()) {
-//
-//            String sql = "INSERT INTO Recommendation (itemID, categoryID, avgQualityRating, avgTasteRating, avgFreshnessRating, " +
-//                         "avgValueForMoneyRating, percentPositive, percentNeutral, percentNegative, totalVotes) " +
-//                         "SELECT f.itemID, c.categoryID, " +
-//                         "       AVG(uf.qualityRating) AS avgQualityRating, " +
-//                         "       AVG(uf.tasteRating) AS avgTasteRating, " +
-//                         "       AVG(uf.freshnessRating) AS avgFreshnessRating, " +
-//                         "       AVG(uf.valueForMoneyRating) AS avgValueForMoneyRating, " +
-//                         "       SUM(CASE WHEN uf.sentiment = 'positive' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentPositive, " +
-//                         "       SUM(CASE WHEN uf.sentiment = 'neutral' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentNeutral, " +
-//                         "       SUM(CASE WHEN uf.sentiment = 'negative' THEN 1 ELSE 0 END) / COUNT(*) * 100 AS percentNegative, " +
-//                         "       COUNT(*) AS totalVotes " +
-//                         "FROM UserFeedbackOnFoodItem uf " +
-//                         "JOIN FoodItemCategory fic ON uf.itemID = fic.itemID " +
-//                         "JOIN FoodMenuItem f ON uf.itemID = f.itemID " +
-//                         "JOIN Category c ON fic.categoryID = c.categoryID " +
-//                         "GROUP BY f.itemID, c.categoryID";
-//
-//            int rowsInserted = statement.executeUpdate(sql);
-//            System.out.println("Rows inserted: " + rowsInserted);
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
+ 
 
+
+ 
     
+    
+    
+    
+
     
     public String finalReport() {
         String sql = "SELECT c.categoryName, f.nameOfFood AS itemName, cmr.numberOfVotes " +
@@ -215,39 +169,43 @@ public class RecommendationEngine {
     
     
     
-    
+    //user
     public JSONArray getCategoryRatingsOrderedByTaste() {
-    	System.out.println("inside the function");
         JSONArray jsonArray = new JSONArray();
+        try{
+                   LocalDate currentDate = LocalDate.now();
 
-        try {
-            String sql =  "SELECT " +
-                    "    cmr.categoryID, " +
-                    "    c.categoryName, " +
-                    "    cmr.itemID, " +
-                    "    f.nameOfFood AS itemName, " +
-                    "    AVG(uf.tasteRating) AS avgTasteRating, " +
-                    "    AVG(uf.qualityRating) AS avgQualityRating, " +
-                    "    AVG(uf.freshnessRating) AS avgFreshnessRating, " +
-                    "    AVG(uf.valueForMoneyRating) AS avgValueForMoneyRating, " +
-                    "    AVG(CASE WHEN uf.sentiment = 'positive' THEN 1 ELSE 0 END) * 100 AS percentPositive, " +
-                    "    AVG(CASE WHEN uf.sentiment = 'neutral' THEN 1 ELSE 0 END) * 100 AS percentNeutral, " +
-                    "    AVG(CASE WHEN uf.sentiment = 'negative' THEN 1 ELSE 0 END) * 100 AS percentNegative, " +
-                    "    COUNT(*) AS totalVotes " +
-                    "FROM " +
-                    "    ChefMenuRollout cmr " +
-                    "JOIN " +
-                    "    FoodMenuItem f ON cmr.itemID = f.itemID " +
-                    "JOIN " +
-                    "    Category c ON cmr.categoryID = c.categoryID " +
-                    "JOIN " +
-                    "    UserFeedbackOnFoodItem uf ON cmr.itemID = uf.itemID " + // Assuming this relation exists
-                    "GROUP BY " +
-                    "    cmr.categoryID, cmr.itemID " + 
-                    "ORDER BY " +
-                    "    avgTasteRating DESC";
+            String sql = "SELECT " +
+                         "    cmr.categoryID, " +
+                         "    c.categoryName, " +
+                         "    cmr.itemID, " +
+                         "    f.nameOfFood AS itemName, " +
+                         "    AVG(uf.tasteRating) AS avgTasteRating, " +
+                         "    AVG(uf.qualityRating) AS avgQualityRating, " +
+                         "    AVG(uf.freshnessRating) AS avgFreshnessRating, " +
+                         "    AVG(uf.valueForMoneyRating) AS avgValueForMoneyRating, " +
+                         "    AVG(CASE WHEN uf.sentiment = 'positive' THEN 1 ELSE 0 END) * 100 AS percentPositive, " +
+                         "    AVG(CASE WHEN uf.sentiment = 'neutral' THEN 1 ELSE 0 END) * 100 AS percentNeutral, " +
+                         "    AVG(CASE WHEN uf.sentiment = 'negative' THEN 1 ELSE 0 END) * 100 AS percentNegative, " +
+                         "    COUNT(*) AS totalVotes " +
+                         "FROM " +
+                         "    ChefMenuRollout cmr " +
+                         "JOIN " +
+                         "    FoodMenuItem f ON cmr.itemID = f.itemID " +
+                         "JOIN " +
+                         "    Category c ON cmr.categoryID = c.categoryID " +
+                         "JOIN " +
+                         "    UserFeedbackOnFoodItem uf ON cmr.itemID = uf.itemID " +
+                         "WHERE " +
+                         "    cmr.rolloutDate = ? " +  // Filter by rollout date = current date
+                         "GROUP BY " +
+                         "    cmr.categoryID, cmr.itemID " +
+                         "ORDER BY " +
+                         "    avgTasteRating DESC";
 
             PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setObject(1, currentDate); 
+
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
@@ -286,8 +244,9 @@ public class RecommendationEngine {
         }
 
         return jsonArray;
-    }
-
+}
+    
+    
     
     
     public JSONArray retrieveBestFoodInEachCategory() {
@@ -323,6 +282,12 @@ public class RecommendationEngine {
 
         return jsonArray;
     }
+    
+    
+    
+
+   
+    
 
    
 }

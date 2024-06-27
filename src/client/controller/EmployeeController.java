@@ -56,8 +56,12 @@ public class EmployeeController {
 	            	 employee.votefortomorrowsMenu();
 	                 break;	  
 	            case 8:
+	            	 System.out.println("vote to rollout");
+	            	 employee.votefortomorrowsMenu();
+	                 break;	 
+	            case 9:
 	            	 System.out.println("Logging out...");
-	            	 employee.logout();
+	            	 employee.viewTodaysMenu();
 	                 break;
 	            default:
 	                System.out.println("Invalid choice");
@@ -66,6 +70,7 @@ public class EmployeeController {
 	        }
 	    }
 
+	  
 	  private void displayOptions() {
 	        System.out.println("\n1. View Menu menu.");
 	        System.out.println("2. View Recommendation");
@@ -74,7 +79,8 @@ public class EmployeeController {
 	        System.out.println("5. View Notifications.");
 	        System.out.println("6. roolout view");
 	        System.out.println("7. vote to rollout");
-	        System.out.println("8. logout");
+	        System.out.println("8. view Todays Menu");
+	        System.out.println("9. logout");
 	        
 	    }
 	

@@ -4,17 +4,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import server.DatabaseOperation.Menu;
+import server.DatabaseOperation.MenuDatabaseOperator;
+import server.DatabaseOperation.NotificationDatabaseOperator;
 import server.model.MenuItem;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
 public class MenuItemHandler {
 
-    private final Menu menu;
+    private final MenuDatabaseOperator menu;
 
     public MenuItemHandler() throws SQLException {
-        this.menu = new Menu();
+        this.menu = new MenuDatabaseOperator();
     }
 
     public String addMenuItem(String data) throws Exception {
@@ -24,7 +25,9 @@ public class MenuItemHandler {
         if (!menu.isItemInCategory(menuItem.getItemName(), menuItem.getItemCategory())) {
             if (menu.addMenuItem(menuItem)) {
                jsonresponse =JsonConverter.convertStatusAndMessageToJson("success","Added item to menu.");
-
+                
+               NotificationService notificationService= new NotificationService();
+               notificationService.addNotification("Added"+menuItem.getItemName() +"to Main Menu");
                 
             } else {
             	 jsonresponse = JsonConverter.convertStatusAndMessageToJson("error","Error adding menu item");
@@ -61,6 +64,8 @@ public class MenuItemHandler {
          String jsonresponse;
         if (menu.deleteMenuItem(menuItem.getItemName(),menuItem.getItemCategory())) {
             jsonresponse =JsonConverter.convertStatusAndMessageToJson("success","Deleted menu item.");
+            NotificationService   notificationService = new   NotificationService();
+            notificationService.addNotification("Deleted"+menuItem.getItemName()+ "Food Item from Main Menu"); 
         } else {
         	jsonresponse =JsonConverter.convertStatusAndMessageToJson("error","Error deleting menu item.");
     }
@@ -71,7 +76,8 @@ public class MenuItemHandler {
     public String updateFoodAvailableStatus(String data) throws Exception {
     	String itemName =JsonStringToObject.getValueFromData("itemName", data);
     	System.out.println(itemName);
-    	
+    	 NotificationService notificationService= new NotificationService();
+    	notificationService.addNotification("updated Availability Status of "+itemName);
     	boolean availabilityStatus=JsonStringToObject.getValueFromData("itemAvailable", data).equalsIgnoreCase("true");  	
     	
     

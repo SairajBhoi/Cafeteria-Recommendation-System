@@ -16,6 +16,7 @@ public class Admin extends User {
         menu.addMenuItem();
     }
 
+    
     public void updateMenuItem() {
         menu.updateMenuItem();
     }

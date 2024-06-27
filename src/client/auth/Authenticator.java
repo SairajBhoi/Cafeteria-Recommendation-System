@@ -9,8 +9,10 @@ import client.util.JsonConverter;
 import client.util.JsonStringToObject;
 
 public class Authenticator {
+	
     private String requestPath;
     
+  
     public Authenticator() {
         requestPath = "/authenticate"; 
     

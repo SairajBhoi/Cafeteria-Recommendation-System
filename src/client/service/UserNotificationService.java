@@ -1,6 +1,10 @@
 package client.service;
 
+import java.io.IOException;
+
+import client.Client;
 import client.util.JsonConverter;
+import client.util.PrintOutToConsole;
 
 public class UserNotificationService{
     private String role;
@@ -17,8 +21,38 @@ public UserNotificationService(String role)
 public void viewNotification(String userID){
 
     this.requestPath=this.requestPath+"/viewNotification";
-    String jsonRequest = JsonConverter.convertObjectToJson(null, this.requestPath);
-    //TO DO have send and handle notification;
+    String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,null);
+  
+    System.out.println(jsonRequest);
+    String jsonRespose = null;
+	try {
+		jsonRespose = Client.requestServer(jsonRequest);
+		System.out.print(jsonRespose);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    
+    PrintOutToConsole.printToConsole(jsonRespose);
+    
+    
+    this.requestPath="/"+role;
+    this.requestPath=this.requestPath+"/viewUnseenNotification";
+     jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,JsonConverter.convertStatusAndMessageToJson("UserID", userID));
+   
+    jsonRespose = null;
+	try {
+		jsonRespose = Client.requestServer(jsonRequest);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    
+    PrintOutToConsole.printToConsole(jsonRespose);
+    
+    
+   
+   
 }
 
 }

@@ -1,10 +1,11 @@
-package server;
+package server.resources;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class FoodFeedbackSentimentAnalysis {
 
@@ -35,7 +36,7 @@ public class FoodFeedbackSentimentAnalysis {
     }
 
     public String analyzeSentiment(String comment) {
-        // Tokenize and preprocess the comment
+
     	
     	System.out.println("comment"+comment);
         String[] words = tokenize(comment);
@@ -45,7 +46,7 @@ public class FoodFeedbackSentimentAnalysis {
         boolean negateNext = false;
         boolean intensifyNext = false;
 
-        // Calculate sentiment score considering multi-word expressions, negations, and intensifiers
+    
         for (String word : words) {
             System.out.println("Processing word: " + word);
 
@@ -72,7 +73,7 @@ public class FoodFeedbackSentimentAnalysis {
 
                 if (intensifyNext) {
                     System.out.println("Intensifying weight for word: " + word);
-                    weight *= 2; // Double the weight for intensifiers
+                    weight *= 2; 
                     intensifyNext = false;
                 }
 
@@ -84,9 +85,10 @@ public class FoodFeedbackSentimentAnalysis {
             }
         }
 
-        // Determine sentiment category based on score
+
         int totalScore = positiveScore + negativeScore;
         String sentimentResult;
+        
         if (totalScore > 0) {
             sentimentResult = "Positive";
         } else if (totalScore < 0) {
@@ -100,7 +102,7 @@ public class FoodFeedbackSentimentAnalysis {
     }
 
     private boolean isNegation(String word) {
-        // List of negation words to check against
+ 
         return word.equals("not") || word.equals("no") || word.equals("didn't") || word.endsWith("n't");
     }
 

@@ -13,24 +13,24 @@ import java.util.Map;
 import server.DatabaseConnection;
 import server.model.Feedback;
 
-public class EmployeeFeedback {
+public class EmployeeFeedbackDatabaseOperator {
     private Connection connection;
 
-    public EmployeeFeedback() {
+    public EmployeeFeedbackDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }
 
     public String addFeedback(Feedback feedback) throws Exception {
         String status = null;
-        UserDAO user =  new UserDAO();
+        UserDatatabaseOperator user =  new UserDatatabaseOperator();
          if (!user.isUserExists(feedback.getEmployeeId())) {
             throw new Exception("User ID does not exist: " + feedback.getEmployeeId());
         }
         String sqlQuery = "INSERT INTO UserFeedbackOnFoodItem ( userUserID, itemID, feedbackGivenDate, qualityRating, tasteRating, freshnessRating, valueForMoneyRating, feedbackMessage, sentiment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement addFeedbackStmt = connection.prepareStatement(sqlQuery)) {
-            Menu menu = new Menu();
+            MenuDatabaseOperator menu = new MenuDatabaseOperator();
             int itemId = menu.getItemID(feedback.getItemName());
 
             addFeedbackStmt.setString(1, feedback.getEmployeeId());
@@ -60,7 +60,7 @@ public class EmployeeFeedback {
 
     public List<Map<String, Object>> viewFeedback(String itemName) throws Exception {
         List<Map<String, Object>> feedbackList = new ArrayList<>();
-        Menu menu = new Menu();
+        MenuDatabaseOperator menu = new MenuDatabaseOperator();
         int itemId = menu.getItemID(itemName);
 
         String query = "SELECT feedbackID, userUserId, itemID, feedbackGivenDate, qualityRating, tasteRating, " +
@@ -104,7 +104,7 @@ public class EmployeeFeedback {
     private String getUserName(String userId) throws Exception {
         // Implement your logic to fetch user name from User table based on userId
         // Example placeholder
-      UserDAO userDAO = new UserDAO();
+      UserDatatabaseOperator userDAO = new UserDatatabaseOperator();
         return userDAO.getUserName(userId);
       
     }

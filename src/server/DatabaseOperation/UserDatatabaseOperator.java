@@ -8,11 +8,11 @@ import java.sql.SQLException;
 import server.DatabaseConnection;
 import server.model.User;
 
-public class UserDAO {
+public class UserDatatabaseOperator {
 
     private Connection connection;
 
-    public UserDAO() {
+    public UserDatatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }

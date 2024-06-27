@@ -6,6 +6,7 @@ import client.Client;
 import client.model.Feedback;
 import client.util.InputHandler;
 import client.util.JsonConverter;
+import client.util.PrintOutToConsole;
 
 public class FeedbackHandler {
     private Feedback feedback;
@@ -107,15 +108,22 @@ public class FeedbackHandler {
 
    public void viewFeedbackonFoodItem() {
 	   String itemName = null;
-    try {
-		 itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
 
+		 try {
+			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+	
+    System.out.print("view Feedback");
     this.requestPath = "/viewFeedbackonFoodItem"; 
+      Feedback feedback= new Feedback();
       feedback.setItemName(itemName);
+      System.out.print(feedback.getItemName());
+      
     String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback);
   
     String jsonRespose = null;
@@ -128,6 +136,8 @@ public class FeedbackHandler {
     this.requestPath = "/" + this.role;
     
     System.out.print(jsonRespose);
+    
+    PrintOutToConsole.printToConsole(jsonRespose);
 
 
    }

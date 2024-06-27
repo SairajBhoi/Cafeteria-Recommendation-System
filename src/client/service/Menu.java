@@ -1,6 +1,8 @@
 package client.service;
 
 import java.io.IOException;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import client.Client;
 import client.model.MenuItem;
 import client.util.InputHandler;
 import client.util.JsonConverter;
+import client.util.PrintOutToConsole;
 
 public class Menu {
     private MenuItem menuItem;
@@ -21,6 +24,10 @@ public class Menu {
         this.requestPath = "/"+role; 
     }
 
+    
+    
+    
+    
     @SuppressWarnings({ "static-access", "static-access" })
 	public void addMenuItem() {
         menuItem = new MenuItem();
@@ -73,11 +80,19 @@ public class Menu {
 			e.printStackTrace();
 		}
        System.out.println(jsonResponse);
+       PrintOutToConsole.printToConsole(jsonResponse);
+       
+       
     }
 
     private boolean isValidCategory(char category) {
         return category == 'b' || category == 'l' || category == 's' || category == 'd';
     }
+    
+    
+    
+    
+    
 
     public void updateMenuItem() {
     	menuItem = new MenuItem();
@@ -130,6 +145,8 @@ public class Menu {
 			e.printStackTrace();
 		}
        System.out.println(jsonResponse);
+       PrintOutToConsole.printToConsole(jsonResponse);
+       
     }
     
     
@@ -172,8 +189,11 @@ public class Menu {
 			e.printStackTrace();
 		}
        System.out.println(jsonResponse);
+       PrintOutToConsole.printToConsole(jsonResponse);
+       
     }
 
+    
     
     
     
@@ -217,10 +237,15 @@ public class Menu {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       System.out.println(jsonResponse);
+        
+        System.out.println(jsonResponse);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
           
 
+    
+    
+    
     public void viewAllMenuItems() {
         this.requestPath = "/viewAllMenuItems";
         String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,null); 
@@ -233,7 +258,11 @@ public class Menu {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       System.out.println(jsonResponse);
+        
+        System.out.println("Menu Item");
+        PrintOutToConsole.printToConsole(jsonResponse);
+       
+       
     }
     
     private String getCategoryName(char category) {

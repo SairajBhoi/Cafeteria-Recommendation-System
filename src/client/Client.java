@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client {
+	
     private static BufferedReader in;
     private static PrintWriter out;
     private static Socket socket = null;

@@ -13,11 +13,11 @@ import java.util.Map;
 import server.DatabaseConnection;
 import server.model.MenuItem;
 
-public class Menu {
+public class MenuDatabaseOperator {
 
     private Connection connection;
 
-    public Menu() {
+    public MenuDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }
@@ -198,7 +198,10 @@ public class Menu {
     public List<Map<String, Object>> viewMenuItems() throws Exception {
         List<Map<String, Object>> menuList = new ArrayList<>();
 
-        String query = "SELECT itemID, nameOfFood, foodPrice, foodAvailable FROM FoodMenuItem";
+        String query = "SELECT m.itemID, m.nameOfFood, m.foodPrice, m.foodAvailable, c.categoryName " +
+                       "FROM FoodMenuItem m " +
+                       "JOIN FoodItemCategory ic ON m.itemID = ic.itemID " +
+                       "JOIN Category c ON ic.categoryID = c.categoryID";
 
         try (PreparedStatement viewMenuItemsStmt = connection.prepareStatement(query)) {
             ResultSet rs = viewMenuItemsStmt.executeQuery();
@@ -209,6 +212,7 @@ public class Menu {
                 item.put("nameOfFood", rs.getString("nameOfFood"));
                 item.put("foodPrice", rs.getDouble("foodPrice"));
                 item.put("foodAvailable", rs.getBoolean("foodAvailable"));
+                item.put("categoryName", rs.getString("categoryName")); 
                 menuList.add(item);
             }
         } catch (SQLException ex) {
@@ -291,6 +295,39 @@ public class Menu {
             throw new SQLException("Failed to delete menu item from specified category.\n" + ex.getMessage());
         }
     }
+    
+    
+    public String getItemName(int itemId) throws Exception {
+        String query = "SELECT nameOfFood FROM FoodMenuItem WHERE itemID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, itemId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("nameOfFood");
+            } else {
+                throw new Exception("Item not found for ID: " + itemId);
+            }
+        } catch (SQLException ex) {
+            throw new Exception("Failed to get item name.\n" + ex.getMessage());
+        }
+    }
+
+    
+    public String getCategoryName(int categoryId) throws Exception {
+        String query = "SELECT categoryName FROM Category WHERE categoryID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, categoryId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("categoryName");
+            } else {
+                throw new Exception("Category not found for ID: " + categoryId);
+            }
+        } catch (SQLException ex) {
+            throw new Exception("Failed to get category name.\n" + ex.getMessage());
+        }
+    }
+
 
     public void closeConnection() {
         try {

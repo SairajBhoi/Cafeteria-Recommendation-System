@@ -17,6 +17,18 @@ module CafeteriaRecommendationSystem {
 	    exports server.service;
 	    
 	    
+	    opens server.util to com.fasterxml.jackson.databind;
+	   
+	    opens server.model to com.fasterxml.jackson.databind; 
+	    opens server.controller to com.fasterxml.jackson.databind; 
+	    
+	    opens server.DatabaseOperation to com.fasterxml.jackson.databind; 
+	    opens server.service to com.fasterxml.jackson.databind; 
+	    opens server.auth to com.fasterxml.jackson.databind; 
+	    opens server.resources to com.fasterxml.jackson.databind; 
+	    
+	
+	 
 
 	    requires java.sql;
 	    requires com.fasterxml.jackson.databind;
@@ -24,7 +36,7 @@ module CafeteriaRecommendationSystem {
 	    
 	   
 	    requires com.fasterxml.jackson.core;
-		requires junit;
+		
 		
 	    
 	    
