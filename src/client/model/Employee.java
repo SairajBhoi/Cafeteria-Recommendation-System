@@ -47,6 +47,15 @@ public void viewNotification(){
     userNotificationService.viewNotification(this.getUserId());
 }
 
+
+
+
+
+public void viewUnseenNotification() {
+	userNotificationService = new UserNotificationService(this.getUserRole());
+    userNotificationService.viewUnseenNotification(this.getUserId());
+	
+}
 public void viewMainMenu() {
 	 Menu menu = new Menu(this.getUserRole());
 	menu.viewAllMenuItems();

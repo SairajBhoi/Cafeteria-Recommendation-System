@@ -14,8 +14,20 @@ public class NotificationService {
 	void addNotification(String message){
 		
 		NotificationDatabaseOperator notificationDatabaseOpertor = new NotificationDatabaseOperator();	
-		notificationDatabaseOpertor.addNotification(message);
+		int notificationID =notificationDatabaseOpertor.addNotification(message);
 		System.out.println("added notification");
+		
+		
+		if (notificationID != -1) {
+		    boolean success =notificationDatabaseOpertor.associateNotificationWithUsers(notificationID);
+		    if (success) {
+		        System.out.println("Notification added and associated with all users.");
+		    } else {
+		        System.out.println("Failed to associate notification with users.");
+		    }
+		} else {
+		    System.out.println("Failed to add notification.");
+		}
 
 	}
 	

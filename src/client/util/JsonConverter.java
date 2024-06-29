@@ -2,13 +2,14 @@ package client.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonConverter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String convertObjectToJson(String path,Object object) {
+    public static String convertObjectToJson(String path, Object object) {
         try {
             return objectMapper.writeValueAsString(new JsonRequest(path, object));
         } catch (JsonProcessingException e) {
@@ -16,8 +17,8 @@ public class JsonConverter {
             return null;
         }
     }
-    
-    public static String convertStatusAndMessageToJson(String status, String message) {
+
+       public static String convertStatusAndMessageToJson(String status, String message) {
         try {
             return objectMapper.writeValueAsString(new JsonResponse(status, message));
         } catch (JsonProcessingException e) {
@@ -25,7 +26,58 @@ public class JsonConverter {
             return null;
         }
     }
+
+
+    public static String createJson(String key, Object value) {
+        try {
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            addKeyValue(objectNode, key, value);
+            return objectMapper.writeValueAsString(objectNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+   
+    public static String addKeyValueToJson(String jsonString, String key, Object value) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                addKeyValue(objectNode, key, value);
+                return objectMapper.writeValueAsString(objectNode);
+            } else {
+                throw new IllegalArgumentException("Provided JSON string is not an object.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String addJsonObjectToDataField(String jsonString, String jsonObjectString) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            JsonNode jsonObject = objectMapper.readTree(jsonObjectString);
+
+            if (jsonNode.isObject() && jsonObject.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.set("data", jsonObject);
+                return objectMapper.writeValueAsString(objectNode);
+            } else {
+                throw new IllegalArgumentException("Provided JSON string or JSON object is not an object.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     
+    
+    
+    
+   
     public static String convertObjectToJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
@@ -34,6 +86,13 @@ public class JsonConverter {
             return null;
         }
     }
+
+   
+    private static void addKeyValue(ObjectNode objectNode, String key, Object value) {
+        objectNode.putPOJO(key, value);
+    }
+
+  
     public static class JsonRequest {
         private String path;
         private Object data;
@@ -42,9 +101,11 @@ public class JsonConverter {
             this.path = path;
             this.data = data;
         }
+
         public JsonRequest(Object data) {
             this.data = data;
         }
+
         public String getPath() {
             return path;
         }
@@ -61,8 +122,7 @@ public class JsonConverter {
             this.data = data;
         }
     }
-    
-    
+
     public static class JsonResponse {
         private String status;
         private String message;

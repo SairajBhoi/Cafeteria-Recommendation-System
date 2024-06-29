@@ -103,7 +103,6 @@ public class ClientRequestRouter {
                 	uservoteDAO= new UserVoteDatabaseOperator();              
                 	response=uservoteDAO.addVote(data);
                 	break;
-                
                 case "/EMPLOYEE/recommendation":
                 	System.out.println("inside the recommendation case");
                   recommendationService  = new RecommendationService();
