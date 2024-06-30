@@ -11,6 +11,7 @@ import server.service.FinalDecidedTodayMenuHandler;
 import server.service.MenuItemHandler;
 import server.service.NotificationService;
 import server.service.RecommendationService;
+import server.service.UserVoteService;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
@@ -22,8 +23,9 @@ public class ClientRequestRouter {
     private ChefMenuRolloutHandler chefMenuRolloutHandler;
     private UserVoteDatabaseOperator uservoteDAO;
     private FinalDecidedTodayMenuHandler finalResultMenuHandler1;
- private RecommendationService recommendationService;
- private  FinalDecidedTodayMenuHandler finalResultMenuHandler ;
+    private RecommendationService recommendationService;
+    private  FinalDecidedTodayMenuHandler finalResultMenuHandler ;
+    private   UserVoteService userVotesrvice;
 
     public ClientRequestRouter() {
         authService = new AuthenticationService();
@@ -96,12 +98,12 @@ public class ClientRequestRouter {
 			    response = chefMenuRolloutHandler.viewRolloutResult();
 			    break;
                 case "/EMPLOYEE/viewChefRollout":
-                     uservoteDAO = new UserVoteDatabaseOperator();
-                   response = uservoteDAO.getChefRolloutListForCurrentDateAsJson();
+                   userVotesrvice = new UserVoteService();
+                   response = userVotesrvice.getChefRolloutListForCurrentDateAsJson();
                    break;
                 case "/EMPLOYEE/addVote":
-                	uservoteDAO= new UserVoteDatabaseOperator();              
-                	response=uservoteDAO.addVote(data);
+                     userVotesrvice = new UserVoteService();
+                     response = userVotesrvice.addVote(data);
                 	break;
                 case "/EMPLOYEE/recommendation":
                 	System.out.println("inside the recommendation case");

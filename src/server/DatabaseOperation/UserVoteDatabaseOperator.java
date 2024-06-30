@@ -11,8 +11,6 @@ import org.json.simple.JSONObject;
 
 import server.DatabaseConnection;
 import server.model.Vote;
-import server.util.JsonConverter;
-import server.util.JsonStringToObject;
 
 public class UserVoteDatabaseOperator {
 
@@ -23,11 +21,10 @@ public class UserVoteDatabaseOperator {
         this.connection = dbInstance.getConnection();
     }
 
-    public String getChefRolloutListForCurrentDateAsJson() {
+    public JSONArray getChefRolloutListForCurrentDate() {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            // Get current date formatted as 'yyyy-MM-dd'
             LocalDate currentDate = LocalDate.now();
             String formattedCurrentDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -47,56 +44,46 @@ public class UserVoteDatabaseOperator {
                 String categoryName = resultSet.getString("categoryName");
                 int categoryID = resultSet.getInt("categoryID");
 
-                // Create a JSON object for each row
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("rolloutID", rolloutID);
                 jsonObject.put("itemName", itemName);
                 jsonObject.put("categoryName", categoryName);
                 jsonObject.put("categoryID", categoryID);
-                // Add the JSON object to the array
+
                 jsonArray.add(jsonObject);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQLException appropriately (logging, rethrowing, etc.)
         }
 
-        // Convert jsonArray directly to JSON string using JsonConverter
-        if (JsonConverter.convertObjectToJson(jsonArray).isEmpty()) {
-        	
-        	return JsonConverter.convertStatusAndMessageToJson("info","no rollout yet");}
-        else {
-        	return JsonConverter.convertObjectToJson(jsonArray).toString();}
+        return jsonArray;
     }
-    
-    
-    
+
     public String processVote(Vote vote) {
         try {
-        	if(! hasUserVoted( vote.getUserID(), vote.getRolloutID())) {
-            String sql = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setString(1, vote.getUserID());
-            pstmt.setInt(2, vote.getRolloutID());
-            pstmt.setBoolean(3, vote.isVoteDecision());
-            pstmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-            pstmt.executeUpdate();
+            if (!hasUserVoted(vote.getUserID(), vote.getRolloutID())) {
+                String sql = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, ?)";
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                pstmt.setString(1, vote.getUserID());
+                pstmt.setInt(2, vote.getRolloutID());
+                pstmt.setBoolean(3, vote.isVoteDecision());
+                pstmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
+                pstmt.executeUpdate();
 
-            String updateSql = "UPDATE ChefMenuRollout SET numberOfVotes = numberOfVotes + 1 WHERE rolloutID = ?";
-            PreparedStatement updatePstmt = connection.prepareStatement(updateSql);
-            updatePstmt.setInt(1, vote.getRolloutID());
-            updatePstmt.executeUpdate();
-        } 
-        else {
-        	return JsonConverter.convertStatusAndMessageToJson("error", "already given feedback");
-        }}catch (SQLException e) {
-        	return JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+                String updateSql = "UPDATE ChefMenuRollout SET numberOfVotes = numberOfVotes + 1 WHERE rolloutID = ?";
+                PreparedStatement updatePstmt = connection.prepareStatement(updateSql);
+                updatePstmt.setInt(1, vote.getRolloutID());
+                updatePstmt.executeUpdate();
+            } else {
+                return "error: already given feedback";
+            }
+        } catch (SQLException e) {
+            return "error: " + e.getMessage();
         }
-		return JsonConverter.convertStatusAndMessageToJson("success", "voted successfully");
-        
+        return "success: voted successfully";
     }
-   
+
     public boolean hasUserVoted(String userID, int rolloutID) {
         String sql = "SELECT COUNT(*) FROM UserVote WHERE userID = ? AND rolloutID = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -111,13 +98,4 @@ public class UserVoteDatabaseOperator {
         }
         return false;
     }
-    
-    public  String addVote(String data){
-    	Vote vote =JsonStringToObject.fromJsonToObject(data, Vote.class);
-    	
-    	 String status =processVote(vote);
-    	return status;
-    	
-    }
-
 }
