@@ -29,8 +29,6 @@ public class Main {
             } else {
                 System.out.println("--------------------------------------");
             }
-        } catch (IOException e) {
-            System.err.println("IO ERROR.");
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
         }

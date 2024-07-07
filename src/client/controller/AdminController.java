@@ -7,10 +7,9 @@ public class AdminController {
     private Admin admin;
     private String userName;
 
-    
     public AdminController(String userName, String userId) {
         this.userName = userName;
-        admin = new Admin(userName, userId);
+        admin = new Admin(userId, userName);
     }
 
     public void runHomepage() throws Exception {
@@ -44,11 +43,11 @@ public class AdminController {
                 admin.updateAvailabilityStatus();
                 break;
             case 5:
-                admin.viewAllMenuItems();;
+                admin.viewAllMenuItems();
                 break;
             case 6:
                 System.out.println("Logging out...");
-                admin.logout();
+                admin.logout(); 
                 break;
             default:
                 System.out.println("Invalid choice");
@@ -60,7 +59,7 @@ public class AdminController {
         System.out.println("\n1. Add Menu Item");
         System.out.println("2. Delete Menu Item");
         System.out.println("3. Update Menu Item");
-        System.out.println("4. Update Food item Availabilty Status");
+        System.out.println("4. Update Food item Availability Status");
         System.out.println("5. View Menu Items");
         System.out.println("6. Logout");
     }

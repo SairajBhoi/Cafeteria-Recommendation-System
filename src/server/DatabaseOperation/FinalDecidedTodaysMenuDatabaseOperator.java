@@ -22,32 +22,42 @@ public class FinalDecidedTodaysMenuDatabaseOperator {
     }
 
  
-    public String addFinalDecidedMenu(TodayMenu todayMenu) throws Exception {
+    public String addFinalDecidedMenu(TodayMenu todayMenu) throws SQLException {
         MenuDatabaseOperator menu = new MenuDatabaseOperator();
-        int categoryID = menu.getCategoryID(todayMenu.getCategoryName());
-        int itemID = menu.getItemID(todayMenu.getItemName());
-        
+        int categoryID = 0;
+		try {
+			categoryID = menu.getCategoryID(todayMenu.getCategoryName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        int itemID = 0;
+		try {
+			itemID = menu.getItemID(todayMenu.getItemName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
         // Prepare the SQL insert statement
         String sql = "INSERT INTO TodaysMenu (itemID, categoryID, menuDate) VALUES (?, ?, ?)";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-         
             stmt.setInt(1, itemID);
             stmt.setInt(2, categoryID);
             stmt.setDate(3, todayMenu.getMenuDate());
-            
+
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 return "Successfully added menu item to Today's Menu.";
             } else {
                 return "Failed to add menu item to Today's Menu.";
             }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e; 
+        } catch (SQLException e) {
+            throw new SQLException("Error adding final decided menu item: " + e.getMessage());
         }
     }
+
     
     
     

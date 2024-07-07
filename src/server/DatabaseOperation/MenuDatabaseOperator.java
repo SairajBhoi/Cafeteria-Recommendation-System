@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,22 +23,28 @@ public class MenuDatabaseOperator {
     }
 
     public boolean addMenuItem(MenuItem menuItem) throws Exception {
-        
-    	if (isItemNameExists(menuItem.getItemName())) {
-    		int itemId= getItemID(menuItem.getItemName());
-    		int categoryId = getCategoryID(menuItem.getItemCategory());
-    		
-    		
-    		if(!(isItemandCategoryAssociationExist(itemId,categoryId))) {
-    		 boolean success = insertIntoFoodItemCategory(itemId, categoryId);
-             return success;	
-    		}
-    	}
-    	String query = "INSERT INTO FoodMenuItem (nameOfFood, foodPrice, foodAvailable) VALUES (?, ?, ?)";
-        try (PreparedStatement addMenuItemStmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            addMenuItemStmt.setString(1, menuItem.getItemName());
-            addMenuItemStmt.setDouble(2, menuItem.getItemPrice());
-            addMenuItemStmt.setBoolean(3, menuItem.isItemAvailable());
+        if (isItemNameExists(menuItem.getItemName())) {
+            int itemId = getItemID(menuItem.getItemName());
+            int categoryId = getCategoryID(menuItem.getItemCategory());
+
+            if (!(isItemAndCategoryAssociationExist(itemId, categoryId))) {
+                boolean success = insertIntoFoodItemCategory(itemId, categoryId);
+                if (!success) {
+                    throw new Exception("Failed to insert into FoodItemCategory.");
+                }
+            }
+        }
+
+        String query = "INSERT INTO FoodMenuItem (nameOfFood, foodPrice, foodAvailable, CuisineType, FoodType, SpiceLevel, IsSweet) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement addMenuItemStmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+	     addMenuItemStmt.setString(1, menuItem.getItemName());
+	     addMenuItemStmt.setFloat(2, menuItem.getItemPrice());
+	     addMenuItemStmt.setBoolean(3, menuItem.isItemAvailable());
+	     addMenuItemStmt.setString(4, menuItem.getCuisineType());
+	     addMenuItemStmt.setString(5, menuItem.getFoodType());
+	     addMenuItemStmt.setString(6, menuItem.getSpiceLevel());
+	     addMenuItemStmt.setBoolean(7, menuItem.isSweet());
 
             int rowsInserted = addMenuItemStmt.executeUpdate();
 
@@ -52,26 +58,25 @@ public class MenuDatabaseOperator {
                 }
 
                 int categoryId = getCategoryID(menuItem.getItemCategory());
-                
-                if(!(isItemandCategoryAssociationExist(itemId,categoryId))) {
-                boolean success = insertIntoFoodItemCategory(itemId, categoryId);
-                return success;
+
+                // Insert into FoodItemCategory if association doesn't exist
+                if (!(isItemAndCategoryAssociationExist(itemId, categoryId))) {
+                    boolean success = insertIntoFoodItemCategory(itemId, categoryId);
+                    if (!success) {
+                        throw new Exception("Failed to insert into FoodItemCategory.");
+                    }
                 }
+
+                return true;
             } else {
                 return false;
             }
         } catch (SQLException ex) {
             throw new Exception("Failed to add menu item.\n" + ex.getMessage());
         }
-        
-        
-        
-        
-		return false;
     }
 
     public int getCategoryID(String categoryName) throws Exception {
-    	System.out.print(categoryName);
         String query = "SELECT categoryID FROM Category WHERE categoryName = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, categoryName);
@@ -112,10 +117,9 @@ public class MenuDatabaseOperator {
         }
         return false;
     }
-    
-    
-    public boolean isItemandCategoryAssociationExist(int itemId,int categoryId) throws Exception {
-        String query = "SELECT COUNT(*) AS count FROM FoodItemCategory WHERE itemID = ? and  categoryID  = ?";
+
+    public boolean isItemAndCategoryAssociationExist(int itemId, int categoryId) throws Exception {
+        String query = "SELECT COUNT(*) AS count FROM FoodItemCategory WHERE itemID = ? and categoryID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, itemId);
             stmt.setInt(2, categoryId);
@@ -125,48 +129,48 @@ public class MenuDatabaseOperator {
                 return count > 0;
             }
         } catch (SQLException ex) {
-            throw new Exception("Failed to check if item name exists.\n" + ex.getMessage());
+            throw new Exception("Failed to check if item and category association exists.\n" + ex.getMessage());
         }
         return false;
     }
 
     public boolean updateMenuItem(MenuItem menuItem) throws Exception {
-    	System.out.println(menuItem.getItemPrice());
-    	if(isItemNameExists(menuItem.getItemName())) {
-    		System.out.println(menuItem.getItemName());
-    		
-        String query = "UPDATE FoodMenuItem SET foodPrice = ?, foodAvailable = ? WHERE nameOfFood = ?";
-        try (PreparedStatement updateMenuItemStmt = connection.prepareStatement(query)) {
-            updateMenuItemStmt.setDouble(1, menuItem.getItemPrice());
-            updateMenuItemStmt.setBoolean(2, menuItem.isItemAvailable());
-            updateMenuItemStmt.setString(3, menuItem.getItemName());
-
-            int rowsUpdated = updateMenuItemStmt.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException ex) {
-            throw new Exception("Failed to update menu item.\n" + ex.getMessage());
-        }
-     }
-    	else { 
-    		throw new Exception("Failed to update menu Item does not exist item.\n");
-    	}
-    	}
-    
-
-    public boolean updateAvailability(String itemName,boolean foodAvailable) throws Exception {
-    	if(isItemNameExists(itemName) ){
-        String query = "UPDATE FoodMenuItem SET foodAvailable = ? WHERE nameOfFood = ?";
-        try (PreparedStatement updateAvailabilityStmt = connection.prepareStatement(query)) {
-            updateAvailabilityStmt.setBoolean(1, foodAvailable);
-            updateAvailabilityStmt.setString(2, itemName);
-
-            int rowsUpdated = updateAvailabilityStmt.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException ex) {
-            throw new Exception("Failed to update availability status.\n" + ex.getMessage());
+        if (isItemNameExists(menuItem.getItemName())) {
+        	String query = "UPDATE FoodMenuItem SET foodPrice = ?, foodAvailable = ?, CuisineType = ?, FoodType = ?, SpiceLevel = ?, IsSweet = ? WHERE nameOfFood = ?";
+            try (PreparedStatement updateMenuItemStmt = connection.prepareStatement(query)) {
+                updateMenuItemStmt.setDouble(1, menuItem.getItemPrice());
+                updateMenuItemStmt.setBoolean(2, menuItem.isItemAvailable());
+                updateMenuItemStmt.setString(3, menuItem.getCuisineType());
+                updateMenuItemStmt.setString(4, menuItem.getFoodType());
+                updateMenuItemStmt.setString(5, menuItem.getSpiceLevel());
+                updateMenuItemStmt.setBoolean(6, menuItem.isSweet());
+                updateMenuItemStmt.setString(7, menuItem.getItemName());
+                
+                int rowsUpdated = updateMenuItemStmt.executeUpdate();
+                return rowsUpdated > 0;
+            } catch (SQLException ex) {
+                throw new Exception("Failed to update menu item.\n" + ex.getMessage());
+            }
+        } else {
+            throw new Exception("Failed to update menu item. Item does not exist.\n");
         }
     }
-    	throw new Exception("item name does not exist.\n" );
+
+    public boolean updateAvailability(String itemName, boolean foodAvailable) throws Exception {
+        if (isItemNameExists(itemName)) {
+            String query = "UPDATE FoodMenuItem SET foodAvailable = ? WHERE nameOfFood = ?";
+            try (PreparedStatement updateAvailabilityStmt = connection.prepareStatement(query)) {
+                updateAvailabilityStmt.setBoolean(1, foodAvailable);
+                updateAvailabilityStmt.setString(2, itemName);
+
+                int rowsUpdated = updateAvailabilityStmt.executeUpdate();
+                return rowsUpdated > 0;
+            } catch (SQLException ex) {
+                throw new Exception("Failed to update availability status.\n" + ex.getMessage());
+            }
+        } else {
+            throw new Exception("Item does not exist.\n");
+        }
     }
 
     public boolean deleteMenuItem(String itemName) throws Exception {
@@ -198,23 +202,29 @@ public class MenuDatabaseOperator {
     public List<Map<String, Object>> viewMenuItems() throws Exception {
         List<Map<String, Object>> menuList = new ArrayList<>();
 
-        String query = "SELECT m.itemID, m.nameOfFood, m.foodPrice, m.foodAvailable, c.categoryName " +
-                       "FROM FoodMenuItem m " +
-                       "JOIN FoodItemCategory ic ON m.itemID = ic.itemID " +
-                       "JOIN Category c ON ic.categoryID = c.categoryID";
+        String query = "SELECT m.itemID, m.nameOfFood, m.foodPrice, m.foodAvailable, " +
+                "m.CuisineType, m.FoodType, m.SpiceLevel, m.IsSweet, " +
+                "c.categoryName " +
+                "FROM FoodMenuItem m " +
+                "JOIN FoodItemCategory ic ON m.itemID = ic.itemID " +
+                "JOIN Category c ON ic.categoryID = c.categoryID";
 
-        try (PreparedStatement viewMenuItemsStmt = connection.prepareStatement(query)) {
-            ResultSet rs = viewMenuItemsStmt.executeQuery();
-
-            while (rs.next()) {
-                Map<String, Object> item = new HashMap<>();
-                item.put("itemID", rs.getInt("itemID"));
-                item.put("nameOfFood", rs.getString("nameOfFood"));
-                item.put("foodPrice", rs.getDouble("foodPrice"));
-                item.put("foodAvailable", rs.getBoolean("foodAvailable"));
-                item.put("categoryName", rs.getString("categoryName")); 
-                menuList.add(item);
-            }
+	    try (PreparedStatement viewMenuItemsStmt = connection.prepareStatement(query)) {
+	     ResultSet rs = viewMenuItemsStmt.executeQuery();
+	
+	     while (rs.next()) {
+	         Map<String, Object> item = new LinkedHashMap<>();
+	         item.put("itemID", rs.getInt("itemID"));
+	         item.put("nameOfFood", rs.getString("nameOfFood"));
+	         item.put("foodPrice", rs.getDouble("foodPrice"));
+	         item.put("foodAvailable", rs.getBoolean("foodAvailable"));
+	         item.put("CuisineType", rs.getString("CuisineType"));
+	         item.put("FoodType", rs.getString("FoodType"));
+	         item.put("SpiceLevel", rs.getString("SpiceLevel"));
+	         item.put("IsSweet", rs.getBoolean("IsSweet"));
+	         item.put("categoryName", rs.getString("categoryName"));
+	         menuList.add(item);
+	     }
         } catch (SQLException ex) {
             throw new Exception("Failed to view menu items.\n" + ex.getMessage());
         }
@@ -223,23 +233,21 @@ public class MenuDatabaseOperator {
     }
 
     public int getItemID(String menuItem) throws Exception {
-        int itemID = 0;
         String query = "SELECT itemID FROM FoodMenuItem WHERE nameOfFood = ?";
         try (PreparedStatement getItemIDStmt = connection.prepareStatement(query)) {
             getItemIDStmt.setString(1, menuItem);
             ResultSet rs = getItemIDStmt.executeQuery();
             if (rs.next()) {
-                itemID = rs.getInt("itemID");
+                return rs.getInt("itemID");
+            } else {
+                throw new Exception("Item not found for name: " + menuItem);
             }
         } catch (SQLException ex) {
             throw new Exception("Failed to get item ID.\n" + ex.getMessage());
         }
-        return itemID;
     }
 
     public boolean isItemInCategory(String itemName, String categoryName) throws Exception {
-        boolean isInCategory = false;
-
         String query = "SELECT COUNT(*) AS count FROM FoodMenuItem fm " +
                        "JOIN FoodItemCategory fic ON fm.itemID = fic.itemID " +
                        "JOIN Category c ON fic.categoryID = c.categoryID " +
@@ -252,13 +260,13 @@ public class MenuDatabaseOperator {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt("count");
-                isInCategory = count > 0;
+                return count > 0;
             }
         } catch (SQLException ex) {
             throw new Exception("Failed to check item category.\n" + ex.getMessage());
         }
 
-        return isInCategory;
+        return false;
     }
 
     public boolean updateAvailabilityStatus(String itemName, boolean foodAvailable) throws Exception {
@@ -285,18 +293,17 @@ public class MenuDatabaseOperator {
         }
     }
 
-    private void deleteMenuItemFromSpecificCategory(int itemId, int categoryID) throws SQLException {
+    private void deleteMenuItemFromSpecificCategory(int itemId, int categoryId) throws SQLException {
         String query = "DELETE FROM FoodItemCategory WHERE itemID = ? AND categoryID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, itemId);
-            stmt.setInt(2, categoryID);
+            stmt.setInt(2, categoryId);
             stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new SQLException("Failed to delete menu item from specified category.\n" + ex.getMessage());
         }
     }
-    
-    
+
     public String getItemName(int itemId) throws Exception {
         String query = "SELECT nameOfFood FROM FoodMenuItem WHERE itemID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -312,7 +319,6 @@ public class MenuDatabaseOperator {
         }
     }
 
-    
     public String getCategoryName(int categoryId) throws Exception {
         String query = "SELECT categoryName FROM Category WHERE categoryID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -327,7 +333,6 @@ public class MenuDatabaseOperator {
             throw new Exception("Failed to get category name.\n" + ex.getMessage());
         }
     }
-
 
     public void closeConnection() {
         try {

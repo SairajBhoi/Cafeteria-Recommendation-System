@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,13 +22,16 @@ public class EmployeeFeedbackDatabaseOperator {
         this.connection = dbInstance.getConnection();
     }
 
-    public String addFeedback(Feedback feedback) throws Exception {
-        String status = null;
-        UserDatatabaseOperator user =  new UserDatatabaseOperator();
-         if (!user.isUserExists(feedback.getEmployeeId())) {
+    public String addFeedback(Feedback feedback) throws SQLException, Exception {
+        UserDatatabaseOperator user = new UserDatatabaseOperator();
+        if (!user.isUserExists(feedback.getEmployeeId())) {
             throw new Exception("User ID does not exist: " + feedback.getEmployeeId());
         }
-        String sqlQuery = "INSERT INTO UserFeedbackOnFoodItem ( userUserID, itemID, feedbackGivenDate, qualityRating, tasteRating, freshnessRating, valueForMoneyRating, feedbackMessage, sentiment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String sqlQuery = "INSERT INTO UserFeedbackOnFoodItem (userUserID, itemID, feedbackGivenDate, " +
+        		           "qualityRating, tasteRating, freshnessRating, valueForMoneyRating, feedbackMessage, sentiment) " +
+        		           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
 
         try (PreparedStatement addFeedbackStmt = connection.prepareStatement(sqlQuery)) {
             MenuDatabaseOperator menu = new MenuDatabaseOperator();
@@ -35,7 +39,7 @@ public class EmployeeFeedbackDatabaseOperator {
 
             addFeedbackStmt.setString(1, feedback.getEmployeeId());
             addFeedbackStmt.setInt(2, itemId);
-            addFeedbackStmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime())); // Current date
+            addFeedbackStmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime())); 
             addFeedbackStmt.setInt(4, feedback.getQualityRating());
             addFeedbackStmt.setInt(5, feedback.getTasteRating());
             addFeedbackStmt.setInt(6, feedback.getFreshnessRating());
@@ -46,19 +50,16 @@ public class EmployeeFeedbackDatabaseOperator {
             int rowsInserted = addFeedbackStmt.executeUpdate();
 
             if (rowsInserted > 0) {
-                status = "Feedback added successfully.";
+                return "Feedback added successfully.";
             } else {
                 throw new Exception("Failed to add feedback.");
             }
-
         } catch (SQLException e) {
-            throw new Exception("Error during adding feedback: " + e.getMessage());
+            throw new SQLException("Error during adding feedback: " + e.getMessage());
         }
-
-        return status;
     }
 
-    public List<Map<String, Object>> viewFeedback(String itemName) throws Exception {
+    public List<Map<String, Object>> viewFeedback(String itemName) throws SQLException, Exception {
         List<Map<String, Object>> feedbackList = new ArrayList<>();
         MenuDatabaseOperator menu = new MenuDatabaseOperator();
         int itemId = menu.getItemID(itemName);
@@ -75,12 +76,9 @@ public class EmployeeFeedbackDatabaseOperator {
             ResultSet rs = viewFeedbackStmt.executeQuery();
 
             while (rs.next()) {
-                Map<String, Object> feedback = new HashMap<>();
+                Map<String, Object> feedback = new LinkedHashMap<>();
 
-                // You can fetch the user name using DAO or directly from the User table
-                // Here I'm assuming it's fetched from another method, adjust as per your DAO structure
                 String userName = getUserName(rs.getString("userUserId"));
-
                 feedback.put("feedbackID", rs.getInt("feedbackID"));
                 feedback.put("userName", userName);
                 feedback.put("itemID", rs.getInt("itemID"));
@@ -95,17 +93,14 @@ public class EmployeeFeedbackDatabaseOperator {
                 feedbackList.add(feedback);
             }
         } catch (SQLException e) {
-            throw new Exception("Failed to view feedback.\n" + e.getMessage());
+            throw new SQLException("Failed to view feedback.\n" + e.getMessage());
         }
 
         return feedbackList;
     }
 
-    private String getUserName(String userId) throws Exception {
-        // Implement your logic to fetch user name from User table based on userId
-        // Example placeholder
-      UserDatatabaseOperator userDAO = new UserDatatabaseOperator();
+    private String getUserName(String userId) throws SQLException, Exception {
+        UserDatatabaseOperator userDAO = new UserDatatabaseOperator();
         return userDAO.getUserName(userId);
-      
     }
 }

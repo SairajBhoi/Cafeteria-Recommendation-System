@@ -8,12 +8,17 @@ public class InputHandler {
     private static final InputStreamReader inputStreamReader = new InputStreamReader(System.in);
     private static final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-    public static String getStringInput(String messageToUser) throws IOException {
+    public static String getStringInput(String messageToUser) {
         System.out.print(messageToUser);
-        return bufferedReader.readLine();
+        try {
+            return bufferedReader.readLine();
+        } catch (IOException e) {
+            System.out.println("Error reading input. Please try again.");
+            return getStringInput(messageToUser);
+        }
     }
 
-    public static int getIntegerInput(String messageToUser) throws IOException {
+    public static int getIntegerInput(String messageToUser) {
         while (true) {
             try {
                 return Integer.parseInt(getStringInput(messageToUser));
@@ -23,8 +28,7 @@ public class InputHandler {
         }
     }
 
- 
-    public static float getFloatInput(String messageToUser) throws IOException {
+    public static float getFloatInput(String messageToUser) {
         while (true) {
             try {
                 return Float.parseFloat(getStringInput(messageToUser));
@@ -34,7 +38,7 @@ public class InputHandler {
         }
     }
 
-    public static boolean getBooleanInput(String messageToUser) throws IOException {
+    public static boolean getBooleanInput(String messageToUser) {
         while (true) {
             String input = getStringInput(messageToUser + " (yes/no): ").toLowerCase();
             if (input.equals("yes") || input.equals("y")) {
@@ -56,18 +60,11 @@ public class InputHandler {
                 } else {
                     System.out.println("Please enter exactly one character.\n");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Error reading input. Please try again.\n");
             }
         }
     }
 
-    public static void closeInputHandler() {
-        try {
-            bufferedReader.close();
-            inputStreamReader.close();
-        } catch (IOException e) {
-            System.err.println("Error closing input streams: " + e.getMessage());
-        }
-    }
+
 }

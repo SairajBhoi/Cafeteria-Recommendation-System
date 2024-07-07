@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 public class FoodFeedbackSentimentAnalysis {
@@ -12,7 +13,7 @@ public class FoodFeedbackSentimentAnalysis {
     private Map<String, Integer> sentimentWords;
 
     public FoodFeedbackSentimentAnalysis(String fileName) {
-        this.sentimentWords = new HashMap<>();
+        this.sentimentWords = new LinkedHashMap<>();
         loadWords(fileName);
     }
 

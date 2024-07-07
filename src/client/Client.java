@@ -22,7 +22,15 @@ public class Client {
             }
             out.println(requestToServer);
 
-            return in.readLine();
+            String response = in.readLine();
+
+            if (response == null) {
+            	closeConnection();
+            	closeSocket();
+                throw new IOException("Server closed connection unexpectedly.");
+            }
+
+            return response;
         } catch (IOException ex) {
             throw new IOException("Error communicating with server: " + ex.getMessage());
         }

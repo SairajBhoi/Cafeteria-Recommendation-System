@@ -1,4 +1,5 @@
 package server.service;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale.Category;
 
@@ -33,6 +34,18 @@ public String getFoodItemByTaste(){
 	
 return result.toString();
 }
+
+
+public String getFoodOrderbyRatingOnChefRollout() {
+    LocalDate currentDate = LocalDate.now();
+    RecommendationEngine recommendationEngine = new RecommendationEngine();
+    JSONArray jsonArray = recommendationEngine.getFoodItemRatingsForDate(currentDate);
+    String jsonResponse= JsonConverter.convertObjectToJson(jsonArray);
+    
+    System.out.print(jsonResponse);
+    return jsonResponse;
+}
+
 
 
 

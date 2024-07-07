@@ -51,17 +51,21 @@ if(status) {
     
     
     
-    
-public String viewFinalResultMenu() throws Exception {
-	FinalDecidedTodaysMenuDatabaseOperator finalResultMenu = new FinalDecidedTodaysMenuDatabaseOperator();
-    List<TodayMenu> menuItems = (List<TodayMenu>) finalResultMenu.getTodaysMenuItems();
+    public String viewFinalResultMenu() throws Exception {
+        FinalDecidedTodaysMenuDatabaseOperator finalResultMenu = new FinalDecidedTodaysMenuDatabaseOperator();
+        List<TodayMenu> menuItems = (List<TodayMenu>) finalResultMenu.getTodaysMenuItems();
 
-   
-    String jsonMenuItems = JsonConverter.convertObjectToJson(menuItems);
-    
-    return jsonMenuItems;
-    
-} }
+        String response;
+        if (menuItems == null || menuItems.isEmpty()) {
+            response = JsonConverter.convertStatusAndMessageToJson("info", "Not yet prepared");
+        } else {
+            response = JsonConverter.convertObjectToJson(menuItems);
+        }
+
+        return response;
+    }
+
+ }
 
 
 

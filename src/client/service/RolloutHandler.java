@@ -1,10 +1,8 @@
 package client.service;
 
 import java.io.IOException;
-import client.util.*;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Calendar;
 
 import client.Client;
 import client.model.ChefMenuRollout;
@@ -22,127 +20,73 @@ public class RolloutHandler {
         this.requestPath = "/" + role;
         this.role = role;
     }
-    
-    
-    public void recommendation()  {
-    	
-    	this.requestPath=	this.requestPath + "/recommendation";
-    	String categoryName = null;
-		try {
-			categoryName = InputHandler.getStringInput("please Enter Category Name");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	int numberOfItem = 0;
-		try {
-			numberOfItem = InputHandler.getIntegerInput("Enter number of items required");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	FoodCategory  category = new FoodCategory();
-    	category.setCategoryName(categoryName); 
-    	category.setNumberOfItems(numberOfItem);
-   
-    	
-    	String jsonRequest=JsonConverter.convertObjectToJson(this.requestPath, category);
-    	String jsonResponse = null;
-    	 try {
-			 jsonResponse = Client.requestServer(jsonRequest);
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-    	 this.requestPath = "/" + role;
-    	
-    	 PrintOutToConsole.printToConsole(jsonResponse);
-    	
+
+    public void recommendation() {
+        try {
+            this.requestPath += "/recommendation";
+            String categoryName = InputHandler.getStringInput("Please enter category name: ");
+            int numberOfItems = InputHandler.getIntegerInput("Enter number of items required: ");
+
+            FoodCategory category = new FoodCategory();
+            category.setCategoryName(categoryName);
+            category.setNumberOfItems(numberOfItems);
+
+            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, category);
+            String jsonResponse = Client.requestServer(jsonRequest);
+            resetRequestPath();
+
+            PrintOutToConsole.printToConsole(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error processing recommendation request: " + e.getMessage());
+        }
     }
-    
-    
+
     public void getFinalVoteMenu() {
-    	this.requestPath=	this.requestPath + "/finalVoteMenu";
-    	String jsonRequest=JsonConverter.convertObjectToJson(this.requestPath, null);
-    	String jsonResponse = null;
-    	 try {
-			 jsonResponse = Client.requestServer(jsonRequest);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	 this.requestPath = "/" + role;
-    	 System.out.println("recommendation system");
-    	System.out.println(jsonResponse);
-    	
-    	 PrintOutToConsole.printToConsole(jsonResponse);
+        try {
+            this.requestPath += "/finalVoteMenu";
+            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
+            String jsonResponse = Client.requestServer(jsonRequest);
+            resetRequestPath();
+
+            System.out.println("Final Vote Menu:");
+            PrintOutToConsole.printToConsole(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error fetching final vote menu: " + e.getMessage());
+        }
     }
-    
-    
+
     public void getFinalDecidedMenu() {
-    	this.requestPath= "/finalDecidedMenuAfterRollout";
-    	String jsonRequest=JsonConverter.convertObjectToJson(this.requestPath, null);
-    	String jsonResponse = null;
-    	 try {
-			 jsonResponse = Client.requestServer(jsonRequest);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	 this.requestPath = "/" + role;
-    	 System.out.println("Todays Menu");
-    	System.out.println(jsonResponse);
-    	 PrintOutToConsole.printToConsole(jsonResponse);
-    	
+        try {
+            this.requestPath = "/finalDecidedMenuAfterRollout";
+            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
+            String jsonResponse = Client.requestServer(jsonRequest);
+            resetRequestPath();
+
+            System.out.println("Today's Menu:");
+            PrintOutToConsole.printToConsole(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error fetching final decided menu: " + e.getMessage());
+        }
     }
-    	
-    	
-    
-   
-    
-    
-    
-   
 
     public void createChefMenuRollouts(String mealType) {
-        int itemCount = 0;
-		try {
-			itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " Food items to add");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            int itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " food items to add: ");
+            for (int count = 0; count < itemCount; count++) {
+                ChefMenuRollout chefMenuRollout = new ChefMenuRollout();
+                chefMenuRollout.setCategoryName(mealType);
+                String itemName = InputHandler.getStringInput("Item Name: ");
+                chefMenuRollout.setItemName(itemName);
+                chefMenuRollout.setRolloutDate(new Date(System.currentTimeMillis()));
 
-        for (int count = 0; count < itemCount; count++) {
-            ChefMenuRollout chefMenuRollout = new ChefMenuRollout();
+                String currentRequestPath = this.requestPath + "/rolloutMenu";
+                String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, chefMenuRollout);
 
-            chefMenuRollout.setCategoryName(mealType);
-            String itemName = null;
-            try {
-                itemName = InputHandler.getStringInput("Item Name: ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            chefMenuRollout.setItemName(itemName);
-
-            long currentTimeMillis = System.currentTimeMillis();
-            Date currentDate = new Date(currentTimeMillis);
-
-            System.out.println("Current Date: " + currentDate);
-
-            chefMenuRollout.setRolloutDate(currentDate);
-
-            String currentRequestPath = this.requestPath + "/rolloutMenu"; 
-            String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, chefMenuRollout);
-            System.out.println("JSON Request: " + jsonRequest);
-
-            String jsonResponse = null;
-            this.requestPath =  "/" + this.role;
-            try {
-                jsonResponse = Client.requestServer(jsonRequest);
+                String jsonResponse = Client.requestServer(jsonRequest);
                 System.out.println("JSON Response: " + jsonResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            System.err.println("Error creating chef menu rollouts: " + e.getMessage());
         }
     }
 
@@ -152,78 +96,39 @@ public class RolloutHandler {
         createChefMenuRollouts("snacks");
         createChefMenuRollouts("dinner");
     }
-    
-    
-    
-    
-    
-    public void createfinalDecidedMenuAfterRollout(String mealType) {
-        int itemCount = 0;
-		try {
-			itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " Food items to add");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("--");
-        for (int count = 0; count < itemCount; count++) {
-            TodayMenu todayMenu = new TodayMenu();
 
-            todayMenu.setCategoryName(mealType);
-            String itemName = null;
-            try {
-                itemName = InputHandler.getStringInput("Item Name: ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        
-            todayMenu.setItemName(itemName);
-               
-            
-            System.out.println(todayMenu.getItemName());
-       
-            LocalDate currentDate = LocalDate.now();
-            System.out.println("Current Date: " + currentDate);
-
-            LocalDate nextDay = currentDate.plusDays(1);
-            System.out.println("-----------------------");
-
-            // Convert LocalDate to java.sql.Date
+    public void createFinalDecidedMenuAfterRollout(String mealType) {
+        try {
+            int itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " food items to add: ");
+            LocalDate nextDay = LocalDate.now().plusDays(1);
             Date nextDayDate = Date.valueOf(nextDay);
 
-            todayMenu.setMenuDate(nextDayDate);
-            System.out.println("-----------------------");
+            for (int count = 0; count < itemCount; count++) {
+                TodayMenu todayMenu = new TodayMenu();
+                todayMenu.setCategoryName(mealType);
+                String itemName = InputHandler.getStringInput("Item Name: ");
+                todayMenu.setItemName(itemName);
+                todayMenu.setMenuDate(nextDayDate);
 
-            todayMenu.setMenuDate(nextDayDate);
-            System.out.println(nextDay);
-            
-            String currentRequestPath = this.requestPath + "/CHEF/addfinalResultMenu"; 
-            String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, todayMenu);
-            System.out.println("JSON Request: " + jsonRequest);
+                String currentRequestPath = this.requestPath + "/CHEF/addfinalResultMenu";
+                String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, todayMenu);
 
-            String jsonResponse = null;
-            this.requestPath =  "/" + this.role;
-            try {
-                jsonResponse = Client.requestServer(jsonRequest);
+                String jsonResponse = Client.requestServer(jsonRequest);
                 System.out.println("JSON Response: " + jsonResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            System.err.println("Error creating final decided menu: " + e.getMessage());
         }
     }
 
     public void createAllFinalDecidedChefMenu() {
-    	createfinalDecidedMenuAfterRollout("breakfast");
-    	System.out.println("--");
-    	createfinalDecidedMenuAfterRollout("lunch");
-    	createfinalDecidedMenuAfterRollout("snacks");
-    	createfinalDecidedMenuAfterRollout("dinner");
+        createFinalDecidedMenuAfterRollout("breakfast");
+        createFinalDecidedMenuAfterRollout("lunch");
+        createFinalDecidedMenuAfterRollout("snacks");
+        createFinalDecidedMenuAfterRollout("dinner");
     }
-    
-  
-   
-    }
-    
-    
-  
 
+    private void resetRequestPath() {
+        this.requestPath = "/" + this.role;
+    }
+}

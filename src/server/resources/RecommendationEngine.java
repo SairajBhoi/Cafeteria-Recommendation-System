@@ -28,7 +28,6 @@ public class RecommendationEngine {
         public List<String> getFoodItemForNextDay(String categoryName, int NumberOfItems) {
             List<String> foodItemNames = new ArrayList<>();
 
-            // SQL query template
             String query = "SELECT " +
                     "    m.nameOfFood " +
                     "FROM " +
@@ -48,21 +47,20 @@ public class RecommendationEngine {
                     "LIMIT ?";
 
             try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-                // Set dynamic parameters
+                
                 pstmt.setString(1, categoryName);
                 pstmt.setInt(2, NumberOfItems);
 
-                // Execute the query
+                
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    // Process the result set
+                 
                     while (rs.next()) {
                         String nameOfFood = rs.getString("nameOfFood");
                         foodItemNames.add(nameOfFood);
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace(); // Consider logging the exception instead of just printing it
-                // It's a good practice to handle exceptions or propagate them to the caller
+                e.printStackTrace(); 
                 throw new RuntimeException("Error fetching food item names: " + e.getMessage());
             }
 
@@ -71,9 +69,68 @@ public class RecommendationEngine {
  
 
 
+        
+        
  
+        public JSONArray getFoodItemRatingsForDate(LocalDate rolloutDate) {
+            JSONArray jsonArray = new JSONArray();
+
+            String query = "SELECT " +
+                    "    r.rolloutDate, " +
+                    "    c.categoryName, " + 
+                    "    f.nameOfFood, " +
+                    "    ar.avgQualityRating, " +
+                    "    ar.avgTasteRating, " +
+                    "    ar.avgFreshnessRating, " +
+                    "    ar.avgValueForMoneyRating, " +
+                    "    ar.avgOverallRating " +
+                    "FROM ChefMenuRollout r " +
+                    "JOIN ( " +
+                    "    SELECT " +
+                    "        itemID, " +
+                    "        AVG(qualityRating) AS avgQualityRating, " +
+                    "        AVG(tasteRating) AS avgTasteRating, " +
+                    "        AVG(freshnessRating) AS avgFreshnessRating, " +
+                    "        AVG(valueForMoneyRating) AS avgValueForMoneyRating, " +
+                    "        (AVG(qualityRating) + AVG(tasteRating) + AVG(freshnessRating) + AVG(valueForMoneyRating)) / 4 AS avgOverallRating " +
+                    "    FROM UserFeedbackOnFoodItem " +
+                    "    GROUP BY itemID " +
+                    ") ar ON r.itemID = ar.itemID " +
+                    "JOIN FoodMenuItem f ON r.itemID = f.itemID " +
+                    "JOIN Category c ON r.categoryID = c.categoryID " +
+                    "WHERE r.rolloutDate = ? " +
+                    "ORDER BY ar.avgOverallRating DESC";
+
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setDate(1, Date.valueOf(rolloutDate));
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("nameOfFood", rs.getString("nameOfFood"));
+                        jsonObject.put("categoryName", rs.getString("categoryName"));
+                        jsonObject.put("rolloutDate", rs.getDate("rolloutDate").toString());                 
+                        jsonObject.put("avgQualityRating", rs.getDouble("avgQualityRating"));
+                        jsonObject.put("avgTasteRating", rs.getDouble("avgTasteRating"));
+                        jsonObject.put("avgFreshnessRating", rs.getDouble("avgFreshnessRating"));
+                        jsonObject.put("avgValueForMoneyRating", rs.getDouble("avgValueForMoneyRating"));
+                        jsonObject.put("avgOverallRating", rs.getDouble("avgOverallRating"));
+
+                        jsonArray.add(jsonObject);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error fetching food item ratings for date: " + e.getMessage());
+            }
+
+            return jsonArray;
+        }
+
     
-    
+        
+        
+        
     
     
 
@@ -89,17 +146,17 @@ public class RecommendationEngine {
         JSONArray jsonArray = new JSONArray();
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            // Set current date as parameter in the PreparedStatement
+            
             pstmt.setDate(1, Date.valueOf(LocalDate.now()));
 
-            // Execute query and process result set
+          
             try (ResultSet resultSet = pstmt.executeQuery()) {
                 while (resultSet.next()) {
                     String categoryName = resultSet.getString("categoryName");
                     String itemName = resultSet.getString("itemName");
                     int numberOfVotes = resultSet.getInt("numberOfVotes");
 
-                    // Create JSON object for each row
+                   
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("categoryName", categoryName);
                     jsonObject.put("itemName", itemName);
@@ -169,7 +226,7 @@ public class RecommendationEngine {
     
     
     
-    //user
+
     public JSONArray getCategoryRatingsOrderedByTaste() {
         JSONArray jsonArray = new JSONArray();
         try{
@@ -197,7 +254,7 @@ public class RecommendationEngine {
                          "JOIN " +
                          "    UserFeedbackOnFoodItem uf ON cmr.itemID = uf.itemID " +
                          "WHERE " +
-                         "    cmr.rolloutDate = ? " +  // Filter by rollout date = current date
+                         "    cmr.rolloutDate = ? " + 
                          "GROUP BY " +
                          "    cmr.categoryID, cmr.itemID " +
                          "ORDER BY " +
@@ -285,7 +342,15 @@ public class RecommendationEngine {
     
     
     
-
+    
+    
+    
+    
+    
+    
+    
+    
+   
    
     
 

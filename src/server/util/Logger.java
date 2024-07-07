@@ -13,14 +13,14 @@ public class Logger {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String LOG_DIRECTORY = "logs/";
 
-    static {
+    public Logger() {
         File logDir = new File(LOG_DIRECTORY);
         if (!logDir.exists()) {
             logDir.mkdirs();
         }
     }
 
-    public static void logOperation(int userId, String operation, String message) {
+    public void logOperation(int userId, String operation, String message) {
         String timestamp = dtf.format(LocalDateTime.now());
         String logMessage = String.format("[%s] Operation: %s, Message: %s", timestamp, operation, message);
         String userLogDirectory = LOG_DIRECTORY + userId + "/";

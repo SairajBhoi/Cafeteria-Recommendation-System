@@ -4,70 +4,68 @@ import client.model.Chef;
 import client.util.InputHandler;
 
 public class ChefController {
-		 private Chef chef;
-		 private String userName;
+    private Chef chef;
+    private String userName;
 
-	    public ChefController(String userName, String userId) {
-	        this.userName = userName;
-	        chef = new Chef(userName, userId); 
-	    }
+    public ChefController(String userName, String userId) {
+        this.userName = userName;
+        chef = new Chef(userId, userName); 
+    }
 
-	  public void runHomePage() throws Exception {
-	        System.out.println("\nWelcome "+ userName);
-	        run();
-	    }
+    public void runHomePage() throws Exception {
+        System.out.println("\nWelcome " + userName);
+        run();
+    }
 
-	  private void run() throws Exception {
-	        while (true) {
-	            displayOptions();
-	            int choice = InputHandler.getIntegerInput("Enter your choice: ");
-	            processOption(choice);
-	            if (choice == 7) {
-	                break;
-	            }
-	        }
-	    }
+    private void run() throws Exception {
+        while (true) {
+            displayOptions();
+            int choice = InputHandler.getIntegerInput("Enter your choice: ");
+            processOption(choice);
+            if (choice == 7) {
+                break;
+            }
+        }
+    }
 
-	  private void processOption(int choice) throws Exception {
-	        switch (choice) {
-	            case 1:
-	               chef.menurollout();
-	                break;
-	            case 2:
-	               chef.viewRecommendation();
-	                break;
-	            case 3:
-	                chef.ViewFeedbackonFoodItem();
-	                break;
-	            case 4:
-	            	 chef.FinalVoteMenu(); //rollout result
-	                break;
-	            case 5:
-	            	chef.addFinalMenuafterRollout();
-	            	break;
-	            case 6:
-	            	 chef.viewFinalMenuDecided(); 
-	                break;
-	            case 7:
-	            	 System.out.println("Logging out...");
-	                 chef.logout();
-	                 break;
-	            default:
-	                System.out.println("Invalid choice");
-	                run();
-	                break;
-	        }
-	    }
+    private void processOption(int choice) throws Exception {
+        switch (choice) {
+            case 1:
+                chef.menurollout();
+                break;
+            case 2:
+                chef.viewRecommendation();
+                break;
+            case 3:
+                chef.ViewFeedbackonFoodItem();
+                break;
+            case 4:
+                chef.FinalVoteMenu();
+                break;
+            case 5:
+                chef.addFinalMenuafterRollout();
+                break;
+            case 6:
+                chef.viewFinalMenuDecided();
+                break;
+            case 7:
+                System.out.println("Logging out...");
+                chef.logout();
+                break;
+            default:
+                System.out.println("Invalid choice");
+                run();
+                break;
+        }
+    }
 
-	    private void displayOptions() {
-	        System.out.println("\n1. Rollout menu for tomorrow.");
-	        System.out.println("2. View Recommendation from Engine.");
-	        System.out.println("3. View Feedback on food item");
-	        System.out.println("4. create final Report of rollout ");
-	        System.out.println("5. add Decdicided Menu To be prepared tommorow");
-	        System.out.println("6. View Decdicided Menu To be prepared tommorow");
-	        
-	        System.out.println("7. Logout");
-	    }
-	}
-
+    private void displayOptions() {
+        System.out.println("\n1. Rollout menu for tomorrow.");
+        System.out.println("2. View Recommendation from Engine.");
+        System.out.println("3. View Feedback on food item.");
+        System.out.println("4. Create final report of rollout.");
+        System.out.println("5. Add Decided Menu To be prepared tomorrow.");
+        System.out.println("6. View Decided Menu To be prepared tomorrow.");
+        System.out.println("7. Logout");
+    }
+}

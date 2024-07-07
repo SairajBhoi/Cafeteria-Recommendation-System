@@ -2,15 +2,15 @@ package server.controller;
 
 import java.sql.SQLException;
 
-import server.DatabaseOperation.UserVoteDatabaseOperator;
+
 import server.auth.AuthenticationService;
-import server.resources.RecommendationEngine;
 import server.service.ChefMenuRolloutHandler;
 import server.service.FeedbackService;
 import server.service.FinalDecidedTodayMenuHandler;
 import server.service.MenuItemHandler;
 import server.service.NotificationService;
 import server.service.RecommendationService;
+import server.service.UserProfile;
 import server.service.UserVoteService;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
@@ -21,21 +21,26 @@ public class ClientRequestRouter {
     private MenuItemHandler menuItemHandler;
     private FeedbackService feedbackService;
     private ChefMenuRolloutHandler chefMenuRolloutHandler;
-    private UserVoteDatabaseOperator uservoteDAO;
-    private FinalDecidedTodayMenuHandler finalResultMenuHandler1;
+    private UserVoteService userVoteService;
+    private FinalDecidedTodayMenuHandler finalResultMenuHandler;
     private RecommendationService recommendationService;
-    private  FinalDecidedTodayMenuHandler finalResultMenuHandler ;
-    private   UserVoteService userVotesrvice;
+    private NotificationService notificationService;
+    private  UserProfile userProfile;
 
     public ClientRequestRouter() {
         authService = new AuthenticationService();
         try {
-			menuItemHandler = new MenuItemHandler();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            menuItemHandler = new MenuItemHandler();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         feedbackService = new FeedbackService();
-      
+        finalResultMenuHandler = new FinalDecidedTodayMenuHandler();
+        recommendationService = new RecommendationService();
+        notificationService = new NotificationService();
+        userVoteService = new UserVoteService();
+        chefMenuRolloutHandler = new ChefMenuRolloutHandler();
+        userProfile  = new UserProfile();
     }
 
     public String route(String clientRequest) {
@@ -43,23 +48,36 @@ public class ClientRequestRouter {
 
         try {
             String path = JsonStringToObject.getPath(clientRequest);
-            System.out.print("path"+path);
+            System.out.println("Request Path: " + path);
             String data = JsonStringToObject.getData(clientRequest);
-            System.out.print("data"+data);
+            System.out.println("Request Data: " + data);
+
             switch (path) {
-   
                 case "/authenticate":
                     response = authService.authenticate(data);
                     break;
+                    
+                    
+                    
+                    
                 case "/viewAllMenuItems":
                     response = menuItemHandler.viewAllMenuItems();
                     break;
-                case "/viewFeedbackonFoodItem":
+                case "/viewFeedbackOnFoodItem":
                     response = feedbackService.viewFeedback(data);
                     break;
-                case "/EMPLOYEE/addFeedbackOnFoodItem":
-                    response = feedbackService.addFeedback(data);
-                    break;
+                    
+                    
+                    
+                    
+                    
+               
+                case "/finalDecidedMenuAfterRollout":
+                    response = finalResultMenuHandler.viewFinalResultMenu();
+                    break;	
+                	
+                	
+                	
                 case "/ADMIN/deleteMenuItem":
                     response = menuItemHandler.deleteMenuItem(data);
                     break;
@@ -72,61 +90,63 @@ public class ClientRequestRouter {
                 case "/ADMIN/updateFoodAvailableStatus":
                     response = menuItemHandler.updateFoodAvailableStatus(data);
                     break;
+                    
+                    
+                    
+                    
+                    
                 case "/CHEF/recommendation":
-                	System.out.println("inside the recommendation case");
-                	RecommendationService recommendationService = new RecommendationService();
-                response =  recommendationService. getFoodItemForNextDay(data);
-                break;
-                
-                case"/CHEF/addfinalResultMenu":
-                	 finalResultMenuHandler= new FinalDecidedTodayMenuHandler();
-                	response = finalResultMenuHandler1.addFinalResultMenu(data);
-                	break;
-                	
-                case"/finalDecidedMenuAfterRollout":
-                	 finalResultMenuHandler = new FinalDecidedTodayMenuHandler();
-                	response = finalResultMenuHandler.viewFinalResultMenu();
-                	break; 
-                	
+                    response = recommendationService.getFoodItemForNextDay(data);
+                    break;
+                case "/CHEF/addfinalResultMenu":
+                    response = finalResultMenuHandler.addFinalResultMenu(data);
+                    break;
                 case "/CHEF/rolloutMenu":
-                	chefMenuRolloutHandler = new ChefMenuRolloutHandler();
-				    response = chefMenuRolloutHandler.rolloutMenu(data);
-               	break;
-               	
+                    response = chefMenuRolloutHandler.rolloutMenu(data);
+                    break;
                 case "/CHEF/finalVoteMenu":
-                chefMenuRolloutHandler = new ChefMenuRolloutHandler();
-			    response = chefMenuRolloutHandler.viewRolloutResult();
-			    break;
-                case "/EMPLOYEE/viewChefRollout":
-                   userVotesrvice = new UserVoteService();
-                   response = userVotesrvice.getChefRolloutListForCurrentDateAsJson();
-                   break;
-                case "/EMPLOYEE/addVote":
-                     userVotesrvice = new UserVoteService();
-                     response = userVotesrvice.addVote(data);
+                    response = chefMenuRolloutHandler.viewRolloutResult();
+                    break;
+                    
+                    
+                    
+                    
+                    
+                    
+                case "/EMPLOYEE/addFeedbackOnFoodItem":
+                    response = feedbackService.addFeedback(data);
+                    break;
+                case "/EMPLOYEE/viewUserProfile":
+				response = userProfile.getUserProfile(data);
                 	break;
+                case "/EMPLOYEE/updateUserProfile":
+    				response = userProfile.updateUserProfile(data);
+                    	break;   
+                case "/EMPLOYEE/viewChefRollout":
+                    response = userVoteService.getChefRolloutListForCurrentDateAsJson();
+                    break;
+                case "/EMPLOYEE/addVote":
+                    response = userVoteService.addVote(data);
+                    break;
                 case "/EMPLOYEE/recommendation":
-                	System.out.println("inside the recommendation case");
-                  recommendationService  = new RecommendationService();
-                response = recommendationService.getFoodItemByTaste();
-                break;
-                case "/EMPLOYEE/viewNotification":
-                	System.out.println("inside the Notification");
-                 NotificationService notificationService  = new NotificationService();
-                response =  notificationService.getNotification();
-                break;
-                
+                    response = recommendationService.getFoodItemByTaste();
+                    break;
+                case "/EMPLOYEE/recommendationOnChefRooloout":
+                	  response = recommendationService.getFoodOrderbyRatingOnChefRollout(); 
+                	  break;
+                	  case "/EMPLOYEE/viewNotification":
+                    response = notificationService.getNotification();
+                    break;
                 case "/EMPLOYEE/viewUnseenNotification":
-                	   notificationService  = new NotificationService();
-                      response =  notificationService.getUnseenNotifications(data);
-                       break;
+                    response = notificationService.getUnseenNotifications(data);
+                    break;
                 default:
-                    response = JsonConverter.convertStatusAndMessageToJson("info","Unknown request path: " + path);
+                    response = JsonConverter.convertStatusAndMessageToJson("info", "Unknown request path: " + path);
                     break;
             }
         } catch (Exception e) {
             System.err.println("Error processing client request: " + e.getMessage());
-            response = "Error processing request";
+            response = JsonConverter.convertStatusAndMessageToJson("error", "Error processing request");
         }
 
         return response;

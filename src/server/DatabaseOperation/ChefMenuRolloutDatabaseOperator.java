@@ -11,7 +11,6 @@ public class ChefMenuRolloutDatabaseOperator {
 
     private Connection connection;
 
-    
     public ChefMenuRolloutDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
@@ -23,17 +22,12 @@ public class ChefMenuRolloutDatabaseOperator {
             int itemId = menu.getItemID(rollout.getItemName());
             int categoryId = menu.getCategoryID(rollout.getCategoryName());
 
-            // Log the retrieved IDs
-            System.out.println("Item ID: " + itemId);
-            System.out.println("Category ID: " + categoryId);
-
-          
             rollout.setItemID(itemId);
             rollout.setCategoryID(categoryId);
-
         } catch (Exception e) {
+            
             e.printStackTrace();
-            return false;  
+            return false;
         }
 
         String query = "INSERT INTO ChefMenuRollout (rolloutDate, itemID, categoryID, numberOfVotes) VALUES (?, ?, ?, ?)";
@@ -43,19 +37,12 @@ public class ChefMenuRolloutDatabaseOperator {
             stmt.setInt(3, rollout.getCategoryID());
             stmt.setInt(4, rollout.getNumberOfVotes());
 
-            // Log the values being set
-            System.out.println("PreparedStatement values: " +
-                "rolloutDate=" + rollout.getRolloutDate() +
-                ", itemID=" + rollout.getItemID() +
-                ", categoryID=" + rollout.getCategoryID() +
-                ", numberOfVotes=" + rollout.getNumberOfVotes());
-
             int affectedRows = stmt.executeUpdate();
 
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Error inserting ChefMenuRollout: " + e.getMessage());
-            throw e;
+            throw e; 
         }
     }
 
@@ -91,17 +78,12 @@ public class ChefMenuRolloutDatabaseOperator {
                 rollout.setCategoryID(rs.getInt("categoryID"));
                 rollout.setNumberOfVotes(rs.getInt("numberOfVotes"));
                 try {
-					rollout.setCategoryName(menuDatabaseOperator.getItemName(rollout.getItemID()));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                try {
-					rollout.setItemName(menuDatabaseOperator.getCategoryName(rollout.getCategoryID()));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    rollout.setCategoryName(menuDatabaseOperator.getCategoryName(rollout.getCategoryID()));
+                    rollout.setItemName(menuDatabaseOperator.getItemName(rollout.getItemID()));
+                } catch (Exception e) {
+                    // Handle specific exceptions or rethrow as appropriate
+                    e.printStackTrace();
+                }
                 rollouts.add(rollout);
             }
         }
@@ -116,7 +98,7 @@ public class ChefMenuRolloutDatabaseOperator {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error updating vote count: " + e.getMessage());
-            throw e;
+            throw e; 
         }
     }
 
@@ -142,7 +124,7 @@ public class ChefMenuRolloutDatabaseOperator {
             }
         } catch (SQLException e) {
             System.err.println("Error casting vote: " + e.getMessage());
-            throw e;
+            throw e; 
         }
         return false;
     }

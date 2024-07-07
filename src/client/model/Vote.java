@@ -7,7 +7,7 @@ public class Vote {
     private int categoryID;
     private boolean voteDecision;
 
-    // Constructor
+   
     public Vote(String userID, int rolloutID, int categoryID, boolean voteDecision) {
         this.userID = userID;
         this.rolloutID = rolloutID;
@@ -15,20 +15,20 @@ public class Vote {
         this.voteDecision = voteDecision;
     }
 
-    // Default Constructor
+ 
     public Vote() {}
 
-    // Getter for userID
+    
     public String getUserID() {
         return userID;
     }
 
-    // Setter for userID
+    
     public void setUserID(String userID) {
         this.userID = userID;
     }
 
-    // Getter for rolloutID
+ 
     public int getRolloutID() {
         return rolloutID;
     }
@@ -38,22 +38,22 @@ public class Vote {
         this.rolloutID = rolloutID;
     }
 
-    // Getter for categoryID
+    
     public int getCategoryID() {
         return categoryID;
     }
 
-    // Setter for categoryID
+   
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 
-    // Getter for voteDecision
+   
     public boolean isVoteDecision() {
         return voteDecision;
     }
 
-    // Setter for voteDecision
+    
     public void setVoteDecision(boolean voteDecision) {
         this.voteDecision = voteDecision;
     }

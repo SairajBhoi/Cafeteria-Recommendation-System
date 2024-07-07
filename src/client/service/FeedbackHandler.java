@@ -15,67 +15,28 @@ public class FeedbackHandler {
     private String employeeName;
     private String employeeId;
 
-    public FeedbackHandler(String role,String employeeName,String employeeID) {
+    public FeedbackHandler(String role, String employeeName, String employeeID) {
         feedback = new Feedback();
         feedback.setEmployeeId(employeeID);
         feedback.setEmployeeName(employeeName);
         this.role = role;
-        this.employeeName=employeeName;
-        this.employeeId=employeeID;
+        this.employeeName = employeeName;
+        this.employeeId = employeeID;
         this.requestPath = "/" + role;
     }
+
     public FeedbackHandler(String role) {
-    	
-    	this.role=role;
+        this.role = role;
+        this.requestPath = "/" + role;
     }
-    
-    
-    
 
-    public void addFeedbackOnFoodItem() throws IOException {
- 
-
-        String itemName=null;
-		try {
-			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        int tasteRating = 0, qualityRating = 0, freshnessRating=0, valueForMoneyRating=0;
-
-        do {
-            try {
-				tasteRating = InputHandler.getIntegerInput("Enter the Taste rating of " + itemName + " (0-5): ");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        } while (!isValidRating(tasteRating));
-
-        do {
-            try {
-				qualityRating =  InputHandler.getIntegerInput("Enter the Quality rating of " + itemName + " (0-5): ");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        } while (!isValidRating(qualityRating));
-
-        do {
-            try {
-				freshnessRating =  InputHandler.getIntegerInput("Enter the Freshness rating of " + itemName + " (0-5): ");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        } while (!isValidRating(freshnessRating));
-
-        do {
-            valueForMoneyRating =  InputHandler.getIntegerInput("Enter the Value for Money rating of " + itemName + " (0-5): ");
-        } while (!isValidRating(valueForMoneyRating));
-
+    public void addFeedbackOnFoodItem() {
+        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+        int tasteRating = getValidRating("Enter the Taste rating of " + itemName + " (0-5): ");
+        int qualityRating = getValidRating("Enter the Quality rating of " + itemName + " (0-5): ");
+        int freshnessRating = getValidRating("Enter the Freshness rating of " + itemName + " (0-5): ");
+        int valueForMoneyRating = getValidRating("Enter the Value for Money rating of " + itemName + " (0-5): ");
         String feedbackMessage = InputHandler.getStringInput("Enter feedback message: ");
-
-        this.requestPath = this.requestPath + "/addFeedbackOnFoodItem"; 
 
         feedback.setEmployeeName(this.employeeName);
         feedback.setItemName(itemName);
@@ -85,61 +46,42 @@ public class FeedbackHandler {
         feedback.setValueForMoneyRating(valueForMoneyRating);
         feedback.setFeedbackMessage(feedbackMessage);
 
-        String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback );
-        this.requestPath = "/" + this.role;
-        
-        String jsonResponse=Client.requestServer(jsonRequest);
-        System.out.print(jsonResponse);
+        String fullPath = this.requestPath + "/addFeedbackOnFoodItem";
+        String jsonRequest = JsonConverter.convertObjectToJson(fullPath, feedback);
 
-//        System.out.println("Feedback added successfully!");
-//        System.out.println("Feedback details:");
-//        System.out.println("Item Name: " + feedback.getItemName());
-//        System.out.println("Taste Rating: " + feedback.getTasteRating());
-//        System.out.println("Quality Rating: " + feedback.getQualityRating());
-//        System.out.println("Freshness Rating: " + feedback.getFreshnessRating());
-//        System.out.println("Value for Money Rating: " + feedback.getValueForMoneyRating());
-//        System.out.println("Feedback Message: " + feedback.getFeedbackMessage());
+        try {
+            String jsonResponse = Client.requestServer(jsonRequest);
+            System.out.print(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error sending feedback to the server: " + e.getMessage());
+        }
+    }
+
+    private int getValidRating(String message) {
+        int rating;
+        do {
+            rating = InputHandler.getIntegerInput(message);
+        } while (!isValidRating(rating));
+        return rating;
     }
 
     private boolean isValidRating(int rating) {
         return rating >= 0 && rating <= 5;
     }
 
+    public void viewFeedbackOnFoodItem() {
+        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+        feedback.setItemName(itemName);
 
-   public void viewFeedbackonFoodItem() {
-	   String itemName = null;
+        String fullPath = "/viewFeedbackOnFoodItem";
+        String jsonRequest = JsonConverter.convertObjectToJson(fullPath, feedback);
 
-		 try {
-			itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
-	
-    System.out.print("view Feedback");
-    this.requestPath = "/viewFeedbackonFoodItem"; 
-      Feedback feedback= new Feedback();
-      feedback.setItemName(itemName);
-      System.out.print(feedback.getItemName());
-      
-    String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath,feedback);
-  
-    String jsonRespose = null;
-	try {
-		jsonRespose = Client.requestServer(jsonRequest);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-
-    this.requestPath = "/" + this.role;
-    
-    System.out.print(jsonRespose);
-    
-    PrintOutToConsole.printToConsole(jsonRespose);
-
-
-   }
-  
+        try {
+            String jsonResponse = Client.requestServer(jsonRequest);
+            System.out.print(jsonResponse);
+            PrintOutToConsole.printToConsole(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error retrieving feedback from the server: " + e.getMessage());
+        }
+    }
 }

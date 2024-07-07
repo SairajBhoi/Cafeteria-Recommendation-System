@@ -11,7 +11,7 @@ public class TodayMenu {
     private String categoryName;
     private double itemPrice;
 
-    // Getters and Setters
+
    
 	public Date getMenuDate() {
         return menuDate;
