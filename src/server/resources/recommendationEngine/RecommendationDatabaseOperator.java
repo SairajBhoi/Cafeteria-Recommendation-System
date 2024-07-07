@@ -1,4 +1,4 @@
-package server.resources;
+package server.resources.recommendationEngine;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,11 +16,11 @@ import org.json.simple.JSONObject;
 import server.util.JsonConverter;
 import server.DatabaseConnection;
 
-public class RecommendationEngine {
+public class RecommendationDatabaseOperator {
 
     private Connection connection;
 
-    public RecommendationEngine() {
+    public RecommendationDatabaseOperator() {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 

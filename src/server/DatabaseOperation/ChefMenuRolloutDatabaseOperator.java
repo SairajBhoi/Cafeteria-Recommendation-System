@@ -2,8 +2,11 @@ package server.DatabaseOperation;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import server.model.MenuItem;
 import server.DatabaseConnection;
 import server.model.ChefMenuRollout;
 
@@ -81,7 +84,7 @@ public class ChefMenuRolloutDatabaseOperator {
                     rollout.setCategoryName(menuDatabaseOperator.getCategoryName(rollout.getCategoryID()));
                     rollout.setItemName(menuDatabaseOperator.getItemName(rollout.getItemID()));
                 } catch (Exception e) {
-                    // Handle specific exceptions or rethrow as appropriate
+                    
                     e.printStackTrace();
                 }
                 rollouts.add(rollout);
@@ -89,6 +92,69 @@ public class ChefMenuRolloutDatabaseOperator {
         }
         return rollouts;
     }
+    
+    
+    public List<MenuItem> getChefMenuItemsByRolloutDate(Date rolloutDate) throws SQLException {
+        List<MenuItem> menuItems = new ArrayList<>();
+        String query = "SELECT m.nameOfFood, m.foodPrice, m.foodAvailable, " +
+                       "m.CuisineType, m.FoodType, m.SpiceLevel, m.IsSweet, c.categoryName " +
+                       "FROM ChefMenuRollout r " +
+                       "JOIN FoodMenuItem m ON r.itemID = m.itemID " +
+                       "JOIN FoodItemCategory ic ON m.itemID = ic.itemID " +
+                       "JOIN Category c ON ic.categoryID = c.categoryID " +
+                       "WHERE r.rolloutDate = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDate(1, rolloutDate);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                MenuItem menuItem = new MenuItem();
+                menuItem.setItemName(rs.getString("nameOfFood"));
+                menuItem.setItemPrice(rs.getFloat("foodPrice"));
+                menuItem.setItemAvailable(rs.getBoolean("foodAvailable"));
+                menuItem.setCuisineType(rs.getString("CuisineType"));
+                menuItem.setFoodType(rs.getString("FoodType"));
+                menuItem.setSpiceLevel(rs.getString("SpiceLevel"));
+                menuItem.setSweet(rs.getBoolean("IsSweet"));
+                menuItem.setItemCategory(rs.getString("categoryName"));
+                menuItems.add(menuItem);
+            }
+        }
+
+        return menuItems;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     public boolean updateVoteCount(int rolloutID, int newVoteCount) throws SQLException {
         String query = "UPDATE ChefMenuRollout SET numberOfVotes = ? WHERE rolloutID = ?";

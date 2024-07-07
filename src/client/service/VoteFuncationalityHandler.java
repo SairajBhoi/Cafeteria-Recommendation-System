@@ -90,12 +90,35 @@ public class VoteFuncationalityHandler {
             
             System.out.println("Recommendation");
             resetRequestPath();
-            this.requestPath += "/recommendationOnChefRooloout";
+//           this.requestPath += "/recommendationOnChefRooloout";
+//            
+//          
+//            
+//            
+//            
+//            String jsonRequestRecommendation = JsonConverter.convertObjectToJson(this.requestPath, null);
+//            String jsonResponseRecommendation= Client.requestServer(jsonRequestRecommendation);
             
             
             
-            String jsonRequestRecommendation = JsonConverter.convertObjectToJson(this.requestPath, null);
-            String jsonResponseRecommendation= Client.requestServer(jsonRequestRecommendation);
+            
+            
+            this.requestPath += "/recommendationOnPreference";
+            
+            
+            
+            String jsonRequestRecommendation = JsonConverter.convertObjectToJson(this.requestPath,null);
+            String jsonuserID= JsonConverter.createJson("UserID", this.UserID);
+            
+            
+            System.out.println("jsonRequestRecommendation=============="+jsonRequestRecommendation);
+            
+            System.out.println("jsonuserID ==============="+jsonuserID);
+            
+            String jsonrequest=JsonConverter.addJsonObjectToDataField(jsonRequestRecommendation, jsonuserID);
+            System.out.println("jsonuserID ==============="+jsonrequest);
+            
+            String jsonResponseRecommendation= Client.requestServer(jsonrequest);
             PrintOutToConsole.printToConsole(jsonResponseRecommendation);
             
             

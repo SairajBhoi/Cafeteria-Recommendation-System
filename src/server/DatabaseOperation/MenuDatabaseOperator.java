@@ -246,6 +246,9 @@ public class MenuDatabaseOperator {
             throw new Exception("Failed to get item ID.\n" + ex.getMessage());
         }
     }
+    
+    
+    
 
     public boolean isItemInCategory(String itemName, String categoryName) throws Exception {
         String query = "SELECT COUNT(*) AS count FROM FoodMenuItem fm " +

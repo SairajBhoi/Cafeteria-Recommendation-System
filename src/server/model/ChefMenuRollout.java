@@ -15,6 +15,7 @@ public class ChefMenuRollout {
     private int numberOfVotes;
     private String itemName;
     private String categoryName;
+   
 
 
     public ChefMenuRollout() {}

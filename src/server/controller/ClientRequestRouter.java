@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 
 import server.auth.AuthenticationService;
+import server.resources.recommendationEngine.RecommendationService;
 import server.service.ChefMenuRolloutHandler;
 import server.service.FeedbackService;
 import server.service.FinalDecidedTodayMenuHandler;
 import server.service.MenuItemHandler;
 import server.service.NotificationService;
-import server.service.RecommendationService;
 import server.service.UserProfile;
 import server.service.UserVoteService;
 import server.util.JsonConverter;
@@ -134,7 +134,10 @@ public class ClientRequestRouter {
                 case "/EMPLOYEE/recommendationOnChefRooloout":
                 	  response = recommendationService.getFoodOrderbyRatingOnChefRollout(); 
                 	  break;
-                	  case "/EMPLOYEE/viewNotification":
+                case "/EMPLOYEE/recommendationOnPreference":
+                	response =recommendationService.getFoodOrderbyUserPreferenceOnChefRollout(data);
+                	break;
+               case "/EMPLOYEE/viewNotification":
                     response = notificationService.getNotification();
                     break;
                 case "/EMPLOYEE/viewUnseenNotification":
