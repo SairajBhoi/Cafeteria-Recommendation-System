@@ -64,25 +64,33 @@ public class UserVoteDatabaseOperator {
         try {
             if (!hasUserVoted(vote.getUserID(), vote.getRolloutID())) {
                 String sql = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, ?)";
-                PreparedStatement pstmt = connection.prepareStatement(sql);
-                pstmt.setString(1, vote.getUserID());
-                pstmt.setInt(2, vote.getRolloutID());
-                pstmt.setBoolean(3, vote.isVoteDecision());
-                pstmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-                pstmt.executeUpdate();
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setString(1, vote.getUserID());
+                    pstmt.setInt(2, vote.getRolloutID());
+                    pstmt.setInt(3, vote.isVoteDecision() ? 1 : 0);  // Use setBoolean for boolean values
+                    
+                    pstmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
+    
+                    pstmt.executeUpdate();
+                }
 
-                String updateSql = "UPDATE ChefMenuRollout SET numberOfVotes = numberOfVotes + 1 WHERE rolloutID = ?";
-                PreparedStatement updatePstmt = connection.prepareStatement(updateSql);
-                updatePstmt.setInt(1, vote.getRolloutID());
-                updatePstmt.executeUpdate();
+                if (vote.isVoteDecision()) {
+                    String updateSql = "UPDATE ChefMenuRollout SET numberOfVotes = numberOfVotes + 1 WHERE rolloutID = ?";
+                    try (PreparedStatement updatePstmt = connection.prepareStatement(updateSql)) {
+                        updatePstmt.setInt(1, vote.getRolloutID());
+                        updatePstmt.executeUpdate();
+                    }
+                }
             } else {
                 return "error: already given feedback";
-            }
+           }
         } catch (SQLException e) {
             return "error: " + e.getMessage();
         }
         return "success: voted successfully";
     }
+
+
 
     public boolean hasUserVoted(String userID, int rolloutID) {
         String sql = "SELECT COUNT(*) FROM UserVote WHERE userID = ? AND rolloutID = ?";

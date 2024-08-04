@@ -22,7 +22,7 @@ public class ChefController {
             displayOptions();
             int choice = InputHandler.getIntegerInput("Enter your choice: ");
             processOption(choice);
-            if (choice == 7) {
+            if (choice == 10) {
                 break;
             }
         }
@@ -49,6 +49,15 @@ public class ChefController {
                 chef.viewFinalMenuDecided();
                 break;
             case 7:
+                chef.viewChefDiscardList();
+                break;
+            case 8:
+            	chef.generateDiscardList();
+            	break;
+            case 9: 
+            	 chef.viewFeedbackOnDiscardList();
+            	 break;
+            case 10:
                 System.out.println("Logging out...");
                 chef.logout();
                 break;
@@ -63,9 +72,12 @@ public class ChefController {
         System.out.println("\n1. Rollout menu for tomorrow.");
         System.out.println("2. View Recommendation from Engine.");
         System.out.println("3. View Feedback on food item.");
-        System.out.println("4. Create final report of rollout.");
+        System.out.println("4. View rollout.");
         System.out.println("5. Add Decided Menu To be prepared tomorrow.");
         System.out.println("6. View Decided Menu To be prepared tomorrow.");
-        System.out.println("7. Logout");
+        System.out.println("7. View Chef DiscardList");
+        System.out.println("8. Generate DiscardList");
+        System.out.println("9. Feedback on Discard List");
+        System.out.println("10. Logout");
     }
 }

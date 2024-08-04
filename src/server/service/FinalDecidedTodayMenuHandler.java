@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.time.LocalDate;
 import java.sql.Date;
 
 import java.util.ArrayList;
@@ -52,9 +52,13 @@ if(status) {
     
     
     public String viewFinalResultMenu() throws Exception {
+    	LocalDate nextDay = LocalDate.now().plusDays(1);
+        Date nextDayDate = Date.valueOf(nextDay);
+        String date =  nextDayDate.toString();
+        
         FinalDecidedTodaysMenuDatabaseOperator finalResultMenu = new FinalDecidedTodaysMenuDatabaseOperator();
-        List<TodayMenu> menuItems = (List<TodayMenu>) finalResultMenu.getTodaysMenuItems();
-
+        List<TodayMenu> menuItems = (List<TodayMenu>) finalResultMenu.getMenuItems(date);
+        
         String response;
         if (menuItems == null || menuItems.isEmpty()) {
             response = JsonConverter.convertStatusAndMessageToJson("info", "Not yet prepared");
@@ -65,9 +69,30 @@ if(status) {
         return response;
     }
 
- }
+ 
 
 
+
+
+
+public String viewTodaysMenu() throws Exception {
+    FinalDecidedTodaysMenuDatabaseOperator finalResultMenu = new FinalDecidedTodaysMenuDatabaseOperator();
+    
+    LocalDate currentDate = LocalDate.now();
+    String date = currentDate.toString();
+    List<TodayMenu> menuItems = (List<TodayMenu>) finalResultMenu.getMenuItems(date);
+
+    String response;
+    if (menuItems == null || menuItems.isEmpty()) {
+        response = JsonConverter.convertStatusAndMessageToJson("info", "Not yet prepared");
+    } else {
+        response = JsonConverter.convertObjectToJson(menuItems);
+    }
+
+    return response;
+}
+
+}
 
 
 

@@ -35,7 +35,7 @@ public class UserProfile {
 		
 		
 		String jsonRequest =JsonConverter.convertObjectToJson(this.requestPath, userPreference);
-		System.out.println(jsonRequest);
+		//System.out.println(jsonRequest);
 		
 		
 		String jsonResponse=null;
@@ -98,12 +98,11 @@ public class UserProfile {
 	    userPreference.setHasSweetTooth(InputHandler.getBooleanInput("Do you have a sweet tooth?"));
 
 	    String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, userPreference);
-	    System.out.println("JSON Request: " + jsonRequest);
 
 	    String jsonResponse = null;
 	    try {
 	        jsonResponse = Client.requestServer(jsonRequest);
-	        System.out.println("jsonResponse:"+ jsonResponse);
+	        PrintOutToConsole.printToConsole(jsonResponse);
 	        
 	        
 	    } catch (IOException e) {

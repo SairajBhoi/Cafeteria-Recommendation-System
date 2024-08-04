@@ -118,7 +118,7 @@ public class NotificationDatabaseOperator {
         }
     }
     
-    public List<Notification> getAllNotifications() {
+    public List<Notification> getAllNotifications(String userID) {
         String selectQuery = "SELECT notificationID, notificationMessage, notificationDate FROM Notification ORDER BY notificationDate DESC";
 
         List<Notification> notifications = new ArrayList<>();
@@ -138,6 +138,7 @@ public class NotificationDatabaseOperator {
                 Date currentDate = Date.valueOf(localDate);
                 notification.setNotificationDate(currentDate);
                 notifications.add(notification);
+                markNotificationsAsSeen(userID,notification.getNotificationID());
             }
 
         } catch (SQLException e) {

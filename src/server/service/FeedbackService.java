@@ -16,7 +16,7 @@ public class FeedbackService {
 	    String jsonResponse;
 	    try {
 	       
-	        Feedback feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
+	        feedback = JsonStringToObject.fromJsonToObject(data, Feedback.class);
 	        
 	     
 	        String feedbackMessage = feedback.getFeedbackMessage();
@@ -41,16 +41,26 @@ public class FeedbackService {
 	}
 	 
 	 
-	 public String viewFeedback(String data) {
-		    try {
-		    	String itemName=JsonStringToObject.getValueFromData("itemName", data);
-		    	EmployeeFeedbackDatabaseOperator employeeFeedback = new EmployeeFeedbackDatabaseOperator();
-		        List<Map<String, Object>> feedbackList = employeeFeedback.viewFeedback(itemName);
-		        return JsonConverter.convertObjectToJson(feedbackList);
-		    } catch (Exception e) {
-		        e.printStackTrace(); 
-		        return JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
-		    }
-		}
-	 
+	public String viewFeedback(String data) {
+	    String jsonResponse = null;
+
+	    try {
+	        String itemName = JsonStringToObject.getValueFromData("itemName", data);
+	        EmployeeFeedbackDatabaseOperator employeeFeedback = new EmployeeFeedbackDatabaseOperator();
+	        List<Map<String, Object>> feedbackList = employeeFeedback.viewFeedback(itemName);
+
+	        if (feedbackList == null || feedbackList.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No feedback found for the given item name");
+	        } else {
+	            jsonResponse = JsonConverter.convertObjectToJson(feedbackList);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	    }
+
+	    return jsonResponse;
+	}
+
+
 }

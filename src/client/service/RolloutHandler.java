@@ -68,6 +68,22 @@ public class RolloutHandler {
             System.err.println("Error fetching final decided menu: " + e.getMessage());
         }
     }
+    
+    
+    public void todaysMenu() {
+        try {
+            this.requestPath = "/viewTodaysMenu";
+            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
+            String jsonResponse = Client.requestServer(jsonRequest);
+            resetRequestPath();
+
+            System.out.println("Today's Menu:");
+            PrintOutToConsole.printToConsole(jsonResponse);
+        } catch (IOException e) {
+            System.err.println("Error fetching final decided menu: " + e.getMessage());
+        }
+    }
+    
 
     public void createChefMenuRollouts(String mealType) {
         try {
@@ -83,7 +99,8 @@ public class RolloutHandler {
                 String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, chefMenuRollout);
 
                 String jsonResponse = Client.requestServer(jsonRequest);
-                System.out.println("JSON Response: " + jsonResponse);
+                PrintOutToConsole.printToConsole(jsonResponse);
+  
             }
         } catch (IOException e) {
             System.err.println("Error creating chef menu rollouts: " + e.getMessage());
@@ -110,11 +127,11 @@ public class RolloutHandler {
                 todayMenu.setItemName(itemName);
                 todayMenu.setMenuDate(nextDayDate);
 
-                String currentRequestPath = this.requestPath + "/CHEF/addfinalResultMenu";
+                String currentRequestPath = this.requestPath + "/addfinalResultMenu";
                 String jsonRequest = JsonConverter.convertObjectToJson(currentRequestPath, todayMenu);
 
                 String jsonResponse = Client.requestServer(jsonRequest);
-                System.out.println("JSON Response: " + jsonResponse);
+                PrintOutToConsole.printToConsole(jsonResponse);
             }
         } catch (IOException e) {
             System.err.println("Error creating final decided menu: " + e.getMessage());

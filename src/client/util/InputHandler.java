@@ -11,13 +11,19 @@ public class InputHandler {
     public static String getStringInput(String messageToUser) {
         System.out.print(messageToUser);
         try {
-            return bufferedReader.readLine();
+            String input = bufferedReader.readLine();
+            if (input != null) {
+                
+                String trimmedInput = input.trim();
+                return trimmedInput;
+            } else {
+                throw new IOException(); 
+            }
         } catch (IOException e) {
             System.out.println("Error reading input. Please try again.");
-            return getStringInput(messageToUser);
+            return getStringInput(messageToUser); 
         }
     }
-
     public static int getIntegerInput(String messageToUser) {
         while (true) {
             try {

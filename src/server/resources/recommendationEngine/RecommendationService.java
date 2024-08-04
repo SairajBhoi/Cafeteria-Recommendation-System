@@ -25,33 +25,69 @@ public class RecommendationService {
 	
 	
 	
-public String getFoodItemForNextDay(String data){
-		
-		FoodCategory category =JsonStringToObject.fromJsonToObject(data,FoodCategory.class);
-		
-		RecommendationDatabaseOperator recommendationEngine = new RecommendationDatabaseOperator();
-		List <String> result =recommendationEngine.getFoodItemForNextDay(category.getCategoryName(), category.getNumberOfItems());
-		String jsonResponse= JsonConverter.convertObjectToJson(result);
-		
-	return jsonResponse;
+	public String getFoodItemForNextDay(String data) {
+	    String jsonResponse;
+	    
+	    try {
+	        FoodCategory category = JsonStringToObject.fromJsonToObject(data, FoodCategory.class);
+	        RecommendationDatabaseOperator recommendationEngine = new RecommendationDatabaseOperator();
+	        List<String> result = recommendationEngine.getFoodItemForNextDay(category.getCategoryName(), category.getNumberOfItems());
+	        
+	        if (result == null || result.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No food items found for the next day");
+	        } else {
+	            jsonResponse = JsonConverter.convertObjectToJson(result);
+	        }
+	    } catch (Exception e) {
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    System.out.println(jsonResponse);
+	    return jsonResponse;
 	}
 
 
 
-	public String getFoodItemByTaste(){
-		
-		RecommendationDatabaseOperator recommendationEngine = new RecommendationDatabaseOperator();
-		JSONArray result =recommendationEngine.getCategoryRatingsOrderedByTaste();
-		
-	return result.toString();
+
+	public String getFoodItemByTaste() {
+	    String jsonResponse;
+	    
+	    try {
+	        RecommendationDatabaseOperator recommendationEngine = new RecommendationDatabaseOperator();
+	        JSONArray result = recommendationEngine.getCategoryRatingsOrderedByTaste();
+	        
+	        if (result == null || result.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No food items found ordered by taste");
+	        } else {
+	            jsonResponse = result.toString();
+	        }
+	    } catch (Exception e) {
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return jsonResponse;
 	}
 
 
 	public String getFoodOrderbyRatingOnChefRollout() {
+	    String jsonResponse;
 	    LocalDate currentDate = LocalDate.now();
 	    RecommendationDatabaseOperator recommendationEngine = new RecommendationDatabaseOperator();
-	    JSONArray jsonArray = recommendationEngine.getFoodItemRatingsForDate(currentDate);
-	    String jsonResponse= JsonConverter.convertObjectToJson(jsonArray);
+	    
+	    try {
+	        JSONArray jsonArray = recommendationEngine.getFoodItemRatingsForDate(currentDate);
+	        
+	        if (jsonArray == null || jsonArray.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No food items found for the given date");
+	        } else {
+	            jsonResponse = JsonConverter.convertObjectToJson(jsonArray);
+	        }
+	    } catch (Exception e) {
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	        e.printStackTrace();
+	    }
 	    
 	    System.out.print(jsonResponse);
 	    return jsonResponse;
@@ -130,7 +166,7 @@ public String getFoodItemForNextDay(String data){
         }
 
         if (menuItem.isSweet() == userPreference.isHasSweetTooth()) {
-            score += 0.33;
+            score += 0.38;
         }
 
         return score;

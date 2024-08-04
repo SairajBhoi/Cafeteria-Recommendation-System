@@ -62,7 +62,14 @@ public class EmployeeFeedbackDatabaseOperator {
     public List<Map<String, Object>> viewFeedback(String itemName) throws SQLException, Exception {
         List<Map<String, Object>> feedbackList = new ArrayList<>();
         MenuDatabaseOperator menu = new MenuDatabaseOperator();
-        int itemId = menu.getItemID(itemName);
+        
+        int itemId;
+        try {
+            itemId = menu.getItemID(itemName);
+        } catch (Exception e) {
+            // Rethrow the exception to be handled by the calling method
+            throw new Exception("Failed to retrieve feedback: " + e.getMessage());
+        }
 
         String query = "SELECT feedbackID, userUserId, itemID, feedbackGivenDate, qualityRating, tasteRating, " +
                        "freshnessRating, valueForMoneyRating, feedbackMessage, sentiment " +
@@ -98,6 +105,7 @@ public class EmployeeFeedbackDatabaseOperator {
 
         return feedbackList;
     }
+
 
     private String getUserName(String userId) throws SQLException, Exception {
         UserDatatabaseOperator userDAO = new UserDatatabaseOperator();

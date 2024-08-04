@@ -74,10 +74,6 @@ public class ChefMenuRollout {
         this.categoryName = categoryName;
     }
 
-	public double getScore() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
    
    

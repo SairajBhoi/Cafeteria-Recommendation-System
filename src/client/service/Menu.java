@@ -19,13 +19,13 @@ public class Menu {
 
     public void addMenuItem() {
         menuItem = new MenuItem();
-        fillMenuItemDetails();
+        fillMenuItemDetails(true);
         sendMenuItemRequest("/addMenuItem");
     }
 
     public void updateMenuItem() {
         menuItem = new MenuItem();
-        fillMenuItemDetails();
+        fillMenuItemDetails(false);
         sendMenuItemRequest("/updateMenuItem");
     }
 
@@ -40,10 +40,10 @@ public class Menu {
 
             String fullPath = this.requestPath + "/updateFoodAvailableStatus";
             String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-            System.out.println("JSON Request: " + jsonRequest);
+           // System.out.println("JSON Request: " + jsonRequest);
 
             String jsonResponse = Client.requestServer(jsonRequest);
-            System.out.println(jsonResponse);
+           // System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error updating availability status: " + e.getMessage());
@@ -68,10 +68,10 @@ public class Menu {
             MenuItem menuItem = new MenuItem(itemName, categoryName);
             String fullPath = this.requestPath + "/deleteMenuItem";
             String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-            System.out.println("JSON Request: " + jsonRequest);
+          //  System.out.println("JSON Request: " + jsonRequest);
 
             String jsonResponse = Client.requestServer(jsonRequest);
-            System.out.println(jsonResponse);
+         //   System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error deleting menu item: " + e.getMessage());
@@ -84,7 +84,7 @@ public class Menu {
         try {
             String fullPath = "/viewAllMenuItems";
             String jsonRequest = JsonConverter.convertObjectToJson(fullPath, null);
-            System.out.println("JSON Request: " + jsonRequest);
+         //   System.out.println("JSON Request: " + jsonRequest);
 
             String jsonResponse = Client.requestServer(jsonRequest);
             System.out.println("Menu Item:");
@@ -96,16 +96,17 @@ public class Menu {
         }
     }
 
-    private void fillMenuItemDetails() {
+    private void fillMenuItemDetails(boolean isCategoryRequired) {
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
 		float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
 		boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
 
-		char category;
+		char category = 0;
+		if (isCategoryRequired) {
 		do {
 		    category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
 		} while (!isValidCategory(category));
-
+		}
 		String foodType;
 		do {
 		    int foodTypeInput = InputHandler.getIntegerInput("Enter dietary preference (1 - Vegetarian, 2 - Non-Vegetarian, 3 - Eggetarian): ");
@@ -134,13 +135,13 @@ public class Menu {
 		} while (cuisineType == null);
 
 		boolean isSweet = InputHandler.getBooleanInput("Does " + itemName + " have a sweet taste?");
-
-		String categoryName = getCategoryName(category);
-
+		if (isCategoryRequired) {
+				String categoryName = getCategoryName(category);
+				menuItem.setItemCategory(categoryName);
+		}
 		menuItem.setItemName(itemName);
 		menuItem.setItemPrice(itemPrice);
 		menuItem.setItemAvailable(isItemAvailable);
-		menuItem.setItemCategory(categoryName);
 		menuItem.setCuisineType(cuisineType);
 		menuItem.setFoodType(foodType);
 		menuItem.setSpiceLevel(spiceLevel);
@@ -151,10 +152,10 @@ public class Menu {
         try {
             String fullPath = this.requestPath + endpoint;
             String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-            System.out.println("JSON Request: " + jsonRequest);
+           // System.out.println("JSON Request: " + jsonRequest);
 
             String jsonResponse = Client.requestServer(jsonRequest);
-            System.out.println(jsonResponse);
+            //System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error sending menu item request: " + e.getMessage());

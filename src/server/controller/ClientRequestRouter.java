@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import server.auth.AuthenticationService;
 import server.resources.recommendationEngine.RecommendationService;
 import server.service.ChefMenuRolloutHandler;
+import server.service.DiscardedItemListHandler;
+import server.service.FeedbackOnDiscardFoodItem;
 import server.service.FeedbackService;
 import server.service.FinalDecidedTodayMenuHandler;
 import server.service.MenuItemHandler;
@@ -26,7 +28,8 @@ public class ClientRequestRouter {
     private RecommendationService recommendationService;
     private NotificationService notificationService;
     private  UserProfile userProfile;
-
+    private DiscardedItemListHandler discardedItemListHandler;
+    private FeedbackOnDiscardFoodItem feedbackOnDiscardFoodItem;
     public ClientRequestRouter() {
         authService = new AuthenticationService();
         try {
@@ -41,6 +44,8 @@ public class ClientRequestRouter {
         userVoteService = new UserVoteService();
         chefMenuRolloutHandler = new ChefMenuRolloutHandler();
         userProfile  = new UserProfile();
+        discardedItemListHandler = new DiscardedItemListHandler();
+        feedbackOnDiscardFoodItem = new FeedbackOnDiscardFoodItem();
     }
 
     public String route(String clientRequest) {
@@ -67,6 +72,10 @@ public class ClientRequestRouter {
                     response = feedbackService.viewFeedback(data);
                     break;
                     
+                case "/viewFeedbackOnDiscardFoodItem":
+                	response = feedbackOnDiscardFoodItem.viewFeedback(data);
+                	break;
+                    
                     
                     
                     
@@ -75,7 +84,9 @@ public class ClientRequestRouter {
                 case "/finalDecidedMenuAfterRollout":
                     response = finalResultMenuHandler.viewFinalResultMenu();
                     break;	
-                	
+                case "/viewTodaysMenu":
+                	 response = finalResultMenuHandler.viewTodaysMenu();
+                     break;	
                 	
                 	
                 case "/ADMIN/deleteMenuItem":
@@ -107,8 +118,18 @@ public class ClientRequestRouter {
                 case "/CHEF/finalVoteMenu":
                     response = chefMenuRolloutHandler.viewRolloutResult();
                     break;
-                    
-                    
+                case "/viewDiscardedList":
+                	response = discardedItemListHandler.getLastMonthDiscardedList();
+                	break;
+                case "/viewChefDiscardedList":
+                	response = discardedItemListHandler.getChefDiscardedList();
+                	break;
+                case "/CHEF/addChefDiscardedFoodItem":
+                	response = discardedItemListHandler.insertChefDiscardsFoodItem(data);
+                	break;
+                case "/CHEF/deleteChefDiscardedFoodItem":
+                	response = discardedItemListHandler.deleteDiscardFoodItem(data);
+                	break;
                     
                     
                     
@@ -138,11 +159,17 @@ public class ClientRequestRouter {
                 	response =recommendationService.getFoodOrderbyUserPreferenceOnChefRollout(data);
                 	break;
                case "/EMPLOYEE/viewNotification":
-                    response = notificationService.getNotification();
+                    response = notificationService.getNotification(data);
                     break;
                 case "/EMPLOYEE/viewUnseenNotification":
                     response = notificationService.getUnseenNotifications(data);
                     break;
+                case "/EMPLOYEE/addFeedbackOnDiscardFoodItem":
+                	response = feedbackOnDiscardFoodItem.addFeedback(data);
+                	break;  
+                    
+                    
+                  
                 default:
                     response = JsonConverter.convertStatusAndMessageToJson("info", "Unknown request path: " + path);
                     break;

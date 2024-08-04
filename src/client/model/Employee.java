@@ -2,6 +2,7 @@ package client.model;
 
 import java.text.ParseException;
 
+import client.service.DiscardListService;
 import client.service.FeedbackHandler;
 import client.service.Menu;
 import client.service.RolloutHandler;
@@ -14,6 +15,7 @@ public class Employee extends User {
     private UserNotificationService userNotificationService;
     private VoteFuncationalityHandler voteDAO;
     private UserProfile userProfile;
+    private 	DiscardListService discardListService ;
 
     
     public Employee(String userName, String userId) {
@@ -25,7 +27,7 @@ public class Employee extends User {
         this.userNotificationService = new UserNotificationService(this.getUserRole());
         this.voteDAO = new VoteFuncationalityHandler(this.getUserRole(), this.getUserId());
         this.userProfile= new UserProfile(this.getUserRole(),this.getUserId());
-        
+        discardListService = new DiscardListService(this.getUserRole());
     }
 
     public void viewFeedbackOnFoodItem() {
@@ -66,7 +68,7 @@ public class Employee extends User {
 
     public void viewTodaysMenu() {
         RolloutHandler rolloutHandler = new RolloutHandler(this.getUserRole());
-        rolloutHandler.getFinalDecidedMenu();
+        rolloutHandler.todaysMenu();
     }
     
     public void viewUserProfile() {
@@ -78,6 +80,18 @@ public class Employee extends User {
     	userProfile.updateUserProfile();
     	
     }
+    
+    public void viewChefDiscardFoodItem() {
+    discardListService.viewChefDiscardList();
+    	
+    }
+    
+    public void addFeedbackOnChefDiscardFoodItem() {
+    	viewChefDiscardFoodItem();
+    	feedbackHandler.addFeedbackOnChefDiscardedFoodItem();
+       }
+    
+    
     
     
 }

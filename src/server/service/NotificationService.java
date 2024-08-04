@@ -32,20 +32,47 @@ public class NotificationService {
 	}
 	
 	
-public String getNotification(){
-	
-		
-		NotificationDatabaseOperator notificationDatabaseOpertor = new NotificationDatabaseOperator();	
-		List<server.model.Notification>	notifications = notificationDatabaseOpertor.getAllNotifications();
-		
-		return JsonConverter.convertObjectToJson(notifications);
+	public String getNotification(String data) {
+	    String jsonResponse;
+	    NotificationDatabaseOperator notificationDatabaseOperator = new NotificationDatabaseOperator();
+	    
+	    try {
+	        String userID = JsonStringToObject.getValueFromData("UserID", data);
+	        List<server.model.Notification> notifications = notificationDatabaseOperator.getAllNotifications(userID);
+	        
+	        if (notifications == null || notifications.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No notifications found for the given UserID");
+	        } else {
+	            jsonResponse = JsonConverter.convertObjectToJson(notifications);
+	        }
+	    } catch (Exception e) {
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return jsonResponse;
 	}
 
-public String getUnseenNotifications(String data){
-	String UserID=JsonStringToObject.getValueFromData("UserID", data);
-	NotificationDatabaseOperator notificationDatabaseOpertor = new NotificationDatabaseOperator();	
-	 List<server.model.Notification>	notifications = notificationDatabaseOpertor.getUnseenNotifications(UserID);
-	
-	return JsonConverter.convertObjectToJson(notifications);
-}
+
+	public String getUnseenNotifications(String data) {
+	    String jsonResponse;
+	    
+	    try {
+	        String userID = JsonStringToObject.getValueFromData("UserID", data);
+	        NotificationDatabaseOperator notificationDatabaseOperator = new NotificationDatabaseOperator();    
+	        List<server.model.Notification> notifications = notificationDatabaseOperator.getUnseenNotifications(userID);
+	        
+	        if (notifications == null || notifications.isEmpty()) {
+	            jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No unseen notifications found for the given UserID");
+	        } else {
+	            jsonResponse = JsonConverter.convertObjectToJson(notifications);
+	        }
+	    } catch (Exception e) {
+	        jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return jsonResponse;
+	}
+
 }

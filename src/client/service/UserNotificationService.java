@@ -35,8 +35,13 @@ public class UserNotificationService {
         try {
             this.requestPath += "/viewNotification";
             String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-
-            String jsonResponse = Client.requestServer(jsonRequest);
+             
+            String userIdJsonString = JsonConverter.createJson("UserID", userID);
+            String jsonRequestToServer = JsonConverter.addJsonObjectToDataField(jsonRequest, userIdJsonString);
+            
+            
+            
+            String jsonResponse = Client.requestServer(jsonRequestToServer);
             PrintOutToConsole.printToConsole(jsonResponse);
             
         } catch (IOException e) {

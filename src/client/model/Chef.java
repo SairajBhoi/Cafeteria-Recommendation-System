@@ -1,6 +1,7 @@
 package client.model;
 
 import client.service.RolloutHandler;
+import client.service.DiscardListService;
 import client.service.FeedbackHandler;
 
 public class Chef extends User {
@@ -47,8 +48,31 @@ public class Chef extends User {
         System.out.println("View Feedback on food item.");
         feedbackHandler.viewFeedbackOnFoodItem();
     }
+    
+    public void viewChefDiscardList() {
+           DiscardListService discardList = new  DiscardListService(this.getUserRole());
+           discardList.viewChefDiscardList();
+    }
+    
+    public void generateDiscardList(){
+    	DiscardListService discardList = new  DiscardListService(this.getUserRole());
+    	 discardList.generateDiscardList();
+    }
+    
+    
+    public void viewFeedbackOnDiscardList() {
+    	DiscardListService discardList = new  DiscardListService(this.getUserRole());
+   	    discardList.viewFeedbackOnDiscardList();
+    	
+    }
+    
+    
 
     void generateReport() {
         System.out.println("Generate report.");
     }
+    
+    
+    
+    
 }

@@ -111,12 +111,12 @@ public class VoteFuncationalityHandler {
             String jsonuserID= JsonConverter.createJson("UserID", this.UserID);
             
             
-            System.out.println("jsonRequestRecommendation=============="+jsonRequestRecommendation);
+           // System.out.println("jsonRequestRecommendation=============="+jsonRequestRecommendation);
             
-            System.out.println("jsonuserID ==============="+jsonuserID);
+         //   System.out.println("jsonuserID ==============="+jsonuserID);
             
             String jsonrequest=JsonConverter.addJsonObjectToDataField(jsonRequestRecommendation, jsonuserID);
-            System.out.println("jsonuserID ==============="+jsonrequest);
+           // System.out.println("jsonuserID ==============="+jsonrequest);
             
             String jsonResponseRecommendation= Client.requestServer(jsonrequest);
             PrintOutToConsole.printToConsole(jsonResponseRecommendation);
@@ -139,7 +139,8 @@ public class VoteFuncationalityHandler {
                     requestJson.put("data", voteJson);
 
                     String voteResponse = Client.requestServer(requestJson.toJSONString());
-                    PrintOutToConsole.printToConsole(voteResponse);
+                    System.out.println(voteResponse);
+                   //PrintOutToConsole.printToConsole(voteResponse);
                 }
             } else {
                 System.out.println("No rollout data available.");
@@ -154,5 +155,23 @@ public class VoteFuncationalityHandler {
 
     private void resetRequestPath() {
         this.requestPath = "/" + this.role;
+    }
+    
+    
+    private Boolean getUserDecision(String message) {
+        while (true) {
+            String input = InputHandler.getStringInput(message + " (yes/no/q/quit): ");
+            switch (input.toLowerCase()) {
+                case "yes":
+                    return true;
+                case "no":
+                    return false;
+                case "q":
+                case "quit":
+                    return null; 
+                default:
+                    System.out.println("Invalid input. Please enter 'yes', 'no', 'q', or 'quit'.");
+            }
+        }
     }
 }

@@ -96,16 +96,23 @@ public class MenuItemHandler {
     }
     
     public String viewAllMenuItems() {
-    	String jsonresponse;
-    	List<Map<String, Object>> menuList = null;
-		try {
-			menuList = menu.viewMenuItems();
-		} catch (Exception e) {
-			jsonresponse =JsonConverter.convertStatusAndMessageToJson("error",e.getMessage());
-			
-			e.printStackTrace();
-		}
-    	jsonresponse=JsonConverter.convertObjectToJson(menuList);
-		return jsonresponse;
+        String jsonResponse;
+        List<Map<String, Object>> menuList = null;
+        
+        try {
+            menuList = menu.viewMenuItems();
+            
+            if (menuList == null || menuList.isEmpty()) {
+                jsonResponse = JsonConverter.convertStatusAndMessageToJson("info", "No menu items found");
+            } else {
+                jsonResponse = JsonConverter.convertObjectToJson(menuList);
+            }
+        } catch (Exception e) {
+            jsonResponse = JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return jsonResponse;
     }
+
 }

@@ -34,7 +34,7 @@ public class MenuDatabaseOperator {
                 }
             }
         }
-
+        else {
         String query = "INSERT INTO FoodMenuItem (nameOfFood, foodPrice, foodAvailable, CuisineType, FoodType, SpiceLevel, IsSweet) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement addMenuItemStmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -74,6 +74,8 @@ public class MenuDatabaseOperator {
         } catch (SQLException ex) {
             throw new Exception("Failed to add menu item.\n" + ex.getMessage());
         }
+        }
+		return true;
     }
 
     public int getCategoryID(String categoryName) throws Exception {
@@ -246,7 +248,8 @@ public class MenuDatabaseOperator {
             throw new Exception("Failed to get item ID.\n" + ex.getMessage());
         }
     }
-    
+
+
     
     
 

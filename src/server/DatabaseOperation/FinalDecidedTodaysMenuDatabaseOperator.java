@@ -1,9 +1,12 @@
 package server.DatabaseOperation;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +64,10 @@ public class FinalDecidedTodaysMenuDatabaseOperator {
     
     
     
-    public List<TodayMenu> getTodaysMenuItems() throws SQLException {
+    public List<TodayMenu> getMenuItems(String nextDayDate) throws SQLException {
         List<TodayMenu> todaysMenuItems = new ArrayList<>();
 
-        // Get the current date
-        LocalDate currentDate = LocalDate.now();
-
-        // Prepare the SQL query
+      
         String sql = "SELECT t.menuID, f.nameOfFood AS itemName, f.foodPrice, c.categoryName " +
                      "FROM TodaysMenu t " +
                      "JOIN FoodMenuItem f ON t.itemID = f.itemID " +
@@ -76,10 +76,10 @@ public class FinalDecidedTodaysMenuDatabaseOperator {
                      "ORDER BY t.categoryID";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            // Set the current date as parameter
-            stmt.setDate(1, java.sql.Date.valueOf(currentDate));
+         
+            stmt.setDate(1, java.sql.Date.valueOf(nextDayDate));
 
-            // Execute the query
+    
             ResultSet rs = stmt.executeQuery();
 
             // Process the result set
@@ -91,7 +91,20 @@ public class FinalDecidedTodaysMenuDatabaseOperator {
 
                 // Create a TodayMenu object and add to the list
                 TodayMenu menuItem = new TodayMenu();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date utilDate = null;
+                try {
+                    utilDate = (Date) dateFormat.parse(nextDayDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 
+                if (utilDate != null) {
+                
+                    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+                    menuItem.setMenuDate(sqlDate);
+                }
+               
                 menuItem.setItemName(itemName);
                 menuItem.setCategoryName(categoryName);
                 menuItem.setItemPrice(foodPrice);

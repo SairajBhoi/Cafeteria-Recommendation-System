@@ -23,10 +23,10 @@ public class Authenticator {
 
         try {
             String jsonRequest = JsonConverter.convertObjectToJson(requestPath, user);
-            System.out.println("JSON Request: " + jsonRequest);
+            //System.out.println("JSON Request: " + jsonRequest);
 
             String jsonResponse = Client.requestServer(jsonRequest);
-            System.out.println("JSON Response: " + jsonResponse);
+           // System.out.println("JSON Response: " + jsonResponse);
 
             String status = JsonStringToObject.getValueFromData("status", jsonResponse);
             if ("error".equals(status)) {
