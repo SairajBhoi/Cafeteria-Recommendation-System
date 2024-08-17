@@ -2,31 +2,29 @@ package client.service;
 
 import java.io.IOException;
 import client.Client;
+import RequestGateway.MenuRequestGateway;
 import client.model.MenuItem;
 import client.util.InputHandler;
-import client.util.JsonConverter;
 import client.util.PrintOutToConsole;
 
 public class Menu {
     private MenuItem menuItem;
-    private String requestPath;
-    private String role;
+    private MenuRequestGateway requestGateway;
 
     public Menu(String role) {
-        this.role = role;
-        this.requestPath = "/" + role;
+        this.requestGateway = new MenuRequestGateway(role);
     }
 
     public void addMenuItem() {
         menuItem = new MenuItem();
         fillMenuItemDetails(true);
-        sendMenuItemRequest("/addMenuItem");
+        sendMenuItemRequest(requestGateway.createAddMenuItemRequest(menuItem));
     }
 
     public void updateMenuItem() {
         menuItem = new MenuItem();
         fillMenuItemDetails(false);
-        sendMenuItemRequest("/updateMenuItem");
+        sendMenuItemRequest(requestGateway.createUpdateMenuItemRequest(menuItem));
     }
 
     public void updateAvailabilityStatus() {
@@ -38,17 +36,11 @@ public class Menu {
             menuItem.setItemName(itemName);
             menuItem.setItemAvailable(isItemAvailable);
 
-            String fullPath = this.requestPath + "/updateFoodAvailableStatus";
-            String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-           // System.out.println("JSON Request: " + jsonRequest);
-
+            String jsonRequest = requestGateway.createUpdateFoodAvailableStatusRequest(menuItem);
             String jsonResponse = Client.requestServer(jsonRequest);
-           // System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error updating availability status: " + e.getMessage());
-        } finally {
-            this.requestPath = "/" + this.role;
         }
     }
 
@@ -66,101 +58,83 @@ public class Menu {
             String categoryName = getCategoryName(category);
 
             MenuItem menuItem = new MenuItem(itemName, categoryName);
-            String fullPath = this.requestPath + "/deleteMenuItem";
-            String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-          //  System.out.println("JSON Request: " + jsonRequest);
-
+            String jsonRequest = requestGateway.createDeleteMenuItemRequest(menuItem);
             String jsonResponse = Client.requestServer(jsonRequest);
-         //   System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error deleting menu item: " + e.getMessage());
-        } finally {
-            this.requestPath = "/" + this.role;
         }
     }
 
     public void viewAllMenuItems() {
         try {
-            String fullPath = "/viewAllMenuItems";
-            String jsonRequest = JsonConverter.convertObjectToJson(fullPath, null);
-         //   System.out.println("JSON Request: " + jsonRequest);
-
+            String jsonRequest = requestGateway.createViewAllMenuItemsRequest();
             String jsonResponse = Client.requestServer(jsonRequest);
             System.out.println("Menu Item:");
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error viewing all menu items: " + e.getMessage());
-        } finally {
-            this.requestPath = "/" + this.role;
         }
     }
 
     private void fillMenuItemDetails(boolean isCategoryRequired) {
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-		float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
-		boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
+        float itemPrice = InputHandler.getFloatInput("Enter the Food Item price for " + itemName + ": ");
+        boolean isItemAvailable = InputHandler.getBooleanInput(itemName + " is Available: Enter 'no' for not available, 'yes' for available");
 
-		char category = 0;
-		if (isCategoryRequired) {
-		do {
-		    category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
-		} while (!isValidCategory(category));
-		}
-		String foodType;
-		do {
-		    int foodTypeInput = InputHandler.getIntegerInput("Enter dietary preference (1 - Vegetarian, 2 - Non-Vegetarian, 3 - Eggetarian): ");
-		    foodType = mapFoodType(foodTypeInput);
-		    if (foodType == null) {
-		        System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
-		    }
-		} while (foodType == null);
+        char category = 0;
+        if (isCategoryRequired) {
+            do {
+                category = Character.toLowerCase(InputHandler.getCharInput("Enter Food Category: \nb - breakfast\nl - lunch\ns - snacks\nd - dinner\n"));
+            } while (!isValidCategory(category));
+        }
+        String foodType;
+        do {
+            int foodTypeInput = InputHandler.getIntegerInput("Enter dietary preference (1 - Vegetarian, 2 - Non-Vegetarian, 3 - Eggetarian): ");
+            foodType = mapFoodType(foodTypeInput);
+            if (foodType == null) {
+                System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
+            }
+        } while (foodType == null);
 
-		String spiceLevel;
-		do {
-		    int spiceInput = InputHandler.getIntegerInput("Enter preferred spice level (1 - Low, 2 - Medium, 3 - High): ");
-		    spiceLevel = mapSpiceLevel(spiceInput);
-		    if (spiceLevel == null) {
-		        System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
-		    }
-		} while (spiceLevel == null);
+        String spiceLevel;
+        do {
+            int spiceInput = InputHandler.getIntegerInput("Enter preferred spice level (1 - Low, 2 - Medium, 3 - High): ");
+            spiceLevel = mapSpiceLevel(spiceInput);
+            if (spiceLevel == null) {
+                System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
+            }
+        } while (spiceLevel == null);
 
-		String cuisineType;
-		do {
-		    int cuisineInput = InputHandler.getIntegerInput("Enter preferred cuisine (1 - North Indian, 2 - South Indian, 3 - Other): ");
-		    cuisineType = mapCuisine(cuisineInput);
-		    if (cuisineType == null) {
-		        System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
-		    }
-		} while (cuisineType == null);
+        String cuisineType;
+        do {
+            int cuisineInput = InputHandler.getIntegerInput("Enter preferred cuisine (1 - North Indian, 2 - South Indian, 3 - Other): ");
+            cuisineType = mapCuisine(cuisineInput);
+            if (cuisineType == null) {
+                System.out.println("Invalid input. Please enter a valid integer (1, 2, 3).");
+            }
+        } while (cuisineType == null);
 
-		boolean isSweet = InputHandler.getBooleanInput("Does " + itemName + " have a sweet taste?");
-		if (isCategoryRequired) {
-				String categoryName = getCategoryName(category);
-				menuItem.setItemCategory(categoryName);
-		}
-		menuItem.setItemName(itemName);
-		menuItem.setItemPrice(itemPrice);
-		menuItem.setItemAvailable(isItemAvailable);
-		menuItem.setCuisineType(cuisineType);
-		menuItem.setFoodType(foodType);
-		menuItem.setSpiceLevel(spiceLevel);
-		menuItem.setSweet(isSweet);
+        boolean isSweet = InputHandler.getBooleanInput("Does " + itemName + " have a sweet taste?");
+        if (isCategoryRequired) {
+            String categoryName = getCategoryName(category);
+            menuItem.setItemCategory(categoryName);
+        }
+        menuItem.setItemName(itemName);
+        menuItem.setItemPrice(itemPrice);
+        menuItem.setItemAvailable(isItemAvailable);
+        menuItem.setCuisineType(cuisineType);
+        menuItem.setFoodType(foodType);
+        menuItem.setSpiceLevel(spiceLevel);
+        menuItem.setSweet(isSweet);
     }
 
-    private void sendMenuItemRequest(String endpoint) {
+    private void sendMenuItemRequest(String jsonRequest) {
         try {
-            String fullPath = this.requestPath + endpoint;
-            String jsonRequest = JsonConverter.convertObjectToJson(fullPath, menuItem);
-           // System.out.println("JSON Request: " + jsonRequest);
-
             String jsonResponse = Client.requestServer(jsonRequest);
-            //System.out.println(jsonResponse);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
             System.err.println("Error sending menu item request: " + e.getMessage());
-        } finally {
-            this.requestPath = "/" + this.role;
         }
     }
 

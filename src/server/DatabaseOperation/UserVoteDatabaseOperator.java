@@ -62,18 +62,24 @@ public class UserVoteDatabaseOperator {
 
     public String processVote(Vote vote) {
         try {
+            // First, check if the rolloutID exists for the current date
+            if (!isValidRolloutID(vote.getRolloutID())) {
+                return "error: invalid rolloutID for the given date";
+            }
+
+            // Check if the user has already voted
             if (!hasUserVoted(vote.getUserID(), vote.getRolloutID())) {
+                // Insert the vote into the UserVote table
                 String sql = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, ?)";
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                     pstmt.setString(1, vote.getUserID());
                     pstmt.setInt(2, vote.getRolloutID());
-                    pstmt.setInt(3, vote.isVoteDecision() ? 1 : 0);  // Use setBoolean for boolean values
-                    
+                    pstmt.setInt(3, vote.isVoteDecision() ? 1 : 0);
                     pstmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-    
                     pstmt.executeUpdate();
                 }
 
+                // If the vote is positive, update the number of votes in ChefMenuRollout
                 if (vote.isVoteDecision()) {
                     String updateSql = "UPDATE ChefMenuRollout SET numberOfVotes = numberOfVotes + 1 WHERE rolloutID = ?";
                     try (PreparedStatement updatePstmt = connection.prepareStatement(updateSql)) {
@@ -83,13 +89,27 @@ public class UserVoteDatabaseOperator {
                 }
             } else {
                 return "error: already given feedback";
-           }
+            }
         } catch (SQLException e) {
             return "error: " + e.getMessage();
         }
         return "success: voted successfully";
     }
 
+    // Method to check if the rolloutID is valid for the current date
+    private boolean isValidRolloutID(int rolloutID) throws SQLException {
+        String query = "SELECT COUNT(*) FROM ChefMenuRollout WHERE rolloutID = ? AND rolloutDate = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, rolloutID);
+            pstmt.setDate(2, java.sql.Date.valueOf(LocalDate.now())); // Check for today's date
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 
 
     public boolean hasUserVoted(String userID, int rolloutID) {

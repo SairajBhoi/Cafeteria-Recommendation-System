@@ -3,6 +3,7 @@ package client.model;
 import client.service.RolloutHandler;
 import client.service.DiscardListService;
 import client.service.FeedbackHandler;
+import client.service.Menu;
 
 public class Chef extends User {
 
@@ -72,6 +73,11 @@ public class Chef extends User {
         System.out.println("Generate report.");
     }
     
+    public void viewMainMenu() {
+    	
+    	Menu menu = new Menu(this.getUserRole());
+    	menu.viewAllMenuItems();
+    }
     
     
     

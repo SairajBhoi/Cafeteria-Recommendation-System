@@ -8,6 +8,7 @@ import java.util.Map;
 
 import server.model.MenuItem;
 import server.DatabaseConnection;
+import server.model.ChefMenuItemScore;
 import server.model.ChefMenuRollout;
 
 public class ChefMenuRolloutDatabaseOperator {
@@ -94,14 +95,13 @@ public class ChefMenuRolloutDatabaseOperator {
     }
     
     
-    public List<MenuItem> getChefMenuItemsByRolloutDate(Date rolloutDate) throws SQLException {
-        List<MenuItem> menuItems = new ArrayList<>();
-        String query = "SELECT m.nameOfFood, m.foodPrice, m.foodAvailable, " +
+    public List<ChefMenuItemScore> getChefMenuItemsByRolloutDate(Date rolloutDate) throws SQLException {
+        List<ChefMenuItemScore> menuItems = new ArrayList<>();
+        String query = "SELECT r.rolloutID, m.nameOfFood, m.foodPrice, m.foodAvailable, " +
                        "m.CuisineType, m.FoodType, m.SpiceLevel, m.IsSweet, c.categoryName " +
                        "FROM ChefMenuRollout r " +
                        "JOIN FoodMenuItem m ON r.itemID = m.itemID " +
-                       "JOIN FoodItemCategory ic ON m.itemID = ic.itemID " +
-                       "JOIN Category c ON ic.categoryID = c.categoryID " +
+                       "JOIN Category c ON r.categoryID = c.categoryID " +  // Join directly with Category using rollout table
                        "WHERE r.rolloutDate = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -109,7 +109,8 @@ public class ChefMenuRolloutDatabaseOperator {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                MenuItem menuItem = new MenuItem();
+                ChefMenuItemScore menuItem = new ChefMenuItemScore();
+                menuItem.setRolloutID(rs.getInt("rolloutID"));
                 menuItem.setItemName(rs.getString("nameOfFood"));
                 menuItem.setItemPrice(rs.getFloat("foodPrice"));
                 menuItem.setItemAvailable(rs.getBoolean("foodAvailable"));
@@ -118,12 +119,14 @@ public class ChefMenuRolloutDatabaseOperator {
                 menuItem.setSpiceLevel(rs.getString("SpiceLevel"));
                 menuItem.setSweet(rs.getBoolean("IsSweet"));
                 menuItem.setItemCategory(rs.getString("categoryName"));
+                // Assuming 'score' can be set or is calculated later
                 menuItems.add(menuItem);
             }
         }
 
         return menuItems;
     }
+
     
     
     

@@ -1,174 +1,108 @@
 package client.service;
 
 import java.io.IOException;
-import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import client.Client;
-import client.model.ChefMenuRollout;
 import client.util.InputHandler;
-import client.util.JsonConverter;
-import client.util.JsonStringToObject;
 import client.util.PrintOutToConsole;
-
-import org.json.simple.JSONObject;
+import RequestGateway.VoteRequestGateway;
 
 public class VoteFuncationalityHandler {
-    private String requestPath;
-    private String UserID;
     private String role;
+    private String userID;
+    private VoteRequestGateway voteRequestGateway;
 
     public VoteFuncationalityHandler(String role, String userID) {
         this.role = role;
-        this.UserID = userID;
-        this.requestPath = "/" + role;
+        this.userID = userID;
+        this.voteRequestGateway = new VoteRequestGateway(role);
     }
 
     public VoteFuncationalityHandler(String role) {
-        this.role = role;
-        this.requestPath = "/" + role;
+        this(role, null);
     }
 
     public void viewChefRollout() {
         try {
-            resetRequestPath();
-            this.requestPath += "/viewChefRollout";
-            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-
+            String jsonRequest = voteRequestGateway.createChefRolloutRequest();
             String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            resetRequestPath();
+            System.err.println("Failed to retrieve chef rollout: " + e.getMessage());
         }
     }
 
     public void viewRecommendation() {
         try {
-            resetRequestPath();
-            this.requestPath += "/recommendation";
-            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-
+            String jsonRequest = voteRequestGateway.createRecommendationRequest();
             String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            resetRequestPath();
+            System.err.println("Failed to retrieve recommendation: " + e.getMessage());
         }
     }
 
     public void addVote() {
         try {
-            resetRequestPath();
-            this.requestPath += "/viewChefRollout";
-            
-            
-            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-
-            String jsonResponse = Client.requestServer(jsonRequest);
-            
-            if (jsonResponse == null || jsonResponse.contains("Unknown request path")) {
-                System.out.println("Invalid request path or no response received: " + this.requestPath);
-                return;
-            }
-            else {
-            	String status = JsonStringToObject.getValueFromData("status", jsonResponse);
-            if ("info".equals(status)) {
-                return ;
-            }
-            }
-            
-           
-            
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<ChefMenuRollout> rollouts = objectMapper.readValue(jsonResponse, new TypeReference<List<ChefMenuRollout>>() {});
-            
+            // Fetch and display recommendations
             System.out.println("Recommendation");
-            resetRequestPath();
-//           this.requestPath += "/recommendationOnChefRooloout";
-//            
-//          
-//            
-//            
-//            
-//            String jsonRequestRecommendation = JsonConverter.convertObjectToJson(this.requestPath, null);
-//            String jsonResponseRecommendation= Client.requestServer(jsonRequestRecommendation);
-            
-            
-            
-            
-            
-            this.requestPath += "/recommendationOnPreference";
-            
-            
-            
-            String jsonRequestRecommendation = JsonConverter.convertObjectToJson(this.requestPath,null);
-            String jsonuserID= JsonConverter.createJson("UserID", this.UserID);
-            
-            
-           // System.out.println("jsonRequestRecommendation=============="+jsonRequestRecommendation);
-            
-         //   System.out.println("jsonuserID ==============="+jsonuserID);
-            
-            String jsonrequest=JsonConverter.addJsonObjectToDataField(jsonRequestRecommendation, jsonuserID);
-           // System.out.println("jsonuserID ==============="+jsonrequest);
-            
-            String jsonResponseRecommendation= Client.requestServer(jsonrequest);
+            String jsonRequestRecommendation = voteRequestGateway.createRecommendationRequest();
+            String jsonResponseRecommendation = Client.requestServer(jsonRequestRecommendation);
             PrintOutToConsole.printToConsole(jsonResponseRecommendation);
-            
-            
-            
-            resetRequestPath();
-            if (rollouts != null && !rollouts.isEmpty()) {
-                for (ChefMenuRollout rollout : rollouts) {
-                    boolean voteDecision = InputHandler.getBooleanInput("Enter whether you want to vote for " + rollout.getItemName() + " in category " + rollout.getCategoryName());
 
-                    JSONObject voteJson = new JSONObject();
-                    voteJson.put("userID", this.UserID);
-                    voteJson.put("rolloutID", rollout.getRolloutID());
-                    voteJson.put("categoryID", rollout.getCategoryID());
-                    voteJson.put("voteDecision", voteDecision);
-
-                    JSONObject requestJson = new JSONObject();
-                    requestJson.put("path", "/" + this.role + "/addVote");
-                    requestJson.put("data", voteJson);
-
-                    String voteResponse = Client.requestServer(requestJson.toJSONString());
-                    System.out.println(voteResponse);
-                   //PrintOutToConsole.printToConsole(voteResponse);
+            // Loop to handle voting for multiple Rollout IDs
+            while (true) {
+                // Get user input for a single Rollout ID
+                String rolloutIDInput = InputHandler.getStringInput("Enter the Rollout ID you want to vote for (or type 'quit' to exit): ");
+                if (rolloutIDInput.equalsIgnoreCase("quit")) {
+                    break;
                 }
-            } else {
-                System.out.println("No rollout data available.");
+
+                int rolloutID;
+                try {
+                    rolloutID = Integer.parseInt(rolloutIDInput.trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid Rollout ID: " + rolloutIDInput);
+                    continue;
+                }
+
+                Boolean voteDecision = getUserDecision("Do you want to vote for Rollout ID " + rolloutID + "? (yes/no/quit)");
+                if (voteDecision == null) {
+                    break;
+                }
+
+                if (voteDecision) {
+                    String voteRequest = voteRequestGateway.createVoteRequest(this.userID, rolloutID, voteDecision);
+                    String voteResponse = Client.requestServer(voteRequest);
+                    System.out.println(voteResponse);
+                } else {
+                    System.out.println("Skipping vote for Rollout ID " + rolloutID + ".");
+                }
+
+                // Ask if the user wants to vote for another item
+                Boolean voteAnother = getUserDecision("Do you want to vote for another item? (yes/no/quit)");
+                if (voteAnother == null || !voteAnother) {
+                    break;
+                }
             }
         } catch (IOException e) {
-            System.out.println("Server connection failed.");
-            e.printStackTrace();
-        } finally {
-            resetRequestPath();
+            System.err.println("Server connection failed: " + e.getMessage());
         }
     }
 
-    private void resetRequestPath() {
-        this.requestPath = "/" + this.role;
-    }
-    
-    
     private Boolean getUserDecision(String message) {
         while (true) {
             String input = InputHandler.getStringInput(message + " (yes/no/q/quit): ");
             switch (input.toLowerCase()) {
+                case "y":
                 case "yes":
                     return true;
+                case "n":
                 case "no":
                     return false;
                 case "q":
                 case "quit":
-                    return null; 
+                    return null;
                 default:
                     System.out.println("Invalid input. Please enter 'yes', 'no', 'q', or 'quit'.");
             }

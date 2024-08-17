@@ -22,7 +22,7 @@ public class ChefController {
             displayOptions();
             int choice = InputHandler.getIntegerInput("Enter your choice: ");
             processOption(choice);
-            if (choice == 10) {
+            if (choice == 11) {
                 break;
             }
         }
@@ -30,34 +30,37 @@ public class ChefController {
 
     private void processOption(int choice) throws Exception {
         switch (choice) {
-            case 1:
+        case 1:
+        	chef.viewMainMenu();
+        	break;
+            case 2:
                 chef.menurollout();
                 break;
-            case 2:
+            case 3:
                 chef.viewRecommendation();
                 break;
-            case 3:
+            case 4:
                 chef.ViewFeedbackonFoodItem();
                 break;
-            case 4:
+            case 5:
                 chef.FinalVoteMenu();
                 break;
-            case 5:
+            case 6:
                 chef.addFinalMenuafterRollout();
                 break;
-            case 6:
+            case 7:
                 chef.viewFinalMenuDecided();
                 break;
-            case 7:
+            case 8:
                 chef.viewChefDiscardList();
                 break;
-            case 8:
+            case 9:
             	chef.generateDiscardList();
             	break;
-            case 9: 
+            case 10: 
             	 chef.viewFeedbackOnDiscardList();
             	 break;
-            case 10:
+            case 11:
                 System.out.println("Logging out...");
                 chef.logout();
                 break;
@@ -69,15 +72,16 @@ public class ChefController {
     }
 
     private void displayOptions() {
-        System.out.println("\n1. Rollout menu for tomorrow.");
-        System.out.println("2. View Recommendation from Engine.");
-        System.out.println("3. View Feedback on food item.");
-        System.out.println("4. View rollout.");
-        System.out.println("5. Add Decided Menu To be prepared tomorrow.");
-        System.out.println("6. View Decided Menu To be prepared tomorrow.");
-        System.out.println("7. View Chef DiscardList");
-        System.out.println("8. Generate DiscardList");
-        System.out.println("9. Feedback on Discard List");
-        System.out.println("10. Logout");
+    	System.out.println("\n1. View Main Menu");
+    	System.out.println("2. Rollout menu for tomorrow.");
+        System.out.println("3. View Recommendation from Engine.");
+        System.out.println("4. View Feedback on food item.");
+        System.out.println("5. View rollout.");
+        System.out.println("6. Add Decided Menu To be prepared tomorrow.");
+        System.out.println("7. View Decided Menu To be prepared tomorrow.");
+        System.out.println("8. View Chef DiscardList");
+        System.out.println("9. Generate DiscardList");
+        System.out.println("10. Feedback on Discard List");
+        System.out.println("11. Logout");
     }
 }

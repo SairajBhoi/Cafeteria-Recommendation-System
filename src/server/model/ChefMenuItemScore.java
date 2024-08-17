@@ -1,6 +1,7 @@
 package server.model;
 
 public class ChefMenuItemScore {
+	 private int rolloutID;
 	 private String itemName;
 	    private float itemPrice;
 	    private boolean isItemAvailable;
@@ -19,6 +20,13 @@ public class ChefMenuItemScore {
 	        this.itemCategory = itemCategory;
 	    }
 
+	    public int getRolloutID() {
+	        return rolloutID;
+	    }
+
+	    public void setRolloutID(int rolloutID) {
+	        this.rolloutID = rolloutID;
+	    }
 	    public String getItemName() {
 	        return itemName;
 	    }

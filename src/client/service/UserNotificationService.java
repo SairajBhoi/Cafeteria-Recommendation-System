@@ -1,57 +1,34 @@
 package client.service;
 
 import java.io.IOException;
+import RequestGateway.UserNotificationRequestGateway;
 import client.Client;
-import client.util.JsonConverter;
 import client.util.PrintOutToConsole;
 
 public class UserNotificationService {
-    private String role;
-    private String requestPath;
+    private UserNotificationRequestGateway requestGateway;
 
     public UserNotificationService(String role) {
-        this.role = role;
-        this.requestPath = "/" + role;
+        this.requestGateway = new UserNotificationRequestGateway(role);
     }
 
     public void viewUnseenNotification(String userID) {
         try {
-            this.requestPath += "/viewUnseenNotification";
-            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-
-            String userIdJsonString = JsonConverter.createJson("UserID", userID);
-            String jsonRequestToServer = JsonConverter.addJsonObjectToDataField(jsonRequest, userIdJsonString);
-
-            String jsonResponse = Client.requestServer(jsonRequestToServer);
+            String jsonRequest = requestGateway.createViewUnseenNotificationRequest(userID);
+            String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            resetRequestPath();
+            System.err.println("Error fetching unseen notifications: " + e.getMessage());
         }
     }
 
     public void viewNotification(String userID) {
         try {
-            this.requestPath += "/viewNotification";
-            String jsonRequest = JsonConverter.convertObjectToJson(this.requestPath, null);
-             
-            String userIdJsonString = JsonConverter.createJson("UserID", userID);
-            String jsonRequestToServer = JsonConverter.addJsonObjectToDataField(jsonRequest, userIdJsonString);
-            
-            
-            
-            String jsonResponse = Client.requestServer(jsonRequestToServer);
+            String jsonRequest = requestGateway.createViewNotificationRequest(userID);
+            String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
-            
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            resetRequestPath();
+            System.err.println("Error fetching notifications: " + e.getMessage());
         }
-    }
-
-    private void resetRequestPath() {
-        this.requestPath = "/" + this.role;
     }
 }

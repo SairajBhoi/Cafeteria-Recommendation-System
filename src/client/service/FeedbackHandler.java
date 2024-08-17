@@ -8,15 +8,15 @@ import client.Client;
 import client.model.Feedback;
 import client.model.UserDiscardedFeedback;
 import client.util.InputHandler;
-import client.util.JsonConverter;
 import client.util.PrintOutToConsole;
+import RequestGateway.FeedbackRequestGateway;
 
 public class FeedbackHandler {
     private Feedback feedback;
-    private String requestPath;
     private String role;
     private String employeeName;
     private String employeeId;
+    private FeedbackRequestGateway requestGateway;
 
     public FeedbackHandler(String role, String employeeName, String employeeID) {
         feedback = new Feedback();
@@ -25,17 +25,16 @@ public class FeedbackHandler {
         this.role = role;
         this.employeeName = employeeName;
         this.employeeId = employeeID;
-        this.requestPath = "/" + role;
+        this.requestGateway = new FeedbackRequestGateway(role);
     }
 
     public FeedbackHandler(String role) {
-    	feedback = new Feedback();
+        feedback = new Feedback();
         this.role = role;
-        this.requestPath = "/" + role;
+        this.requestGateway = new FeedbackRequestGateway(role);
     }
 
     public void addFeedbackOnFoodItem() {
-    	resetRequestPath();
         String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
         int tasteRating = getValidRating("Enter the Taste rating of " + itemName + " (0-5): ");
         int qualityRating = getValidRating("Enter the Quality rating of " + itemName + " (0-5): ");
@@ -51,16 +50,44 @@ public class FeedbackHandler {
         feedback.setValueForMoneyRating(valueForMoneyRating);
         feedback.setFeedbackMessage(feedbackMessage);
 
-        String fullPath = this.requestPath + "/addFeedbackOnFoodItem";
-        String jsonRequest = JsonConverter.convertObjectToJson(fullPath, feedback);
+        String jsonRequest = requestGateway.createAddFeedbackOnFoodItemRequest(feedback);
+
+        sendRequestToServer(jsonRequest);
+    }
+
+    public void viewFeedbackOnFoodItem() {
+        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
+        feedback.setItemName(itemName);
+
+        String jsonRequest = requestGateway.createViewFeedbackOnFoodItemRequest(feedback);
 
         try {
             String jsonResponse = Client.requestServer(jsonRequest);
-            //System.out.print(jsonResponse);
-            resetRequestPath();
+            PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
-            System.err.println("Error sending feedback to the server: " + e.getMessage());
+            System.err.println("Error retrieving feedback from the server: " + e.getMessage());
         }
+    }
+
+    public void addFeedbackOnChefDiscardedFoodItem() {
+        String userID = this.employeeId;
+        int discardID = InputHandler.getIntegerInput("Enter the Discard ID: ");
+        String question1Answer = InputHandler.getStringInput("Enter your answer for Question 1: What did you not like about the food? ");
+        String question2Answer = InputHandler.getStringInput("Enter your answer for Question 2: How would you like the taste to be improved? ");
+        String question3Answer = InputHandler.getStringInput("Enter your answer for Question 3: Please provide a recipe ?: ");
+        Date feedbackDate = Date.valueOf(LocalDate.now());
+
+        UserDiscardedFeedback feedback = new UserDiscardedFeedback();
+        feedback.setUserID(userID);
+        feedback.setDiscardID(discardID);
+        feedback.setQuestion1Answer(question1Answer);
+        feedback.setQuestion2Answer(question2Answer);
+        feedback.setQuestion3Answer(question3Answer);
+        feedback.setFeedbackDate(feedbackDate);
+
+        String jsonRequest = requestGateway.createAddFeedbackOnDiscardFoodItemRequest(feedback);
+
+        sendRequestToServer(jsonRequest);
     }
 
     private int getValidRating(String message) {
@@ -75,68 +102,12 @@ public class FeedbackHandler {
         return rating >= 0 && rating <= 5;
     }
 
-    public void viewFeedbackOnFoodItem() {
-        String itemName = InputHandler.getStringInput("Enter the Food Item name: ");
-        
-        feedback.setItemName(itemName);
-
-        String fullPath = "/viewFeedbackOnFoodItem";
-        String jsonRequest = JsonConverter.convertObjectToJson(fullPath, feedback);
-
-        try {
-            String jsonResponse = Client.requestServer(jsonRequest);
-            //System.out.print(jsonResponse);
-            PrintOutToConsole.printToConsole(jsonResponse);
-            resetRequestPath();
-        } catch (IOException e) {
-            System.err.println("Error retrieving feedback from the server: " + e.getMessage());
-        }
-    }
-    
-    
-    
-    
-    
-    
-    
-    public void addFeedbackOnChefDiscardedFoodItem() {
-    	resetRequestPath();
-        String userID = this.employeeId;
-        int discardID = InputHandler.getIntegerInput("Enter the Discard ID: ");
-        String question1Answer = InputHandler.getStringInput("Enter your answer for Question 1: What did you not like about the food? ");
-        String question2Answer = InputHandler.getStringInput("Enter your answer for Question 2: How would you like the taste to be improved? ");
-        String question3Answer = InputHandler.getStringInput("Enter your answer for Question 3: Please provide a recipe ?: ");
-        Date feedbackDate =java.sql.Date.valueOf(LocalDate.now());
-
-        UserDiscardedFeedback feedback = new UserDiscardedFeedback();
-        feedback.setUserID(userID);
-        feedback.setDiscardID(discardID);
-        feedback.setQuestion1Answer(question1Answer);
-        feedback.setQuestion2Answer(question2Answer);
-        feedback.setQuestion3Answer(question3Answer);
-        feedback.setFeedbackDate(feedbackDate);
-
-        // Convert feedback object to JSON
-        
-        String fullPath = requestPath + "/addFeedbackOnDiscardFoodItem";
-        String jsonRequest = JsonConverter.convertObjectToJson(fullPath,feedback);
-
+    private void sendRequestToServer(String jsonRequest) {
         try {
             String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
-            resetRequestPath();
         } catch (IOException e) {
             System.err.println("Error sending feedback to the server: " + e.getMessage());
         }
     }
-    
-
-    private void resetRequestPath() {
-        this.requestPath = "/" + this.role;
-    }   
-    
-    
-    
-    
-    
 }
