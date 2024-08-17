@@ -1,10 +1,7 @@
 package test;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-
-import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +14,6 @@ import server.model.MenuItem;
 import server.service.MenuItemHandler;
 import server.service.NotificationService;
 import server.util.JsonConverter;
-
 
 public class MenuItemHandlerTest {
 
@@ -32,12 +28,20 @@ public class MenuItemHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void testAddMenuItem_Success() throws Exception {
-        MenuItem menuItem = new MenuItem("Pasta", "lunch", new BigDecimal("10.99"), true, "Other", "Vegetarian", "Low", false);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setItemName("Pasta");
+        menuItem.setItemCategory("lunch");
+        menuItem.setItemPrice(10.99f);
+        menuItem.setItemAvailable(true);
+        menuItem.setCuisineType("Other");
+        menuItem.setFoodType("Vegetarian");
+        menuItem.setSpiceLevel("Low");
+        menuItem.setSweet(false);
         String data = JsonConverter.convertObjectToJson(menuItem);
 
         when(menuDatabaseOperator.isItemInCategory(anyString(), anyString())).thenReturn(false);
@@ -52,7 +56,15 @@ public class MenuItemHandlerTest {
 
     @Test
     public void testAddMenuItem_ItemAlreadyExists() throws Exception {
-        MenuItem menuItem = new MenuItem("Pasta", "lunch", new BigDecimal("10.99"), true, "Other", "Vegetarian", "Low", false);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setItemName("Pasta");
+        menuItem.setItemCategory("lunch");
+        menuItem.setItemPrice(10.99f);
+        menuItem.setItemAvailable(true);
+        menuItem.setCuisineType("Other");
+        menuItem.setFoodType("Vegetarian");
+        menuItem.setSpiceLevel("Low");
+        menuItem.setSweet(false);
         String data = JsonConverter.convertObjectToJson(menuItem);
 
         when(menuDatabaseOperator.isItemInCategory(anyString(), anyString())).thenReturn(true);
@@ -66,7 +78,15 @@ public class MenuItemHandlerTest {
 
     @Test
     public void testUpdateMenuItem_Success() throws Exception {
-        MenuItem menuItem = new MenuItem("Pasta", "lunch", new BigDecimal("10.99"), true, "Other", "Vegetarian", "Low", false);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setItemName("Pasta");
+        menuItem.setItemCategory("lunch");
+        menuItem.setItemPrice(10.99f);
+        menuItem.setItemAvailable(true);
+        menuItem.setCuisineType("Other");
+        menuItem.setFoodType("Vegetarian");
+        menuItem.setSpiceLevel("Low");
+        menuItem.setSweet(false);
         String data = JsonConverter.convertObjectToJson(menuItem);
 
         when(menuDatabaseOperator.updateMenuItem(any(MenuItem.class))).thenReturn(true);
@@ -79,7 +99,15 @@ public class MenuItemHandlerTest {
 
     @Test
     public void testDeleteMenuItem_Success() throws Exception {
-        MenuItem menuItem = new MenuItem("Pasta", "lunch", new BigDecimal("10.99"), true, "Other", "Vegetarian", "Low", false);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setItemName("Pasta");
+        menuItem.setItemCategory("lunch");
+        menuItem.setItemPrice(10.99f);
+        menuItem.setItemAvailable(true);
+        menuItem.setCuisineType("Other");
+        menuItem.setFoodType("Vegetarian");
+        menuItem.setSpiceLevel("Low");
+        menuItem.setSweet(false);
         String data = JsonConverter.convertObjectToJson(menuItem);
 
         when(menuDatabaseOperator.deleteMenuItem(anyString(), anyString())).thenReturn(true);
@@ -93,7 +121,7 @@ public class MenuItemHandlerTest {
 
     @Test
     public void testUpdateFoodAvailableStatus_Success() throws Exception {
-        String data = "{\"itemName\":\"Pasta\",\"itemAvailable\":\"true\"}";
+        String data = "{\"itemName\":\"Pasta\",\"itemAvailable\":true}";
 
         when(menuDatabaseOperator.updateAvailability(anyString(), anyBoolean())).thenReturn(true);
 
