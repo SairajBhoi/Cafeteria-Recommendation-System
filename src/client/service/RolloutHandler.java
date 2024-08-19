@@ -4,92 +4,68 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 
-import client.Client;
-import RequestGateway.RolloutRequestGateway;
+import client.RequestGateway.RolloutRequestGateway;
+
 import client.model.ChefMenuRollout;
 import client.model.TodayMenu;
 import client.util.InputHandler;
-import client.util.PrintOutToConsole;
+
+import client.util.RequestHandler;
 import server.model.FoodCategory;
 
 public class RolloutHandler {
-    private RolloutRequestGateway requestGateway;
+    private final RolloutRequestGateway requestGateway;
+    private final RequestHandler requestHandler;
 
     public RolloutHandler(String role) {
         this.requestGateway = new RolloutRequestGateway(role);
+        this.requestHandler = new RequestHandler();
     }
 
+    public RolloutHandler() {
+        this.requestGateway = new RolloutRequestGateway(null);
+        this.requestHandler = new RequestHandler();
+    }
     public void recommendation() {
-        try {
-            String categoryName = InputHandler.getStringInput("Please enter category name: ");
-            int numberOfItems = InputHandler.getIntegerInput("Enter number of items required: ");
+        FoodCategory category = new FoodCategory();
+        category.setCategoryName(InputHandler.getStringInput("Please enter category name: "));
+        category.setNumberOfItems(InputHandler.getIntegerInput("Enter number of items required: "));
 
-            FoodCategory category = new FoodCategory();
-            category.setCategoryName(categoryName);
-            category.setNumberOfItems(numberOfItems);
-
-            String jsonRequest = requestGateway.createRecommendationRequest(category);
-            String jsonResponse = Client.requestServer(jsonRequest);
-
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error processing recommendation request: " + e.getMessage());
-        }
+        String jsonRequest = requestGateway.createRecommendationRequest(category);
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void getFinalVoteMenu() {
-        try {
-            String jsonRequest = requestGateway.createFinalVoteMenuRequest();
-            String jsonResponse = Client.requestServer(jsonRequest);
-
-            System.out.println("Final Vote Menu:");
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error fetching final vote menu: " + e.getMessage());
-        }
+        String jsonRequest = requestGateway.createFinalVoteMenuRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void getFinalDecidedMenu() {
-        try {
-            String jsonRequest = requestGateway.createFinalDecidedMenuRequest();
-            String jsonResponse = Client.requestServer(jsonRequest);
-
-            System.out.println("Today's Menu:");
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error fetching final decided menu: " + e.getMessage());
-        }
+        String jsonRequest = requestGateway.createFinalDecidedMenuRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void todaysMenu() {
-        try {
-            String jsonRequest = requestGateway.createTodaysMenuRequest();
-            String jsonResponse = Client.requestServer(jsonRequest);
-
-            System.out.println("Today's Menu:");
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error fetching today's menu: " + e.getMessage());
-        }
+        String jsonRequest = requestGateway.createTodaysMenuRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void createChefMenuRollouts(String mealType) {
         try {
-            int itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " food items to add: ");
-            for (int count = 0; count < itemCount; count++) {
-                ChefMenuRollout chefMenuRollout = new ChefMenuRollout();
-                chefMenuRollout.setCategoryName(mealType);
-                String itemName = InputHandler.getStringInput("Item Name: ");
-                chefMenuRollout.setItemName(itemName);
-                chefMenuRollout.setRolloutDate(new Date(System.currentTimeMillis()));
+            processMenuItems(mealType, new MenuItemProcessor() {
+                @Override
+                public void process() throws IOException {
+                    ChefMenuRollout chefMenuRollout = new ChefMenuRollout();
+                    chefMenuRollout.setCategoryName(mealType);
+                    chefMenuRollout.setItemName(InputHandler.getStringInput("Item Name: "));
+                    chefMenuRollout.setRolloutDate(new Date(System.currentTimeMillis()));
 
-                String jsonRequest = requestGateway.createChefMenuRolloutRequest(chefMenuRollout);
-                String jsonResponse = Client.requestServer(jsonRequest);
-
-                PrintOutToConsole.printToConsole(jsonResponse);
-            }
+                    String jsonRequest = requestGateway.createChefMenuRolloutRequest(chefMenuRollout);
+                    requestHandler.sendRequestToServer(jsonRequest);
+                }
+            });
         } catch (IOException e) {
-            System.err.println("Error creating chef menu rollouts: " + e.getMessage());
+            handleException("Error creating chef menu rollouts", e);
         }
     }
 
@@ -102,24 +78,20 @@ public class RolloutHandler {
 
     public void createFinalDecidedMenuAfterRollout(String mealType) {
         try {
-            int itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " food items to add: ");
-            LocalDate nextDay = LocalDate.now().plusDays(1);
-            Date nextDayDate = Date.valueOf(nextDay);
+            processMenuItems(mealType, new MenuItemProcessor() {
+                @Override
+                public void process() throws IOException {
+                    TodayMenu todayMenu = new TodayMenu();
+                    todayMenu.setCategoryName(mealType);
+                    todayMenu.setItemName(InputHandler.getStringInput("Item Name: "));
+                    todayMenu.setMenuDate(Date.valueOf(LocalDate.now().plusDays(1)));
 
-            for (int count = 0; count < itemCount; count++) {
-                TodayMenu todayMenu = new TodayMenu();
-                todayMenu.setCategoryName(mealType);
-                String itemName = InputHandler.getStringInput("Item Name: ");
-                todayMenu.setItemName(itemName);
-                todayMenu.setMenuDate(nextDayDate);
-
-                String jsonRequest = requestGateway.createFinalDecidedMenuAfterRolloutRequest(todayMenu);
-                String jsonResponse = Client.requestServer(jsonRequest);
-
-                PrintOutToConsole.printToConsole(jsonResponse);
-            }
+                    String jsonRequest = requestGateway.createFinalDecidedMenuAfterRolloutRequest(todayMenu);
+                    requestHandler.sendRequestToServer(jsonRequest);
+                }
+            });
         } catch (IOException e) {
-            System.err.println("Error creating final decided menu: " + e.getMessage());
+            handleException("Error creating final decided menu", e);
         }
     }
 
@@ -128,5 +100,20 @@ public class RolloutHandler {
         createFinalDecidedMenuAfterRollout("lunch");
         createFinalDecidedMenuAfterRollout("snacks");
         createFinalDecidedMenuAfterRollout("dinner");
+    }
+
+    private void processMenuItems(String mealType, MenuItemProcessor processor) throws IOException {
+        int itemCount = InputHandler.getIntegerInput("Enter the number of " + mealType + " food items to add: ");
+        for (int count = 0; count < itemCount; count++) {
+            processor.process();
+        }
+    }
+
+    private void handleException(String message, IOException e) {
+        System.err.println(message + ": " + e.getMessage());
+    }
+
+    private interface MenuItemProcessor {
+        void process() throws IOException;
     }
 }

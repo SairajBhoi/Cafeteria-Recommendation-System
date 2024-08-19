@@ -2,20 +2,26 @@ package client.service;
 
 import java.io.IOException;
 
-import client.Client;
+
 import client.util.InputHandler;
-import client.util.PrintOutToConsole;
-import RequestGateway.VoteRequestGateway;
+
+import client.util.RequestHandler;
+import client.util.UserDecisionHandler;
+import client.RequestGateway.VoteRequestGateway;
 
 public class VoteFuncationalityHandler {
-    private String role;
-    private String userID;
-    private VoteRequestGateway voteRequestGateway;
+    private final String role;
+    private final String userID;
+    private final VoteRequestGateway voteRequestGateway;
+    private final RequestHandler requestHandler;
+    private final UserDecisionHandler userDecisionHandler;
 
     public VoteFuncationalityHandler(String role, String userID) {
         this.role = role;
         this.userID = userID;
         this.voteRequestGateway = new VoteRequestGateway(role);
+        this.requestHandler = new RequestHandler();
+        this.userDecisionHandler = new UserDecisionHandler();
     }
 
     public VoteFuncationalityHandler(String role) {
@@ -23,64 +29,41 @@ public class VoteFuncationalityHandler {
     }
 
     public void viewChefRollout() {
-        try {
-            String jsonRequest = voteRequestGateway.createChefRolloutRequest();
-            String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Failed to retrieve chef rollout: " + e.getMessage());
-        }
+        String jsonRequest = voteRequestGateway.createChefRolloutRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void viewRecommendation() {
-        try {
-            String jsonRequest = voteRequestGateway.createRecommendationRequest();
-            String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Failed to retrieve recommendation: " + e.getMessage());
-        }
+        String jsonRequest = voteRequestGateway.createRecommendationRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void addVote() {
         try {
-            // Fetch and display recommendations
-            System.out.println("Recommendation");
-            String jsonRequestRecommendation = voteRequestGateway.createRecommendationRequest();
-            String jsonResponseRecommendation = Client.requestServer(jsonRequestRecommendation);
-            PrintOutToConsole.printToConsole(jsonResponseRecommendation);
+            displayRecommendations();
 
-            // Loop to handle voting for multiple Rollout IDs
             while (true) {
-                // Get user input for a single Rollout ID
                 String rolloutIDInput = InputHandler.getStringInput("Enter the Rollout ID you want to vote for (or type 'quit' to exit): ");
                 if (rolloutIDInput.equalsIgnoreCase("quit")) {
                     break;
                 }
 
-                int rolloutID;
-                try {
-                    rolloutID = Integer.parseInt(rolloutIDInput.trim());
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid Rollout ID: " + rolloutIDInput);
-                    continue;
-                }
+                Integer rolloutID = parseRolloutID(rolloutIDInput);
+                if (rolloutID == null) continue;
 
-                Boolean voteDecision = getUserDecision("Do you want to vote for Rollout ID " + rolloutID + "? (yes/no/quit)");
+                Boolean voteDecision = userDecisionHandler.getUserDecision("Do you want to vote for Rollout ID " + rolloutID + "?");
                 if (voteDecision == null) {
                     break;
                 }
 
                 if (voteDecision) {
                     String voteRequest = voteRequestGateway.createVoteRequest(this.userID, rolloutID, voteDecision);
-                    String voteResponse = Client.requestServer(voteRequest);
-                    System.out.println(voteResponse);
+                    requestHandler.sendRequestToServer(voteRequest);
                 } else {
                     System.out.println("Skipping vote for Rollout ID " + rolloutID + ".");
                 }
 
-                // Ask if the user wants to vote for another item
-                Boolean voteAnother = getUserDecision("Do you want to vote for another item? (yes/no/quit)");
+                Boolean voteAnother = userDecisionHandler.getUserDecision("Do you want to vote for another item?");
                 if (voteAnother == null || !voteAnother) {
                     break;
                 }
@@ -90,22 +73,18 @@ public class VoteFuncationalityHandler {
         }
     }
 
-    private Boolean getUserDecision(String message) {
-        while (true) {
-            String input = InputHandler.getStringInput(message + " (yes/no/q/quit): ");
-            switch (input.toLowerCase()) {
-                case "y":
-                case "yes":
-                    return true;
-                case "n":
-                case "no":
-                    return false;
-                case "q":
-                case "quit":
-                    return null;
-                default:
-                    System.out.println("Invalid input. Please enter 'yes', 'no', 'q', or 'quit'.");
-            }
+    private void displayRecommendations() throws IOException {
+        System.out.println("Recommendation");
+        String jsonRequest = voteRequestGateway.createRecommendationRequest();
+        requestHandler.sendRequestToServer(jsonRequest);
+    }
+
+    private Integer parseRolloutID(String input) {
+        try {
+            return Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid Rollout ID: " + input);
+            return null;
         }
     }
 }

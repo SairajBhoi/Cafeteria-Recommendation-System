@@ -1,6 +1,6 @@
 package client.controller;
 
-import client.model.Employee;
+import client.role.Employee;
 import client.util.InputHandler;
 
 public class EmployeeController {

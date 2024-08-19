@@ -1,7 +1,8 @@
-package client.model;
+package client.role;
 
 import java.text.ParseException;
 
+import client.model.User;
 import client.service.DiscardListService;
 import client.service.FeedbackHandler;
 import client.service.Menu;
@@ -31,6 +32,7 @@ public class Employee extends User {
     }
 
     public void viewFeedbackOnFoodItem() {
+    	this.feedbackHandler = new FeedbackHandler();
         feedbackHandler.viewFeedbackOnFoodItem();
     }
 
@@ -43,15 +45,15 @@ public class Employee extends User {
     }
 
     public void viewNotification() {
-        userNotificationService.viewNotification(this.getUserId());
+        userNotificationService.viewNotifications(this.getUserId());
     }
 
     public void viewUnseenNotification() {
-        userNotificationService.viewUnseenNotification(this.getUserId());
+        userNotificationService.viewUnseenNotifications(this.getUserId());
     }
 
     public void viewMainMenu() {
-        Menu menu = new Menu(this.getUserRole());
+        Menu menu = new Menu();
         menu.viewAllMenuItems();
     }
 
@@ -67,7 +69,7 @@ public class Employee extends User {
     }
 
     public void viewTodaysMenu() {
-        RolloutHandler rolloutHandler = new RolloutHandler(this.getUserRole());
+        RolloutHandler rolloutHandler = new RolloutHandler();
         rolloutHandler.todaysMenu();
     }
     
@@ -82,6 +84,7 @@ public class Employee extends User {
     }
     
     public void viewChefDiscardFoodItem() {
+    discardListService = new DiscardListService();
     discardListService.viewChefDiscardList();
     	
     }

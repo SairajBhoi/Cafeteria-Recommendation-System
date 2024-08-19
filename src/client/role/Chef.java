@@ -1,6 +1,7 @@
-package client.model;
+package client.role;
 
 import client.service.RolloutHandler;
+import client.model.User;
 import client.service.DiscardListService;
 import client.service.FeedbackHandler;
 import client.service.Menu;
@@ -33,7 +34,7 @@ public class Chef extends User {
 
     public void viewFinalMenuDecided() {
         System.out.println("Final Menu after Rollout");
-        RolloutHandler chefrollout = new RolloutHandler(this.getUserRole());
+        RolloutHandler chefrollout = new RolloutHandler();
         chefrollout.getFinalDecidedMenu();
         System.out.println("View Decided Menu To be prepared tomorrow.");
     }
@@ -45,7 +46,7 @@ public class Chef extends User {
     }
 
     public void ViewFeedbackonFoodItem() {
-        FeedbackHandler feedbackHandler = new FeedbackHandler(this.getUserRole());
+        FeedbackHandler feedbackHandler = new FeedbackHandler();
         System.out.println("View Feedback on food item.");
         feedbackHandler.viewFeedbackOnFoodItem();
     }
@@ -62,7 +63,7 @@ public class Chef extends User {
     
     
     public void viewFeedbackOnDiscardList() {
-    	DiscardListService discardList = new  DiscardListService(this.getUserRole());
+    	DiscardListService discardList = new  DiscardListService();
    	    discardList.viewFeedbackOnDiscardList();
     	
     }
@@ -75,7 +76,7 @@ public class Chef extends User {
     
     public void viewMainMenu() {
     	
-    	Menu menu = new Menu(this.getUserRole());
+    	Menu menu = new Menu();
     	menu.viewAllMenuItems();
     }
     

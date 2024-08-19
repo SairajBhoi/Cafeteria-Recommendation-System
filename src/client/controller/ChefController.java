@@ -1,6 +1,6 @@
 package client.controller;
 
-import client.model.Chef;
+import client.role.Chef;
 import client.util.InputHandler;
 
 public class ChefController {

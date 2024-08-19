@@ -1,34 +1,41 @@
 package client.service;
 
 import java.io.IOException;
-import RequestGateway.UserNotificationRequestGateway;
+import client.RequestGateway.UserNotificationRequestGateway;
 import client.Client;
 import client.util.PrintOutToConsole;
 
 public class UserNotificationService {
-    private UserNotificationRequestGateway requestGateway;
+    private final UserNotificationRequestGateway requestGateway;
 
     public UserNotificationService(String role) {
         this.requestGateway = new UserNotificationRequestGateway(role);
     }
 
-    public void viewUnseenNotification(String userID) {
+    public void viewUnseenNotifications(String userID) {
+        processNotificationRequest(
+            requestGateway.createViewUnseenNotificationRequest(userID),
+            "Error fetching unseen notifications:"
+        );
+    }
+
+    public void viewNotifications(String userID) {
+        processNotificationRequest(
+            requestGateway.createViewNotificationRequest(userID),
+            "Error fetching notifications:"
+        );
+    }
+
+    private void processNotificationRequest(String jsonRequest, String errorMessage) {
         try {
-            String jsonRequest = requestGateway.createViewUnseenNotificationRequest(userID);
             String jsonResponse = Client.requestServer(jsonRequest);
             PrintOutToConsole.printToConsole(jsonResponse);
         } catch (IOException e) {
-            System.err.println("Error fetching unseen notifications: " + e.getMessage());
+            handleException(errorMessage, e);
         }
     }
 
-    public void viewNotification(String userID) {
-        try {
-            String jsonRequest = requestGateway.createViewNotificationRequest(userID);
-            String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error fetching notifications: " + e.getMessage());
-        }
+    private void handleException(String message, IOException e) {
+        System.err.println(message + " " + e.getMessage());
     }
 }

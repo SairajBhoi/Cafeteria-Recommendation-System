@@ -3,43 +3,49 @@ package client.service;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import client.Client;
 import client.model.DiscardedFoodItem;
 import client.model.UserDiscardedFeedback;
 import client.util.InputHandler;
-import client.util.PrintOutToConsole;
-import RequestGateway.DiscardListRequestGateway;
+
+import client.util.JsonParser;
+import client.util.RequestHandler;
+import client.RequestGateway.DiscardListRequestGateway;
+import client.util.UserDecisionHandler;
 
 public class DiscardListService {
     private DiscardListRequestGateway requestGateway;
+    private JsonParser jsonParser;
+    private UserDecisionHandler userDecisionHandler;
+    private RequestHandler requestHandler;
 
     public DiscardListService(String role) {
         this.requestGateway = new DiscardListRequestGateway(role);
+        this.jsonParser = new JsonParser();
+        this.userDecisionHandler = new UserDecisionHandler();
+        this.requestHandler = new RequestHandler();
+    }
+    public DiscardListService() {
+        this.requestGateway = new DiscardListRequestGateway();
+        this.jsonParser = new JsonParser();
+        this.userDecisionHandler = new UserDecisionHandler();
+        this.requestHandler = new RequestHandler();
     }
 
     public void viewChefDiscardList() {
         String jsonRequest = requestGateway.createViewChefDiscardListRequest();
-        sendRequestToServer(jsonRequest);
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
     public void generateDiscardList() {
         String jsonRequest = requestGateway.createViewDiscardedListRequest();
-        try {
-            String jsonResponse = Client.requestServer(jsonRequest);
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<DiscardedFoodItem> discardedFoodItemList = objectMapper.readValue(jsonResponse, new TypeReference<List<DiscardedFoodItem>>() {});
+        String jsonResponse = fetchJsonResponse(jsonRequest);
 
-            if (discardedFoodItemList != null && !discardedFoodItemList.isEmpty()) {
-                processDiscardedFoodItems(discardedFoodItemList);
-            } else {
-                System.out.println("No discarded food items available.");
-            }
-        } catch (IOException e) {
-            System.out.println("Server connection failed.");
-            e.printStackTrace();
+        if (jsonResponse != null) {
+            List<DiscardedFoodItem> discardedFoodItemList = jsonParser.parseDiscardedFoodItems(jsonResponse);
+            processDiscardedFoodItems(discardedFoodItemList);
+        } else {
+            System.out.println("No discarded food items available.");
         }
     }
 
@@ -49,12 +55,23 @@ public class DiscardListService {
         feedback.setDiscardID(discardID);
 
         String jsonRequest = requestGateway.createViewFeedbackOnDiscardListRequest(feedback);
-        sendRequestToServer(jsonRequest);
+        requestHandler.sendRequestToServer(jsonRequest);
+    }
+
+    private String fetchJsonResponse(String jsonRequest) {
+        try {
+            return Client.requestServer(jsonRequest);
+        } catch (IOException e) {
+            System.out.println("Server connection failed.");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void processDiscardedFoodItems(List<DiscardedFoodItem> discardedFoodItemList) {
         for (DiscardedFoodItem discardedFoodItem : discardedFoodItemList) {
-            Boolean decision = getUserDecision("Enter whether you want to add " + discardedFoodItem.getItemName() + " in Discarded Table for User Feedback");
+            Boolean decision = userDecisionHandler.getUserDecision(
+                    "Enter whether you want to add " + discardedFoodItem.getItemName() + " to the Discarded Table for User Feedback");
 
             if (decision == null) {
                 System.out.println("Operation terminated by user.");
@@ -62,9 +79,10 @@ public class DiscardListService {
             }
 
             if (decision) {
-                requestGateway.createAddChefDiscardedFoodItemRequest(discardedFoodItem);
+                addDiscardedFoodItem(discardedFoodItem);
             } else {
-                Boolean deleteDecision = getUserDecision("Delete " + discardedFoodItem.getItemName() + " from main menu");
+                Boolean deleteDecision = userDecisionHandler.getUserDecision(
+                        "Delete " + discardedFoodItem.getItemName() + " from the main menu");
 
                 if (deleteDecision == null) {
                     System.out.println("Operation terminated by user.");
@@ -72,37 +90,19 @@ public class DiscardListService {
                 }
 
                 if (deleteDecision) {
-                    requestGateway.createDeleteChefDiscardedFoodItemRequest(discardedFoodItem);
+                    deleteDiscardedFoodItem(discardedFoodItem);
                 }
             }
         }
     }
 
-    private Boolean getUserDecision(String message) {
-        while (true) {
-            String input = InputHandler.getStringInput(message + " (yes/no/q/quit): ");
-            switch (input.toLowerCase()) {
-                case "yes":
-                case "y":
-                    return true;
-                case "no":
-                case "n":
-                    return false;
-                case "q":
-                case "quit":
-                    return null;
-                default:
-                    System.out.println("Invalid input. Please enter 'yes', 'no', 'q', or 'quit'.");
-            }
-        }
+    private void addDiscardedFoodItem(DiscardedFoodItem discardedFoodItem) {
+        String jsonRequest = requestGateway.createAddChefDiscardedFoodItemRequest(discardedFoodItem);
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 
-    private void sendRequestToServer(String jsonRequest) {
-        try {
-            String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            System.err.println("Error sending request to the server: " + e.getMessage());
-        }
+    private void deleteDiscardedFoodItem(DiscardedFoodItem discardedFoodItem) {
+        String jsonRequest = requestGateway.createDeleteChefDiscardedFoodItemRequest(discardedFoodItem);
+        requestHandler.sendRequestToServer(jsonRequest);
     }
 }

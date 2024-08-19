@@ -1,5 +1,6 @@
-package client.model;
+package client.role;
 
+import client.model.User;
 import client.service.Menu;
 
 public class Admin extends User {
@@ -30,6 +31,7 @@ public class Admin extends User {
     }
     
     public void viewAllMenuItems() {
+    	 menu = new Menu();
         menu.viewAllMenuItems();
     }
 }

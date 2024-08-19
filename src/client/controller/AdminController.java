@@ -1,6 +1,6 @@
 package client.controller;
 
-import client.model.Admin;
+import client.role.Admin;
 import client.util.InputHandler;
 
 public class AdminController {
