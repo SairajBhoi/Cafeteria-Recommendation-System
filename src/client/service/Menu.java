@@ -27,25 +27,29 @@ public class Menu {
     public void addMenuItem() {
         MenuItem menuItem = menuItemHandler.createMenuItem(true);
         String jsonRequest = requestGateway.createAddMenuItemRequest(menuItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+       String  jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void updateMenuItem() {
         MenuItem menuItem = menuItemHandler.createMenuItem(false);
         String jsonRequest = requestGateway.createUpdateMenuItemRequest(menuItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String  jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void updateAvailabilityStatus() {
         MenuItem menuItem = menuItemHandler.createMenuItemWithAvailabilityStatus();
         String jsonRequest = requestGateway.createUpdateFoodAvailableStatusRequest(menuItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String  jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void deleteMenuItem() {
         MenuItem menuItem = menuItemHandler.gatherDeletionDetails();
         String jsonRequest = requestGateway.createDeleteMenuItemRequest(menuItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String  jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void viewAllMenuItems() {

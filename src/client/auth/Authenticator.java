@@ -31,7 +31,7 @@ public class Authenticator {
                 System.out.println("Failed to communicate with the server.");
                 return false;
             }
-           System.out.println(jsonResponse);
+           //System.out.println(jsonResponse);
             String status = JsonStringToObject.getValueFromData("status", jsonResponse);
             if ("error".equals(status)) {
                 String errorMessage = JsonStringToObject.getValueFromData("message", jsonResponse);

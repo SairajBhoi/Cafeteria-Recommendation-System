@@ -3,6 +3,7 @@ package client.service;
 import client.model.Feedback;
 import client.model.UserDiscardedFeedback;
 import client.util.InputHandler;
+import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 
 import java.time.LocalDate;
@@ -34,7 +35,8 @@ public class FeedbackHandler {
     public void addFeedbackOnFoodItem() {
         Feedback feedback = gatherFoodItemFeedback();
         String jsonRequest = requestGateway.createAddFeedbackOnFoodItemRequest(feedback);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void viewFeedbackOnFoodItem() {
@@ -43,13 +45,15 @@ public class FeedbackHandler {
         feedback.setItemName(itemName);
 
         String jsonRequest = requestGateway.createViewFeedbackOnFoodItemRequest(feedback);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void addFeedbackOnChefDiscardedFoodItem() {
         UserDiscardedFeedback feedback = gatherDiscardedFoodItemFeedback();
         String jsonRequest = requestGateway.createAddFeedbackOnDiscardFoodItemRequest(feedback);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     private Feedback gatherFoodItemFeedback() {

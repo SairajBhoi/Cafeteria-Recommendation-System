@@ -8,7 +8,7 @@ public class RequestHandler {
     public String sendRequestToServer(String jsonRequest) {
         try {
             String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
+            //PrintOutToConsole.printToConsole(jsonResponse);
             return jsonResponse;
         } catch (IOException e) {
             System.err.println("Error sending request to server: " + e.getMessage());

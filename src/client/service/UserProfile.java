@@ -8,6 +8,7 @@ import client.model.UserPreference;
 import client.util.InputHandler;
 
 import client.util.PreferenceMapper;
+import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 
 public class UserProfile {
@@ -23,13 +24,15 @@ public class UserProfile {
 
     public void viewProfile() {
         String jsonRequest = requestGateway.createViewProfileRequest(userID);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void updateUserProfile() {
         UserPreference userPreference = gatherUserPreferences();
         String jsonRequest = requestGateway.createUpdateProfileRequest(userPreference);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse =requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     private UserPreference gatherUserPreferences() {

@@ -9,6 +9,7 @@ import client.model.UserDiscardedFeedback;
 import client.util.InputHandler;
 
 import client.util.JsonParser;
+import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 import client.RequestGateway.DiscardListRequestGateway;
 import client.util.UserDecisionHandler;
@@ -34,7 +35,8 @@ public class DiscardListService {
 
     public void viewChefDiscardList() {
         String jsonRequest = requestGateway.createViewChefDiscardListRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void generateDiscardList() {
@@ -55,7 +57,9 @@ public class DiscardListService {
         feedback.setDiscardID(discardID);
 
         String jsonRequest = requestGateway.createViewFeedbackOnDiscardListRequest(feedback);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse=requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
+        
     }
 
     private String fetchJsonResponse(String jsonRequest) {
@@ -98,11 +102,14 @@ public class DiscardListService {
 
     private void addDiscardedFoodItem(DiscardedFoodItem discardedFoodItem) {
         String jsonRequest = requestGateway.createAddChefDiscardedFoodItemRequest(discardedFoodItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse =  requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     private void deleteDiscardedFoodItem(DiscardedFoodItem discardedFoodItem) {
         String jsonRequest = requestGateway.createDeleteChefDiscardedFoodItemRequest(discardedFoodItem);
-        requestHandler.sendRequestToServer(jsonRequest);
+       String  jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+       PrintOutToConsole.printToConsole(jsonResponse);
+        
     }
 }

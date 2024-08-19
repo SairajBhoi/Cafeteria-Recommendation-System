@@ -4,12 +4,15 @@ import java.io.IOException;
 import client.RequestGateway.UserNotificationRequestGateway;
 import client.Client;
 import client.util.PrintOutToConsole;
+import client.util.RequestHandler;
 
 public class UserNotificationService {
     private final UserNotificationRequestGateway requestGateway;
+    private final RequestHandler requestHandler;
 
     public UserNotificationService(String role) {
         this.requestGateway = new UserNotificationRequestGateway(role);
+        this.requestHandler = new RequestHandler();
     }
 
     public void viewUnseenNotifications(String userID) {
@@ -27,12 +30,8 @@ public class UserNotificationService {
     }
 
     private void processNotificationRequest(String jsonRequest, String errorMessage) {
-        try {
-            String jsonResponse = Client.requestServer(jsonRequest);
-            PrintOutToConsole.printToConsole(jsonResponse);
-        } catch (IOException e) {
-            handleException(errorMessage, e);
-        }
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+		 PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     private void handleException(String message, IOException e) {

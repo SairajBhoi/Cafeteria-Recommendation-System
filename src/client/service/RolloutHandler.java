@@ -9,7 +9,7 @@ import client.RequestGateway.RolloutRequestGateway;
 import client.model.ChefMenuRollout;
 import client.model.TodayMenu;
 import client.util.InputHandler;
-
+import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 import server.model.FoodCategory;
 
@@ -32,22 +32,26 @@ public class RolloutHandler {
         category.setNumberOfItems(InputHandler.getIntegerInput("Enter number of items required: "));
 
         String jsonRequest = requestGateway.createRecommendationRequest(category);
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void getFinalVoteMenu() {
         String jsonRequest = requestGateway.createFinalVoteMenuRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void getFinalDecidedMenu() {
         String jsonRequest = requestGateway.createFinalDecidedMenuRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void todaysMenu() {
         String jsonRequest = requestGateway.createTodaysMenuRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void createChefMenuRollouts(String mealType) {
@@ -61,7 +65,8 @@ public class RolloutHandler {
                     chefMenuRollout.setRolloutDate(new Date(System.currentTimeMillis()));
 
                     String jsonRequest = requestGateway.createChefMenuRolloutRequest(chefMenuRollout);
-                    requestHandler.sendRequestToServer(jsonRequest);
+                    String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+                    PrintOutToConsole.printToConsole(jsonResponse);
                 }
             });
         } catch (IOException e) {
@@ -87,7 +92,8 @@ public class RolloutHandler {
                     todayMenu.setMenuDate(Date.valueOf(LocalDate.now().plusDays(1)));
 
                     String jsonRequest = requestGateway.createFinalDecidedMenuAfterRolloutRequest(todayMenu);
-                    requestHandler.sendRequestToServer(jsonRequest);
+                    String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+                    PrintOutToConsole.printToConsole(jsonResponse);
                 }
             });
         } catch (IOException e) {

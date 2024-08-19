@@ -4,7 +4,7 @@ import java.io.IOException;
 
 
 import client.util.InputHandler;
-
+import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 import client.util.UserDecisionHandler;
 import client.RequestGateway.VoteRequestGateway;
@@ -30,12 +30,14 @@ public class VoteFuncationalityHandler {
 
     public void viewChefRollout() {
         String jsonRequest = voteRequestGateway.createChefRolloutRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void viewRecommendation() {
         String jsonRequest = voteRequestGateway.createRecommendationRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     public void addVote() {
@@ -58,7 +60,8 @@ public class VoteFuncationalityHandler {
 
                 if (voteDecision) {
                     String voteRequest = voteRequestGateway.createVoteRequest(this.userID, rolloutID, voteDecision);
-                    requestHandler.sendRequestToServer(voteRequest);
+                    String jsonResponse = requestHandler.sendRequestToServer(voteRequest);
+                    PrintOutToConsole.printToConsole(jsonResponse);
                 } else {
                     System.out.println("Skipping vote for Rollout ID " + rolloutID + ".");
                 }
@@ -76,7 +79,8 @@ public class VoteFuncationalityHandler {
     private void displayRecommendations() throws IOException {
         System.out.println("Recommendation");
         String jsonRequest = voteRequestGateway.createRecommendationRequest();
-        requestHandler.sendRequestToServer(jsonRequest);
+        String jsonResponse = requestHandler.sendRequestToServer(jsonRequest);
+        PrintOutToConsole.printToConsole(jsonResponse);
     }
 
     private Integer parseRolloutID(String input) {
