@@ -11,22 +11,22 @@ import server.model.ChefMenuRollout;
 public class ChefMenuRolloutDatabaseOperator {
 
     private Connection connection;
+    private MenuDatabaseOperator menuDatabaseOperator;
 
     public ChefMenuRolloutDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
+        this.menuDatabaseOperator = new MenuDatabaseOperator(); 
     }
 
     public boolean insertChefMenuRollout(ChefMenuRollout rollout) throws SQLException {
-        MenuDatabaseOperator menu = new MenuDatabaseOperator();
         try {
-            int itemId = menu.getItemID(rollout.getItemName());
-            int categoryId = menu.getCategoryID(rollout.getCategoryName());
+            int itemId = menuDatabaseOperator.getItemID(rollout.getItemName());
+            int categoryId = menuDatabaseOperator.getCategoryID(rollout.getCategoryName());
 
             rollout.setItemID(itemId);
             rollout.setCategoryID(categoryId);
         } catch (Exception e) {
-            
             e.printStackTrace();
             return false;
         }
@@ -39,11 +39,10 @@ public class ChefMenuRolloutDatabaseOperator {
             stmt.setInt(4, rollout.getNumberOfVotes());
 
             int affectedRows = stmt.executeUpdate();
-
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Error inserting ChefMenuRollout: " + e.getMessage());
-            throw e; 
+            throw e;
         }
     }
 
@@ -67,7 +66,6 @@ public class ChefMenuRolloutDatabaseOperator {
 
     public List<ChefMenuRollout> getTodayRollouts() throws SQLException {
         String query = "SELECT * FROM ChefMenuRollout WHERE DATE(rolloutDate) = CURDATE()";
-        MenuDatabaseOperator menuDatabaseOperator = new MenuDatabaseOperator();
         List<ChefMenuRollout> rollouts = new ArrayList<>();
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -82,7 +80,6 @@ public class ChefMenuRolloutDatabaseOperator {
                     rollout.setCategoryName(menuDatabaseOperator.getCategoryName(rollout.getCategoryID()));
                     rollout.setItemName(menuDatabaseOperator.getItemName(rollout.getItemID()));
                 } catch (Exception e) {
-                    
                     e.printStackTrace();
                 }
                 rollouts.add(rollout);
@@ -90,71 +87,36 @@ public class ChefMenuRolloutDatabaseOperator {
         }
         return rollouts;
     }
-    
-    
+
     public List<ChefMenuItemScore> getChefMenuItemsByRolloutDate(Date rolloutDate) throws SQLException {
         List<ChefMenuItemScore> menuItems = new ArrayList<>();
         String query = "SELECT r.rolloutID, m.nameOfFood, m.foodPrice, m.foodAvailable, " +
                        "m.CuisineType, m.FoodType, m.SpiceLevel, m.IsSweet, c.categoryName " +
                        "FROM ChefMenuRollout r " +
                        "JOIN FoodMenuItem m ON r.itemID = m.itemID " +
-                       "JOIN Category c ON r.categoryID = c.categoryID " +  // Join directly with Category using rollout table
+                       "JOIN Category c ON r.categoryID = c.categoryID " +
                        "WHERE r.rolloutDate = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDate(1, rolloutDate);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                ChefMenuItemScore menuItem = new ChefMenuItemScore();
-                menuItem.setRolloutID(rs.getInt("rolloutID"));
-                menuItem.setItemName(rs.getString("nameOfFood"));
-                menuItem.setItemPrice(rs.getFloat("foodPrice"));
-                menuItem.setItemAvailable(rs.getBoolean("foodAvailable"));
-                menuItem.setCuisineType(rs.getString("CuisineType"));
-                menuItem.setFoodType(rs.getString("FoodType"));
-                menuItem.setSpiceLevel(rs.getString("SpiceLevel"));
-                menuItem.setSweet(rs.getBoolean("IsSweet"));
-                menuItem.setItemCategory(rs.getString("categoryName"));
-                // Assuming 'score' can be set or is calculated later
-                menuItems.add(menuItem);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ChefMenuItemScore menuItem = new ChefMenuItemScore();
+                    menuItem.setRolloutID(rs.getInt("rolloutID"));
+                    menuItem.setItemName(rs.getString("nameOfFood"));
+                    menuItem.setItemPrice(rs.getFloat("foodPrice"));
+                    menuItem.setItemAvailable(rs.getBoolean("foodAvailable"));
+                    menuItem.setCuisineType(rs.getString("CuisineType"));
+                    menuItem.setFoodType(rs.getString("FoodType"));
+                    menuItem.setSpiceLevel(rs.getString("SpiceLevel"));
+                    menuItem.setSweet(rs.getBoolean("IsSweet"));
+                    menuItem.setItemCategory(rs.getString("categoryName"));
+                    menuItems.add(menuItem);
+                }
             }
         }
-
         return menuItems;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     public boolean updateVoteCount(int rolloutID, int newVoteCount) throws SQLException {
         String query = "UPDATE ChefMenuRollout SET numberOfVotes = ? WHERE rolloutID = ?";
@@ -164,20 +126,21 @@ public class ChefMenuRolloutDatabaseOperator {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error updating vote count: " + e.getMessage());
-            throw e; 
+            throw e;
         }
     }
 
     public boolean castVote(String userID, int rolloutID, String voteDecision) throws SQLException {
-        String query = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, CURDATE())";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, userID);
-            stmt.setInt(2, rolloutID);
-            stmt.setString(3, voteDecision);
-            boolean inserted = stmt.executeUpdate() > 0;
+        String insertQuery = "INSERT INTO UserVote (userID, rolloutID, voteDecision, voteDate) VALUES (?, ?, ?, CURDATE())";
+        String countQuery = "SELECT COUNT(*) AS voteCount FROM UserVote WHERE rolloutID = ?";
+
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
+            insertStmt.setString(1, userID);
+            insertStmt.setInt(2, rolloutID);
+            insertStmt.setString(3, voteDecision);
+            boolean inserted = insertStmt.executeUpdate() > 0;
 
             if (inserted) {
-                String countQuery = "SELECT COUNT(*) AS voteCount FROM UserVote WHERE rolloutID = ?";
                 try (PreparedStatement countStmt = connection.prepareStatement(countQuery)) {
                     countStmt.setInt(1, rolloutID);
                     try (ResultSet rs = countStmt.executeQuery()) {
@@ -190,7 +153,7 @@ public class ChefMenuRolloutDatabaseOperator {
             }
         } catch (SQLException e) {
             System.err.println("Error casting vote: " + e.getMessage());
-            throw e; 
+            throw e;
         }
         return false;
     }

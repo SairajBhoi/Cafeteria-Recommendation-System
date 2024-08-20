@@ -3,24 +3,24 @@ package server.resources;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.util.Map;
 import java.util.LinkedHashMap;
 
-
 public class FoodFeedbackSentimentAnalysis {
+
+    private static final String SENTIMENT_KEYWORDS_FILE = "D:\\Learn_and_Code\\final-assignment-june\\Cafeteria-Recommendation-System\\src\\server\\resources\\SentimentKeyWords.txt";
 
     private Map<String, Integer> sentimentWords;
 
-    public FoodFeedbackSentimentAnalysis(String fileName) {
+    public FoodFeedbackSentimentAnalysis() {
         this.sentimentWords = new LinkedHashMap<>();
-        loadWords(fileName);
+        loadWords();
     }
 
-    private void loadWords(String fileName) {
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+    private void loadWords() {
+        try (BufferedReader br = new BufferedReader(new FileReader(SENTIMENT_KEYWORDS_FILE))) {
             String line;
-            System.out.print("fileName"+fileName);
+            System.out.println("Loading sentiment words from file: " + SENTIMENT_KEYWORDS_FILE);
             
             while ((line = br.readLine()) != null) {
                 String[] parts = line.trim().toLowerCase().split("\\s+");
@@ -31,15 +31,13 @@ public class FoodFeedbackSentimentAnalysis {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + fileName);
+            System.err.println("Error reading file: " + SENTIMENT_KEYWORDS_FILE);
             e.printStackTrace();
         }
     }
 
     public String analyzeSentiment(String comment) {
-
-    	
-    	System.out.println("comment"+comment);
+        System.out.println("Analyzing sentiment for comment: " + comment);
         String[] words = tokenize(comment);
 
         int positiveScore = 0;
@@ -47,7 +45,6 @@ public class FoodFeedbackSentimentAnalysis {
         boolean negateNext = false;
         boolean intensifyNext = false;
 
-    
         for (String word : words) {
             System.out.println("Processing word: " + word);
 
@@ -86,10 +83,9 @@ public class FoodFeedbackSentimentAnalysis {
             }
         }
 
-
         int totalScore = positiveScore + negativeScore;
         String sentimentResult;
-        
+
         if (totalScore > 0) {
             sentimentResult = "Positive";
         } else if (totalScore < 0) {
@@ -103,7 +99,6 @@ public class FoodFeedbackSentimentAnalysis {
     }
 
     private boolean isNegation(String word) {
- 
         return word.equals("not") || word.equals("no") || word.equals("didn't") || word.endsWith("n't");
     }
 

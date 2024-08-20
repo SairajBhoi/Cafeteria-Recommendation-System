@@ -8,11 +8,11 @@ import java.sql.SQLException;
 import server.DatabaseConnection;
 import server.model.User;
 
-public class UserDatatabaseOperator {
+public class UserDatabaseOperator {
 
     private Connection connection;
 
-    public UserDatatabaseOperator() {
+    public UserDatabaseOperator() {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         this.connection = dbInstance.getConnection();
     }
@@ -81,14 +81,5 @@ public class UserDatatabaseOperator {
         }
         return false;
     }
-    public void closeConnection() {
-        try {
-            if (connection != null) {
-                connection.close();
-                System.out.println("Database connection closed.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error closing database connection: " + e.getMessage());
-        }
-    }
+    
 }

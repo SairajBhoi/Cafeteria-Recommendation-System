@@ -17,7 +17,7 @@ public class AdminController {
         run();
     }
 
-    private void run() throws Exception {
+    private void run(){
         while (true) {
             displayOptions();
             int choice = InputHandler.getIntegerInput("Enter your choice: ");

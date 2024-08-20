@@ -137,7 +137,7 @@ public class DiscardedItemsListDatabaseOperator {
                 discardedItems.add(discardedItem);
             }
         } catch (SQLException e) {
-            // Use a logging framework in production code
+            
             e.printStackTrace();
         }
 

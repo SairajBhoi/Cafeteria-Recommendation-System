@@ -6,40 +6,44 @@ import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
 public class UserProfile {
-    public UserPreference userPreference;
+    private UserPreference userPreference;
 
     public String getUserProfile(String data) {
-        userPreference = JsonStringToObject.fromJsonToObject(data, UserPreference.class);
-        UserProfileDatabaseOperator userProfileDatabaseOperator = new UserProfileDatabaseOperator();
-
         try {
+          
+            userPreference = JsonStringToObject.fromJsonToObject(data, UserPreference.class);
+            UserProfileDatabaseOperator userProfileDatabaseOperator = new UserProfileDatabaseOperator();
+
+           
             userPreference = userProfileDatabaseOperator.getUserPreference(userPreference.getUserID());
+            
+          
             if (userPreference == null) {
                 return JsonConverter.convertStatusAndMessageToJson("error", "Profile not set");
             }
-        } catch (Exception e) {
-            return JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
-        }
 
-        String jsonResponse = JsonConverter.convertObjectToJson(userPreference);
-        return jsonResponse;
-    }
-    
-    
-    public String updateUserProfile(String data) {
-    	
-    	String jsonResonse=null;
-    	userPreference = JsonStringToObject.fromJsonToObject(data, UserPreference.class);
-        UserProfileDatabaseOperator userProfileDatabaseOperator = new UserProfileDatabaseOperator();
-        String response;
-        try {
-            response = userProfileDatabaseOperator.updateOrAddUserPreference(userPreference);
-            jsonResonse=JsonConverter.convertStatusAndMessageToJson("success",response);
-           
+          
+            return JsonConverter.convertObjectToJson(userPreference);
         } catch (Exception e) {
-            return JsonConverter.convertStatusAndMessageToJson("error", e.getMessage());
+          
+            return JsonConverter.convertStatusAndMessageToJson("error", "Error retrieving user profile: " + e.getMessage());
         }
-    	
-    	return jsonResonse;
+    }
+
+    public String updateUserProfile(String data) {
+        try {
+           
+            userPreference = JsonStringToObject.fromJsonToObject(data, UserPreference.class);
+            UserProfileDatabaseOperator userProfileDatabaseOperator = new UserProfileDatabaseOperator();
+
+         
+            String response = userProfileDatabaseOperator.updateOrAddUserPreference(userPreference);
+            
+         
+            return JsonConverter.convertStatusAndMessageToJson("success", response);
+        } catch (Exception e) {
+          
+            return JsonConverter.convertStatusAndMessageToJson("error", "Error updating user profile: " + e.getMessage());
+        }
     }
 }

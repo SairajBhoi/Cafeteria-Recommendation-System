@@ -1,14 +1,14 @@
 package server.auth;
 
-import server.databaseoperation.UserDatatabaseOperator;
+import server.databaseoperation.UserDatabaseOperator;
 import server.model.User;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
 public class AuthenticationService {
-    private final UserDatatabaseOperator userDAO;
+    private final UserDatabaseOperator userDAO;
     public AuthenticationService() {
-        this.userDAO = new UserDatatabaseOperator();
+        this.userDAO = new UserDatabaseOperator();
     }
 
     public String authenticate(String data) {

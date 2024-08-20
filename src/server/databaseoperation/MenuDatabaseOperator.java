@@ -339,14 +339,5 @@ public class MenuDatabaseOperator {
         }
     }
 
-    public void closeConnection() {
-        try {
-            if (connection != null) {
-                connection.close();
-                System.out.println("Database connection closed.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+  
 }

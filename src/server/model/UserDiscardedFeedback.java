@@ -10,7 +10,7 @@ public class UserDiscardedFeedback {
     private String question3Answer;
     private Date feedbackDate;
 
-    // Getters and Setters
+
     public String getUserID() {
         return userID;
     }
