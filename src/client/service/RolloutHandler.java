@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 
-import client.RequestGateway.RolloutRequestGateway;
-
 import client.model.ChefMenuRollout;
 import client.model.TodayMenu;
+import client.requestgateway.RolloutRequestGateway;
 import client.util.InputHandler;
 import client.util.PrintOutToConsole;
 import client.util.RequestHandler;

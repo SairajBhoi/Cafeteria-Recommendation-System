@@ -1,6 +1,6 @@
 package server.auth;
 
-import server.DatabaseOperation.UserDatatabaseOperator;
+import server.databaseoperation.UserDatatabaseOperator;
 import server.model.User;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;

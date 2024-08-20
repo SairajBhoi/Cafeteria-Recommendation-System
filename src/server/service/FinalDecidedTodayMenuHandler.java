@@ -1,32 +1,22 @@
 package server.service;
 
-import java.sql.Connection;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.sql.Date;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import server.model.TodayMenu;
-import server.DatabaseConnection;
-import server.DatabaseOperation.FinalDecidedTodaysMenuDatabaseOperator;
-import server.DatabaseOperation.MenuDatabaseOperator;
+import server.databaseoperation.FinalDecidedTodaysMenuDatabaseOperator;
+
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
 public class FinalDecidedTodayMenuHandler {
     
-    private Connection connection;
-    
+     
    
-    public FinalDecidedTodayMenuHandler() {
-        DatabaseConnection dbInstance = DatabaseConnection.getInstance();
-        this.connection = dbInstance.getConnection();
-    }
+   
 
  
     public String addFinalResultMenu(String data) throws Exception {

@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import server.DatabaseOperation.MenuDatabaseOperator;
-import server.DatabaseOperation.NotificationDatabaseOperator;
+import server.databaseoperation.MenuDatabaseOperator;
+import server.databaseoperation.NotificationDatabaseOperator;
 import server.model.MenuItem;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;

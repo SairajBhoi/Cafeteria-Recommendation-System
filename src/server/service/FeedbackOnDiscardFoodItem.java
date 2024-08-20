@@ -3,19 +3,12 @@ package server.service;
 import java.sql.SQLException;
 import java.util.List;
 
-import server.DatabaseOperation.UserDiscardFeedbackDatabaseOper;
+import server.databaseoperation.UserDiscardFeedbackDatabaseOper;
 import server.model.UserDiscardedFeedback;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;
 
 public class FeedbackOnDiscardFoodItem {
-	
-	
-	private UserDiscardFeedbackDatabaseOper userDiscardFeedbackDatabaseOper;
-	
-
-	
-	
 	
 	
 	public String viewFeedback(String data) {
@@ -44,7 +37,6 @@ public class FeedbackOnDiscardFoodItem {
 	
 	
 	public String addFeedback(String data){
-		userDiscardFeedbackDatabaseOper = new UserDiscardFeedbackDatabaseOper();
 		UserDiscardFeedbackDatabaseOper userDiscardFeedbackDatabaseOper = new  UserDiscardFeedbackDatabaseOper();
 		UserDiscardedFeedback userDiscardedFeedback	= JsonStringToObject.fromJsonToObject(data, UserDiscardedFeedback.class);
 		String jsonResponse= null;

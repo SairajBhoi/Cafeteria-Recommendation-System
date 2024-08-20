@@ -1,10 +1,10 @@
 package client.auth;
 
-import client.RequestGateway.AuthenticationRequestGateway;
 import client.controller.AdminController;
 import client.controller.ChefController;
 import client.controller.EmployeeController;
 import client.model.User;
+import client.requestgateway.AuthenticationRequestGateway;
 import client.util.JsonStringToObject;
 import client.util.RequestHandler;
 

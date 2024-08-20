@@ -4,7 +4,7 @@ import java.util.List;
 
 import client.model.Notification;
 import client.util.JsonStringToObject;
-import server.DatabaseOperation.NotificationDatabaseOperator;
+import server.databaseoperation.NotificationDatabaseOperator;
 import server.util.JsonConverter;
 
 public class NotificationService {

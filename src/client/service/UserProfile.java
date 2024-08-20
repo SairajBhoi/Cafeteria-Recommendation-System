@@ -2,9 +2,8 @@ package client.service;
 
 
 
-import client.RequestGateway.UserProfileRequestGateway;
-
 import client.model.UserPreference;
+import client.requestgateway.UserProfileRequestGateway;
 import client.util.InputHandler;
 
 import client.util.PreferenceMapper;

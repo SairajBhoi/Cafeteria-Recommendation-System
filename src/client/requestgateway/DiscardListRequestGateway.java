@@ -1,4 +1,4 @@
-package client.RequestGateway;
+package client.requestgateway;
 
 import client.model.DiscardedFoodItem;
 import client.model.UserDiscardedFeedback;

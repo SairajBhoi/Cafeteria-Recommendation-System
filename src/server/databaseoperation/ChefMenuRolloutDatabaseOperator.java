@@ -1,12 +1,9 @@
-package server.DatabaseOperation;
+package server.databaseoperation;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import server.model.MenuItem;
 import server.DatabaseConnection;
 import server.model.ChefMenuItemScore;
 import server.model.ChefMenuRollout;

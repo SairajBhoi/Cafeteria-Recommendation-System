@@ -4,7 +4,7 @@ package server.service;
 
 import org.json.simple.JSONArray;
 
-import server.DatabaseOperation.UserVoteDatabaseOperator;
+import server.databaseoperation.UserVoteDatabaseOperator;
 import server.model.Vote;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;

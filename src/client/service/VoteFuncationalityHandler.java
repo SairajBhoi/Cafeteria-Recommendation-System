@@ -2,12 +2,11 @@ package client.service;
 
 import java.io.IOException;
 
-
+import client.requestgateway.VoteRequestGateway;
 import client.util.InputHandler;
 import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 import client.util.UserDecisionHandler;
-import client.RequestGateway.VoteRequestGateway;
 
 public class VoteFuncationalityHandler {
     private final String role;

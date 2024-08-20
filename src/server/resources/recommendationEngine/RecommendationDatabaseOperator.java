@@ -13,7 +13,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import server.util.JsonConverter;
+
 import server.DatabaseConnection;
 
 public class RecommendationDatabaseOperator {

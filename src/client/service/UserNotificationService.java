@@ -1,8 +1,8 @@
 package client.service;
 
 import java.io.IOException;
-import client.RequestGateway.UserNotificationRequestGateway;
-import client.Client;
+
+import client.requestgateway.UserNotificationRequestGateway;
 import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 

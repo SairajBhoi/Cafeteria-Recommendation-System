@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import server.util.JsonStringToObject;
-import server.DatabaseOperation.DiscardedItemsListDatabaseOperator;
+import server.databaseoperation.DiscardedItemsListDatabaseOperator;
 import server.model.DiscardedFoodItem;
 import server.util.JsonConverter;
 

@@ -2,13 +2,12 @@ package client.service;
 
 import client.model.Feedback;
 import client.model.UserDiscardedFeedback;
+import client.requestgateway.FeedbackRequestGateway;
 import client.util.InputHandler;
 import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
 
 import java.time.LocalDate;
-
-import client.RequestGateway.FeedbackRequestGateway;
 
 public class FeedbackHandler {
     private FeedbackRequestGateway requestGateway;

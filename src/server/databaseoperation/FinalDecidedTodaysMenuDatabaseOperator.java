@@ -1,4 +1,4 @@
-package server.DatabaseOperation;
+package server.databaseoperation;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

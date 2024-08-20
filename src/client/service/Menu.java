@@ -2,8 +2,8 @@ package client.service;
 
 import java.io.IOException;
 import client.Client;
-import client.RequestGateway.MenuRequestGateway;
 import client.model.MenuItem;
+import client.requestgateway.MenuRequestGateway;
 import client.util.PrintOutToConsole;
 import client.util.MenuItemHandler;
 import client.util.RequestHandler;

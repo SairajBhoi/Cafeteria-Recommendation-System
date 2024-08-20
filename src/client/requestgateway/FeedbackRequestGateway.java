@@ -1,4 +1,4 @@
-package client.RequestGateway;
+package client.requestgateway;
 
 import client.util.JsonConverter;
 import client.model.Feedback;

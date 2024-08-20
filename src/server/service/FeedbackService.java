@@ -3,7 +3,7 @@ package server.service;
 import java.util.List;
 import java.util.Map;
 
-import server.DatabaseOperation.EmployeeFeedbackDatabaseOperator;
+import server.databaseoperation.EmployeeFeedbackDatabaseOperator;
 import server.model.Feedback;
 import server.resources.FoodFeedbackSentimentAnalysis;
 import server.util.JsonConverter;

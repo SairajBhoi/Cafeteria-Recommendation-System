@@ -4,7 +4,7 @@ import client.auth.Encryption;
 import client.auth.Authenticator;
 import client.util.InputHandler;
 
-import java.io.IOException;
+
 
 public class Main {
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package server.service;
 
-import server.DatabaseOperation.UserProfileDatabaseOperator;
+import server.databaseoperation.UserProfileDatabaseOperator;
 import server.model.UserPreference;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;

@@ -3,7 +3,7 @@ package server.service;
 import java.sql.SQLException;
 import java.util.List;
 
-import server.DatabaseOperation.ChefMenuRolloutDatabaseOperator;
+import server.databaseoperation.*;
 import server.model.ChefMenuRollout;
 import server.util.JsonConverter;
 import server.util.JsonStringToObject;

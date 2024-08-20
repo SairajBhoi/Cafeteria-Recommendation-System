@@ -14,11 +14,10 @@ import org.json.simple.JSONArray;
 
 import server.model.UserPreference;
 import server.util.JsonConverter;
-import server.DatabaseOperation.ChefMenuRolloutDatabaseOperator;
-import server.DatabaseOperation.UserProfileDatabaseOperator;
+import server.databaseoperation.ChefMenuRolloutDatabaseOperator;
+import server.databaseoperation.UserProfileDatabaseOperator;
 import server.model.ChefMenuItemScore;
 import server.model.FoodCategory;
-import server.model.MenuItem;
 import server.util.JsonStringToObject;
 
 public class RecommendationService {

@@ -1,4 +1,4 @@
-package client.RequestGateway;
+package client.requestgateway;
 
 import client.model.MenuItem;
 import client.util.JsonConverter;

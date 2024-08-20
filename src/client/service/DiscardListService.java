@@ -6,12 +6,12 @@ import java.util.List;
 import client.Client;
 import client.model.DiscardedFoodItem;
 import client.model.UserDiscardedFeedback;
+import client.requestgateway.DiscardListRequestGateway;
 import client.util.InputHandler;
 
 import client.util.JsonParser;
 import client.util.PrintOutToConsole;
 import client.util.RequestHandler;
-import client.RequestGateway.DiscardListRequestGateway;
 import client.util.UserDecisionHandler;
 
 public class DiscardListService {
