@@ -1,4 +1,4 @@
-package server.resources.recommendationEngine;
+package server.resources.recommendationengine;
 
 import java.sql.Connection;
 import java.sql.Date;

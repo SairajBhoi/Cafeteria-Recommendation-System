@@ -1,4 +1,4 @@
-package server.resources.recommendationEngine;
+package server.resources.recommendationengine;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;

@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 
 import server.auth.AuthenticationService;
-import server.resources.recommendationEngine.RecommendationService;
+import server.resources.recommendationengine.RecommendationService;
 import server.service.ChefMenuRolloutHandler;
 import server.service.DiscardedItemListHandler;
 import server.service.FeedbackOnDiscardFoodItem;
